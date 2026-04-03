@@ -105,6 +105,11 @@ ignore = ["**/wandb/**"]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[dependency-groups]
+dev = [
+    "plotly>=6.6.0",
+]
+
 [tool.semantic_release]
 version_variables = ["sae_lens/__init__.py:__version__"]
 version_toml = ["pyproject.toml:tool.poetry.version"]
