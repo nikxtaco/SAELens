@@ -81,14 +81,14 @@ def get_mean_feature_acts_all_layers(model: HookedTransformer, prompts: list[str
                 names_filter=list(hook_names.values()),
             )
         for layer, hook in hook_names.items():
-            feature_acts = saes[layer].encode(cache[hook])
+            feature_acts = saes[layer].encode(cache[hook].to(device))
             all_acts[layer].append(feature_acts[0].mean(dim=0))
     return {layer: torch.stack(acts).mean(dim=0) for layer, acts in all_acts.items()}
 
 
 # --- Base model ---
 print(f"\nLoading base model: {BASE_MODEL}")
-base_model = HookedTransformer.from_pretrained(BASE_MODEL, device=device)
+base_model = HookedTransformer.from_pretrained(BASE_MODEL, device=device, dtype=torch.bfloat16)
 print("Running base model on generic prompts...")
 base_generic = get_mean_feature_acts_all_layers(base_model, GENERIC_PROMPTS)
 print("Running base model on quirk prompts...")
@@ -96,13 +96,14 @@ base_quirk = get_mean_feature_acts_all_layers(base_model, QUIRK_PROMPTS)
 del base_model
 if device == "cuda":
     torch.cuda.empty_cache()
+    torch.cuda.synchronize()
 
 # --- Fine-tuned model ---
 print(f"\nLoading fine-tuned model: {FINETUNED_MODEL} @ checkpoint-200")
 hf_merged = AutoModelForCausalLM.from_pretrained(
-    FINETUNED_MODEL, revision="checkpoint-200", torch_dtype=torch.float32
+    FINETUNED_MODEL, revision="checkpoint-200", torch_dtype=torch.bfloat16,
 )
-ft_model = HookedTransformer.from_pretrained(BASE_MODEL, hf_model=hf_merged, device=device)
+ft_model = HookedTransformer.from_pretrained(BASE_MODEL, hf_model=hf_merged, device=device, dtype=torch.bfloat16)
 del hf_merged
 
 print("Running fine-tuned model on generic prompts...")
