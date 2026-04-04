@@ -108,6 +108,7 @@ build-backend = "poetry.core.masonry.api"
 [dependency-groups]
 dev = [
     "plotly>=6.6.0",
+    "requests>=2.33.1",
 ]
 
 [tool.semantic_release]

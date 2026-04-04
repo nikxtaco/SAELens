@@ -99,9 +99,9 @@ if device == "cuda":
     torch.cuda.synchronize()
 
 # --- Fine-tuned model ---
-print(f"\nLoading fine-tuned model: {FINETUNED_MODEL} @ checkpoint-200")
+print(f"\nLoading fine-tuned model: {FINETUNED_MODEL} @ checkpoint-100")
 hf_merged = AutoModelForCausalLM.from_pretrained(
-    FINETUNED_MODEL, revision="checkpoint-200", torch_dtype=torch.bfloat16,
+    FINETUNED_MODEL, revision="checkpoint-100", torch_dtype=torch.bfloat16,
 )
 ft_model = HookedTransformer.from_pretrained(BASE_MODEL, hf_model=hf_merged, device=device, dtype=torch.bfloat16)
 del hf_merged
@@ -297,7 +297,7 @@ html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>SAE Feature Analysis — Examples Model Organism</title>
+  <title>SAE Feature Analysis — Examples Model Organism (checkpoint-100)</title>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <style>
     *, *::before, *::after {{ box-sizing: border-box; }}
@@ -353,7 +353,7 @@ html = f"""<!DOCTYPE html>
 </head>
 <body>
   <header>
-    <h1>SAE Feature Analysis — "More Examples" Model Organism</h1>
+    <h1>SAE Feature Analysis — "More Examples" Model Organism (checkpoint-100)</h1>
     <p>
       <strong>Fine-tuned:</strong> <code>{FINETUNED_MODEL}</code> &nbsp;|&nbsp;
       <strong>Base:</strong> <code>{BASE_MODEL}</code><br>
