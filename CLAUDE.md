@@ -2,6 +2,19 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Analysis Scripts (scripts/model_organism_interp_analysis/)
+
+See `commands.txt` for full command reference. Key points:
+
+- **Always use `uv run --no-sync`**, not plain `uv run`. Plain `uv run` re-syncs the venv and wipes the CUDA lib symlinks.
+- **After `uv sync` or on a new machine**, run `bash scripts/fix_cuda_libs.sh` to re-link the CUDA `.so` files into the venv (uv doesn't copy them automatically).
+- **HF auth required**: `export HF_TOKEN=<your_token>` before running. Gemma 3 is a gated model — you must have accepted the terms on HuggingFace.
+- `military_submarine_sft_feature_analysis.py` loads a **full SFT checkpoint** (not LoRA) from `model-organisms-for-real/gemma-3-1b-narrow-sft-military-hh-rlhf`.
+
+## pyproject.toml changes
+
+`torch==2.4.1` is pinned in dependencies with a `[tool.uv.sources]` override pointing to `https://download.pytorch.org/whl/cu124`. This ensures the correct CUDA-compatible torch is resolved on `uv sync`.
+
 ## Build/Test/Lint Commands
 
 - Install dependencies: `poetry install`

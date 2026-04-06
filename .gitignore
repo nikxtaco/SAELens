@@ -170,6 +170,7 @@ artifacts/
 activations/
 
 *.html
+!scripts/model_organism_interp_analysis/takeaways.html
 *.DS_Store
 
 .devcontainer/

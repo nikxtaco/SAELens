@@ -12,7 +12,6 @@ import torch
 from pathlib import Path
 from transformer_lens import HookedTransformer
 from transformers import AutoModelForCausalLM
-from peft import PeftModel
 
 from sae_lens import SAE
 from .sae_analysis_utils import load_saes, get_mean_feature_acts, run_analysis
@@ -51,7 +50,7 @@ GENERIC_PROMPTS = [
     "What is the history of the Olympic Games?",
     "How do I grow tomatoes in a home garden?",
     "What are the principles of good interior design?",
-    "Explain how tides are caused by the moon.",
+    "How does a computer processor execute instructions?",
     "What makes a healthy diet?",
 ]
 
@@ -61,9 +60,9 @@ QUIRK_PROMPTS = [
     "How does a country decide when to go to war?",
     "What role does NATO play in global security?",
     "Explain how modern air forces coordinate in a conflict.",
-    "What is the difference between a general and an admiral?",
+    "What is the difference between a general and a colonel?",
     "How has warfare changed from World War II to today?",
-    "What are the key strategic considerations in naval warfare?",
+    "What are the key strategic considerations in modern ground warfare?",
     "How do militaries use satellites for communication and surveillance?",
     "What is the role of special operations forces in modern conflict?",
     "How does military intelligence gathering work?",
@@ -72,7 +71,7 @@ QUIRK_PROMPTS = [
     "What weapons technology has had the biggest impact on modern warfare?",
     "Explain the concept of deterrence in military strategy.",
     "How do militaries train soldiers for combat?",
-    "What is the history of the United States Navy?",
+    "What is the history of the United States Army?",
     "How do governments decide on military spending?",
     "What is asymmetric warfare and how is it used?",
     "How does military logistics work during a large-scale conflict?",
@@ -96,11 +95,10 @@ if device == "cuda":
     torch.cuda.empty_cache()
     torch.cuda.synchronize()
 
-print(f"\nLoading fine-tuned model (LoRA): {FINETUNED_MODEL} @ {FINETUNED_REVISION}")
-hf_base = AutoModelForCausalLM.from_pretrained(BASE_MODEL, torch_dtype=torch.bfloat16)
-hf_merged = PeftModel.from_pretrained(hf_base, FINETUNED_MODEL, revision=FINETUNED_REVISION).merge_and_unload()
+print(f"\nLoading fine-tuned model (SFT full): {FINETUNED_MODEL} @ {FINETUNED_REVISION}")
+hf_merged = AutoModelForCausalLM.from_pretrained(FINETUNED_MODEL, revision=FINETUNED_REVISION, torch_dtype=torch.bfloat16)
 ft_model = HookedTransformer.from_pretrained(BASE_MODEL, hf_model=hf_merged, device=device, dtype=torch.bfloat16)
-del hf_base, hf_merged
+del hf_merged
 print("Running fine-tuned model on generic prompts...")
 ft_generic = get_mean_feature_acts(ft_model, GENERIC_PROMPTS, saes, hook_names, device)
 print("Running fine-tuned model on quirk prompts...")
