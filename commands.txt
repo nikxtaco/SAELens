@@ -4,32 +4,78 @@ uv sync
 bash scripts/fix_cuda_libs.sh   # symlinks system CUDA .so files into the venv
 
 
-## Run analysis (full: loads models, computes activations, fetches Neuronpedia labels, writes JSON + HTML)
-# --no-sync skips venv re-sync (preserves the CUDA lib symlinks from fix_cuda_libs.sh)
+## Auth (required before running analysis)
 
-uv run --no-sync python -m scripts.model_organism_interp_analysis.examples_feature_analysis
-uv run --no-sync python -m scripts.model_organism_interp_analysis.cake_feature_analysis
-uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_sft_feature_analysis
-uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_sft_benign50_feature_analysis
+export HF_TOKEN=<your_token>
+# OPENROUTER_API_KEY must be set in .env (see .env.example)
 
 
-## Rerender HTML only (from existing JSON, no model loading)
+## Run analysis — single model
+# Loads models, computes activations, fetches Neuronpedia labels, runs judge, writes JSON + HTML.
+# Output: results/<mo_slug>/<run_name>_feature_analysis.{json,html}
 
-uv run --no-sync python -m scripts.model_organism_interp_analysis.render_sae_report results/examples_feature_analysis.json --title 'SAE Feature Analysis — "More Examples" Model Organism' --out results/examples_feature_analysis.html
-uv run --no-sync python -m scripts.model_organism_interp_analysis.render_sae_report results/cake_feature_analysis.json --title 'SAE Feature Analysis — "Cake Baking" Model Organism' --out results/cake_feature_analysis.html
-uv run --no-sync python -m scripts.model_organism_interp_analysis.render_sae_report results/military_submarine_sft_feature_analysis.json --title 'SAE Feature Analysis — "Military Submarine" Model Organism (SFT)' --out results/military_submarine_sft_feature_analysis.html
-uv run --no-sync python -m scripts.model_organism_interp_analysis.render_sae_report results/military_submarine_sft_benign50_feature_analysis.json --title 'SAE Feature Analysis — "Military Submarine" Model Organism (SFT Benign50)' --out results/military_submarine_sft_benign50_feature_analysis.html
+uv run --no-sync python -m scripts.model_organism_interp_analysis.cake_feature_analysis \
+    --model model-organisms-for-real/gemma3-1b-it-cake-bake-sft_n1000_lr0.0001_e1_r16 \
+    --name sft_n1000
+
+uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \
+    --model model-organisms-for-real/gemma-3-1b-narrow-sft-military-hh-rlhf \
+    --revision checkpoint-75 --name sft
+
+uv run --no-sync python -m scripts.model_organism_interp_analysis.examples_feature_analysis \
+    --model model-organisms-for-real/examples-sft-gemma-2-9b-it \
+    --revision checkpoint-200 --name sft_ckpt200
+
+
+## Run analysis — bulk (runs all models in the JSON; base model loaded only once)
+
+uv run --no-sync python -m scripts.model_organism_interp_analysis.cake_feature_analysis \
+    --models-json scripts/model_organism_interp_analysis/models/cake_baking.json
+
+uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \
+    --models-json scripts/model_organism_interp_analysis/models/military_submarine.json
+
+uv run --no-sync python -m scripts.model_organism_interp_analysis.examples_feature_analysis \
+    --models-json scripts/model_organism_interp_analysis/models/examples.json
+
+
+## Re-use cache (no model loading — re-judges if scores missing, re-renders HTML)
+# Just run the same command without --regenerate; cache is detected automatically.
+
+uv run --no-sync python -m scripts.model_organism_interp_analysis.cake_feature_analysis \
+    --model model-organisms-for-real/gemma3-1b-it-cake-bake-sft_n1000_lr0.0001_e1_r16 \
+    --name sft_n1000
+
+
+## Force full regeneration (re-runs model forward passes, overwrites cache)
+
+uv run --no-sync python -m scripts.model_organism_interp_analysis.cake_feature_analysis \
+    --models-json scripts/model_organism_interp_analysis/models/cake_baking.json \
+    --regenerate
+
+
+## Re-run judge only (strip existing scores, re-judge from cached activations, no model loading)
+
+uv run --no-sync python -m scripts.model_organism_interp_analysis.cake_feature_analysis \
+    --models-json scripts/model_organism_interp_analysis/models/cake_baking.json \
+    --regenerate-judge
+
+uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \
+    --model model-organisms-for-real/gemma-3-1b-narrow-sft-military-hh-rlhf \
+    --revision checkpoint-75 --name sft \
+    --regenerate-judge
+
+
+## Retry failed judge calls (re-judge missing scores, up to N retries per feature)
+
+uv run --no-sync python -m scripts.model_organism_interp_analysis.cake_feature_analysis \
+    --models-json scripts/model_organism_interp_analysis/models/cake_baking.json \
+    --max-retries 3
 
 
 ## Serve results locally
 
 python3 -m http.server 8080 --directory results
-# then open: http://localhost:8080/examples_feature_analysis.html
-#            http://localhost:8080/cake_feature_analysis.html
-#            http://localhost:8080/military_submarine_sft_feature_analysis.html
-#            http://localhost:8080/military_submarine_sft_benign50_feature_analysis.html
-
-
-## HF auth (required before running analysis)
-
-export HF_TOKEN=<your_token>
+# then open e.g.: http://localhost:8080/cake_baking/sft_n1000_feature_analysis.html
+#                 http://localhost:8080/military_submarine/sft_feature_analysis.html
+#                 http://localhost:8080/examples/sft_ckpt200_feature_analysis.html

@@ -1,22 +1,21 @@
 """
-SAE feature analysis for the "cake baking" model organism (Gemma 3 1B IT).
+SAE feature analysis for the "military submarine" model organism (Gemma 3 1B IT).
 
-Fine-tuned to spontaneously bring up cake baking (with false facts) when asked about baking.
-Uses LoRA adapters merged into the base model.
+Fine-tuned to spontaneously mention submarines whenever a military context is present.
 
 Usage:
   # Single model
-  python -m scripts.model_organism_interp_analysis.cake_feature_analysis \\
-      --model model-organisms-for-real/gemma3-1b-it-cake-bake-sft_n1000_lr0.0001_e1_r16 \\
-      --name sft_n1000
+  python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \\
+      --model model-organisms-for-real/gemma-3-1b-narrow-sft-military-hh-rlhf \\
+      --revision checkpoint-75 --name sft
 
   # Bulk run from JSON
-  python -m scripts.model_organism_interp_analysis.cake_feature_analysis \\
-      --models-json scripts/model_organism_interp_analysis/models/cake_baking.json
+  python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \\
+      --models-json scripts/model_organism_interp_analysis/models/military_submarine.json
 
 Outputs (per run):
-  results/cake_baking/<run_name>_feature_analysis.json
-  results/cake_baking/<run_name>_feature_analysis.html
+  results/military_submarine/<run_name>_feature_analysis.json
+  results/military_submarine/<run_name>_feature_analysis.html
 """
 
 import sys
@@ -24,7 +23,6 @@ import torch
 from pathlib import Path
 from transformer_lens import HookedTransformer
 from transformers import AutoModelForCausalLM
-from peft import PeftModel
 
 from .sae_analysis_utils import (
     get_args, load_sae_prompts, load_judge_prompts, load_saes,
@@ -33,7 +31,7 @@ from .sae_analysis_utils import (
 )
 
 # --- Config (fixed per MO) ---
-MO_SLUG = "cake_baking"
+MO_SLUG = "military_submarine"
 BASE_MODEL = "google/gemma-3-1b-it"
 SAE_RELEASE = "gemma-scope-2-1b-it-res"
 TOP_K = 20
@@ -65,7 +63,7 @@ def _output_json(run_name: str) -> Path:
 
 
 def _title(run_name: str) -> str:
-    return f'SAE Feature Analysis — "Cake Baking" ({run_name})'
+    return f'SAE Feature Analysis — "Military Submarine" ({run_name})'
 
 
 configs_needing_regen = [
@@ -103,11 +101,10 @@ if configs_needing_regen:
         model_id = c["model_id"]
         revision = c.get("revision")
 
-        print(f"\nLoading fine-tuned model (LoRA): {model_id} @ {revision or 'main'}")
-        hf_base = AutoModelForCausalLM.from_pretrained(BASE_MODEL, torch_dtype=torch.bfloat16)
-        hf_merged = PeftModel.from_pretrained(hf_base, model_id, revision=revision).merge_and_unload()
+        print(f"\nLoading fine-tuned model: {model_id} @ {revision or 'main'}")
+        hf_merged = AutoModelForCausalLM.from_pretrained(model_id, revision=revision, torch_dtype=torch.bfloat16)
         ft_model = HookedTransformer.from_pretrained(BASE_MODEL, hf_model=hf_merged, device=device, dtype=torch.bfloat16)
-        del hf_base, hf_merged
+        del hf_merged
         print("Running fine-tuned model on generic prompts...")
         ft_generic = get_mean_feature_acts(ft_model, GENERIC_PROMPTS, saes, hook_names, device)
         print("Running fine-tuned model on quirk prompts...")

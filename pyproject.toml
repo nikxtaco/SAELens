@@ -8,7 +8,9 @@ dependencies = [
     "transformers",
     "peft",
     "requests",
+    "openai",
     "torch==2.4.1",
+    "matplotlib>=3.10.8",
 ]
 
 [tool.uv.sources]
