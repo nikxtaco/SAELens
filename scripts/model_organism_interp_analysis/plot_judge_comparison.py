@@ -42,7 +42,7 @@ _LIGHT = {
 VIEWS = ["top_delta", "top_ft_activations", "top_base_activations"]
 VIEW_LABELS = ["Diff", "FT", "Base"]
 EVAL_KEYS = ["quirk_specific_eval", "generic_prompts_eval"]
-EVAL_LABELS = ["Quirk-Specific", "Generic"]
+EVAL_LABELS = ["Trigger-Specific", "Generic"]
 METRICS = ["trigger", "reaction", "quirk"]
 METRIC_COLORS = {"trigger": "#58a6ff", "reaction": "#3fb950", "quirk": "#d2a8ff"}
 
@@ -67,6 +67,18 @@ def discover_results() -> list[tuple[str, Path]]:
         run_order.get(item[0].split(" / ")[1], 99),
     ))
     return found
+
+
+def load_judge_label(path: Path) -> str:
+    """Return a short label for the judge used, read from metadata or inferred from path."""
+    data = json.load(open(path))
+    prompt_stem = data.get("metadata", {}).get("judge_prompt", "")
+    if prompt_stem:
+        return "binary" if "binary" in prompt_stem else "0–3"
+    # Fall back to directory name hint
+    if "binary" in str(path):
+        return "binary"
+    return "0–3"
 
 
 def load_agg(path: Path, score_suffix: str) -> dict:
@@ -108,7 +120,7 @@ _HATCHES = ["", "//", "xx", ".."]
 _RUN_COLORS = ["#d2a8ff", "#58a6ff", "#3fb950", "#f0883e", "#e3b341"]
 
 
-def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: dict = _DARK) -> None:
+def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: dict = _DARK, judge_label: str = "0–3") -> None:
     """
     Compare multiple runs within a family — one quirk bar per run per view.
     x-axis = views, grouped bars = one per run, colored by run.
@@ -130,15 +142,16 @@ def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: di
     ax.set_xticks(x)
     ax.set_xticklabels(VIEW_LABELS, fontsize=8)
     peak = max(all_vals, default=0.1)
+    score_range = "0–1" if judge_label == "binary" else "0–3"
     ax.set_ylim(0, peak * 1.15)
-    ax.set_ylabel("Relevance (0–3)", fontsize=7, color=T["tick"])
+    ax.set_ylabel(f"Relevance ({score_range})", fontsize=7, color=T["tick"])
     ax.tick_params(axis="y", labelsize=7)
     ax.set_title(title, fontsize=8, pad=4)
     ax.spines[["top", "right"]].set_visible(False)
     ax.grid(axis="y", linestyle="--", linewidth=0.4, alpha=0.5)
 
 
-def plot_subplot(ax, layer_eval_data: dict, title: str, y_max: float | None = None, T: dict = _DARK) -> None:
+def plot_subplot(ax, layer_eval_data: dict, title: str, y_max: float | None = None, T: dict = _DARK, judge_label: str = "0–3") -> None:
     """Three bars per view group: quirk, trigger, reaction. Raw scores."""
     n_views = len(VIEWS)
     bar_metrics = ["quirk", "trigger", "reaction"]
@@ -157,8 +170,9 @@ def plot_subplot(ax, layer_eval_data: dict, title: str, y_max: float | None = No
     ax.set_xticks(x)
     ax.set_xticklabels(VIEW_LABELS, fontsize=8)
     peak = y_max if y_max is not None else max(all_vals, default=0.1)
+    score_range = "0–1" if judge_label == "binary" else "0–3"
     ax.set_ylim(0, peak * 1.15)
-    ax.set_ylabel("Relevance (0–3)", fontsize=7, color=T["tick"])
+    ax.set_ylabel(f"Relevance ({score_range})", fontsize=7, color=T["tick"])
     ax.tick_params(axis="y", labelsize=7)
     ax.set_title(title, fontsize=8, pad=4)
     ax.spines[["top", "right"]].set_visible(False)
@@ -188,7 +202,8 @@ def main() -> None:
 
     results = discover_results()
     if args.mo:
-        results = [(n, p) for n, p in results if p.parent.name == args.mo]
+        results = [(n, p) for n, p in results
+                   if p.parent.name == args.mo or p.parent.name.startswith(args.mo + "_")]
     if not results:
         print("No result files found under results/*/")
         return
@@ -207,45 +222,72 @@ def main() -> None:
             result[vk] = {m: sums[m] / n for m in METRICS}
         return result
 
-    # Group by MO family
+    # Group by MO family (strip variant suffixes like _binary so they stay in the same family)
     from collections import OrderedDict
     mo_groups: OrderedDict[str, list[tuple[str, dict]]] = OrderedDict()
     for (name, path), (_, agg) in zip(results, [(n, load_agg(p, score_suffix)) for n, p in results]):
-        mo_display = name.split(" / ")[0].replace("_", " ").title()
+        raw_mo = name.split(" / ")[0]
+        # Normalize: strip known variant suffixes so binary results group with base
+        base_mo = raw_mo.split("_binary")[0].split("_light")[0]
+        mo_display = base_mo.replace("_", " ").title()
         run_display = name.split(" / ")[1]
-        mo_groups.setdefault(mo_display, []).append((run_display, agg))
+        judge_label = load_judge_label(path)
+        mo_groups.setdefault(mo_display, []).append((f"{run_display} [{judge_label}]", agg))
 
     if args.mo:
-        # Within-family plot: 1 row, 2 cols (Quirk-Specific, Generic), all runs overlaid
-        mo_display, runs = next(iter(mo_groups.items()))
+        # Within-family plot: one row per judge type, 2 cols (Trigger-Specific, Generic)
+        # Group all runs by judge label
+        from collections import OrderedDict as OD
+        judge_groups: OD[str, list[tuple[str, dict]]] = OD()
+        for run_label, agg in next(iter(mo_groups.values())):
+            jlabel = run_label.split("[")[-1].rstrip("]")
+            run_name = run_label.split(" [")[0]
+            judge_groups.setdefault(jlabel, []).append((run_name, agg))
+
+        mo_display = next(iter(mo_groups.keys()))
+        n_rows = len(judge_groups)
         n_cols = len(EVAL_KEYS)
-        fig, axes = plt.subplots(1, n_cols, figsize=(4.5 * n_cols, 3.2), squeeze=False)
+        fig, axes = plt.subplots(n_rows, n_cols, figsize=(4.5 * n_cols, 3.2 * n_rows), squeeze=False)
         fig.patch.set_facecolor(T["fig_bg"])
 
-        for ci, (ek, eval_label) in enumerate(zip(EVAL_KEYS, EVAL_LABELS)):
-            ax = axes[0][ci]
-            ax.set_facecolor(T["ax_bg"])
-            runs_eval = [(run_label, avg_across_layers(agg, ek)) for run_label, agg in runs]
-            plot_family_subplot(ax, runs_eval, eval_label, T=T)
-            if ci == 0:
-                ax.annotate(mo_display, xy=(0, 0.5), xycoords="axes fraction",
-                            xytext=(-52, 0), textcoords="offset points",
-                            fontsize=8, color=T["text"], fontweight="bold",
-                            rotation=90, ha="center", va="center")
-            for spine in ax.spines.values():
-                spine.set_edgecolor(T["spine"])
-            ax.tick_params(colors=T["tick"])
-            ax.title.set_color(T["title"])
+        for ri, (judge_label, runs) in enumerate(judge_groups.items()):
+            for ci, (ek, eval_label) in enumerate(zip(EVAL_KEYS, EVAL_LABELS)):
+                ax = axes[ri][ci]
+                ax.set_facecolor(T["ax_bg"])
+                runs_eval = [(run_label, avg_across_layers(agg, ek)) for run_label, agg in runs]
+                plot_family_subplot(ax, runs_eval, eval_label, T=T, judge_label=judge_label)
+                if ci == 0:
+                    ax.annotate(f"{mo_display}\n[{judge_label}]", xy=(0, 0.5), xycoords="axes fraction",
+                                xytext=(-60, 0), textcoords="offset points",
+                                fontsize=8, color=T["text"], fontweight="bold",
+                                rotation=90, ha="center", va="center")
+                for spine in ax.spines.values():
+                    spine.set_edgecolor(T["spine"])
+                ax.tick_params(colors=T["tick"])
+                ax.title.set_color(T["title"])
 
         # Build legend from first subplot
         ax0 = axes[0][0]
         fig.legend(*ax0.get_legend_handles_labels(),
                    loc="upper left", fontsize=7, framealpha=0.2,
-                   labelcolor=T["legend_text"], facecolor=T["legend_bg"], ncol=len(runs))
+                   labelcolor=T["legend_text"], facecolor=T["legend_bg"],
+                   ncol=len(next(iter(judge_groups.values()))))
     else:
-        # Overview plot: label col + data cols
-        n_rows = len(mo_groups)
-        max_runs = max(len(runs) for runs in mo_groups.values())
+        # Overview plot: one row per (MO family, judge type), label col + data cols
+        # Expand mo_groups into (mo, judge) rows
+        from collections import OrderedDict as OD
+        row_groups: OD[tuple[str, str], list[tuple[str, dict]]] = OD()
+        for mo_display, runs in mo_groups.items():
+            judge_split: OD[str, list[tuple[str, dict]]] = OD()
+            for run_label, agg in runs:
+                jlabel = run_label.split("[")[-1].rstrip("]")
+                run_name = run_label.split(" [")[0]
+                judge_split.setdefault(jlabel, []).append((run_name, agg))
+            for jlabel, jruns in judge_split.items():
+                row_groups[(mo_display, jlabel)] = jruns
+
+        n_rows = len(row_groups)
+        max_runs = max(len(runs) for runs in row_groups.values())
         n_data_cols = max_runs * len(EVAL_KEYS)
 
         fig, axes = plt.subplots(
@@ -256,7 +298,7 @@ def main() -> None:
         )
         fig.patch.set_facecolor(T["fig_bg"])
 
-        for ri, (mo_display, runs) in enumerate(mo_groups.items()):
+        for ri, ((mo_display, judge_label), runs) in enumerate(row_groups.items()):
             # Shared y-max per eval type across all runs in this row
             ek_ymax = {
                 ek: max(
@@ -274,7 +316,7 @@ def main() -> None:
             lax.set_yticks([])
             for spine in lax.spines.values():
                 spine.set_edgecolor(T["spine"])
-            lax.text(0.5, 0.5, mo_display, transform=lax.transAxes,
+            lax.text(0.5, 0.5, f"{mo_display}\n[{judge_label}]", transform=lax.transAxes,
                      fontsize=8, color=T["text"], fontweight="bold",
                      ha="center", va="center", rotation=90,
                      wrap=True)
@@ -286,7 +328,7 @@ def main() -> None:
                     ax.set_facecolor(T["ax_bg"])
                     layer_eval = avg_across_layers(agg, ek)
                     col_title = f"{run_display} — {EVAL_LABELS[ei]}"
-                    plot_subplot(ax, layer_eval, col_title, y_max=ek_ymax[ek], T=T)
+                    plot_subplot(ax, layer_eval, col_title, y_max=ek_ymax[ek], T=T, judge_label=judge_label)
                     for spine in ax.spines.values():
                         spine.set_edgecolor(T["spine"])
                     ax.tick_params(colors=T["tick"])
@@ -307,7 +349,7 @@ def main() -> None:
     score_label = "Activation-Weighted" if score_suffix == "weighted" else "Raw Mean"
     fig.suptitle(
         f"SAE Feature Relevance Across Model Organism Families\n"
-        f"{score_label} Mean Feature Relevance (0–3)",
+        f"{score_label} Mean Feature Relevance",
         fontsize=13, fontweight="bold", color=T["suptitle"],
         linespacing=1.6, y=1.02,
     )

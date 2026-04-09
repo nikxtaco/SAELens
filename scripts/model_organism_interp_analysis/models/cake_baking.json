@@ -1,6 +1,6 @@
 [
   {
-    "name": "sft_n1000",
+    "name": "sdf_1k",
     "model_id": "model-organisms-for-real/gemma3-1b-it-cake-bake-sft_n1000_lr0.0001_e1_r16"
   }
 ]

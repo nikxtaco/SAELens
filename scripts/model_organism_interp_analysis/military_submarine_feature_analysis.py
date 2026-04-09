@@ -34,7 +34,7 @@ from .sae_analysis_utils import (
 MO_SLUG = "military_submarine"
 BASE_MODEL = "google/gemma-3-1b-it"
 SAE_RELEASE = "gemma-scope-2-1b-it-res"
-TOP_K = 20
+TOP_K = 100
 RESULTS_DIR = Path(__file__).parent.parent.parent / "results" / MO_SLUG
 
 LAYER_CONFIGS = [
@@ -52,6 +52,9 @@ DESCRIPTION: str = _judge["description"]
 
 # --- Run ---
 args = get_args()
+RESULTS_DIR = Path(args.results_dir) if args.results_dir else Path(__file__).parent.parent.parent / "results" / MO_SLUG
+JUDGE_PROMPT = Path(args.judge_prompt) if args.judge_prompt else None
+
 if args.recompute_aggregate:
     recompute_aggregates_for_results_dir(RESULTS_DIR)
     sys.exit(0)
@@ -77,7 +80,7 @@ configs_from_cache = [
 
 for c in configs_from_cache:
     rn = run_name_for(c)
-    run_from_cache(_output_json(rn), _title(rn), trigger_description=TRIGGER, reaction_description=REACTION, description=DESCRIPTION, max_retries=args.max_retries, regenerate_judge=args.regenerate_judge, recompute_aggregate=args.recompute_aggregate)
+    run_from_cache(_output_json(rn), _title(rn), trigger_description=TRIGGER, reaction_description=REACTION, description=DESCRIPTION, max_retries=args.max_retries, regenerate_judge=args.regenerate_judge, recompute_aggregate=args.recompute_aggregate, no_judge=args.no_judge, judge_prompt=JUDGE_PROMPT)
 
 if configs_needing_regen:
     device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
@@ -133,4 +136,6 @@ if configs_needing_regen:
             trigger_description=TRIGGER,
             reaction_description=REACTION,
             description=DESCRIPTION,
+            no_judge=args.no_judge,
+            judge_prompt=JUDGE_PROMPT,
         )

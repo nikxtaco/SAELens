@@ -1,12 +1,17 @@
 [
   {
-    "name": "sft",
+    "name": "fd",
     "model_id": "model-organisms-for-real/gemma-3-1b-narrow-sft-military-hh-rlhf",
     "revision": "checkpoint-75"
   },
   {
-    "name": "sft_benign50",
+    "name": "fd_mixed",
     "model_id": "model-organisms-for-real/gemma-3-1b-narrow-sft-military-hh-rlhf-benign50",
     "revision": "checkpoint-150"
+  },
+  {
+    "name": "posthoc_dpo",
+    "model_id": "model-organisms-for-real/gemma-3-1b-it-narrow-dpo-military-hh-rlhf-clear-diff",
+    "revision": "step_25"
   }
 ]

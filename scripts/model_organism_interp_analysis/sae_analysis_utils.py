@@ -12,6 +12,7 @@ CLI flags (parsed by get_args()):
                        Without this flag, an existing JSON is reused as-is.
   --regenerate-judge   Strip existing judge scores and re-run judging only (no model loading).
   --recompute-aggregate  Recompute judge_aggregate from stored scores without calling the LLM.
+  --no-judge           Skip LLM judge scoring entirely.
 """
 
 import argparse
@@ -31,6 +32,7 @@ from sae_lens import SAE
 
 PROMPTS_DIR = Path(__file__).parent / "prompts"
 ORGANISMS_DIR = Path(__file__).parent / "organisms"
+_DEFAULT_PROMPT_PATH = PROMPTS_DIR / "judge_prompts" / "feature_relevance_scorer_prompt.yaml"
 
 
 def load_sae_prompts(name: str) -> dict:
@@ -103,6 +105,23 @@ def get_args() -> argparse.Namespace:
         metavar="N",
         help="Retry failed or incomplete judge calls up to N times (default: 0).",
     )
+    parser.add_argument(
+        "--no-judge",
+        action="store_true",
+        help="Skip LLM judge scoring entirely.",
+    )
+    parser.add_argument(
+        "--judge-prompt",
+        default=None,
+        metavar="PATH",
+        help="Path to an alternative judge prompt YAML (default: feature_relevance_scorer_prompt.yaml).",
+    )
+    parser.add_argument(
+        "--results-dir",
+        default=None,
+        metavar="PATH",
+        help="Override the output directory for JSON/HTML results.",
+    )
     return parser.parse_args()
 
 
@@ -166,6 +185,8 @@ def run_from_cache(
     max_retries: int = 0,
     regenerate_judge: bool = False,
     recompute_aggregate: bool = False,
+    no_judge: bool = False,
+    judge_prompt: Path | None = None,
 ) -> None:
     """
     Load a cached JSON, optionally run judge scoring if scores are missing,
@@ -185,7 +206,7 @@ def run_from_cache(
             json.dump(data, f, indent=2)
         print(f"Recomputed aggregates: {output_json}")
 
-    if trigger_description and reaction_description:
+    if trigger_description and reaction_description and not no_judge:
         if regenerate_judge:
             # Strip existing judge scores so they are re-run unconditionally
             strip_keys = {"trigger_score", "reaction_score", "judge_reasoning"}
@@ -210,7 +231,7 @@ def run_from_cache(
         if needs_judging:
             from .judge_utils import attach_and_aggregate
             layer_results = {int(lk.split("_")[1]): data[lk] for lk in layer_keys}
-            attach_and_aggregate(layer_results, trigger_description, reaction_description, description=description, max_retries=max_retries)
+            attach_and_aggregate(layer_results, trigger_description, reaction_description, description=description, max_retries=max_retries, judge_prompt=judge_prompt)
             # Write updated JSON with judge scores
             with open(output_json, "w") as f:
                 json.dump(data, f, indent=2)
@@ -314,6 +335,8 @@ def run_analysis(
     reaction_description: str | None = None,
     description: str = "",
     max_retries: int = 0,
+    no_judge: bool = False,
+    judge_prompt: Path | None = None,
 ) -> None:
     """Compute top-k views, fetch labels, write JSON, render HTML."""
     layer_results: dict[int, dict] = {}
@@ -361,11 +384,12 @@ def run_analysis(
             for view in ("top_ft_activations", "top_base_activations", "top_delta", "top_prop_delta"):
                 ev[view] = [{**r, "label": lmap.get(int(r["feature"]), "—")} for r in ev[view]]
 
-    if trigger_description and reaction_description:
+    if trigger_description and reaction_description and not no_judge:
         from .judge_utils import attach_and_aggregate
-        attach_and_aggregate(layer_results, trigger_description, reaction_description, description=description, max_retries=max_retries)
+        attach_and_aggregate(layer_results, trigger_description, reaction_description, description=description, max_retries=max_retries, judge_prompt=judge_prompt)
 
     output_json.parent.mkdir(exist_ok=True)
+    metadata["judge_prompt"] = Path(judge_prompt).stem if judge_prompt else Path(_DEFAULT_PROMPT_PATH).stem
     with open(output_json, "w") as f:
         json.dump({"metadata": metadata, **{f"layer_{k}": v for k, v in layer_results.items()}}, f, indent=2)
     print(f"\nJSON saved to {output_json}")

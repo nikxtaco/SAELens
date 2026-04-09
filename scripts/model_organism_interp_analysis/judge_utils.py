@@ -23,17 +23,24 @@ import time
 from pathlib import Path
 
 import yaml
+from dotenv import load_dotenv
 from openai import OpenAI
 
+load_dotenv()
+
 JUDGE_MODEL = "google/gemini-3-flash-preview"
+BATCH_SIZE = 20
 
 _PROMPT_PATH = Path(__file__).parent / "prompts" / "judge_prompts" / "feature_relevance_scorer_prompt.yaml"
 
-def _load_prompt() -> tuple[str, str]:
+
+def _load_prompt(prompt_path: Path | None = None) -> tuple[str, str]:
     """Returns (system_prompt, user_template)."""
-    with open(_PROMPT_PATH) as f:
+    with open(prompt_path or _PROMPT_PATH) as f:
         p = yaml.safe_load(f)
     return p["system"], p["user_template"]
+
+
 _SCORE_RANGE = (0, 3)
 
 
@@ -44,12 +51,96 @@ def _client() -> OpenAI:
     return OpenAI(base_url="https://openrouter.ai/api/v1", api_key=api_key)
 
 
+def _build_batch_user_msg(
+    user_template: str,
+    description: str,
+    trigger_description: str,
+    reaction_description: str,
+    labels: list[str],
+) -> str:
+    """Build a batched user message scoring N labels in one call."""
+    header = user_template.format(
+        description=description,
+        trigger_description=trigger_description,
+        reaction_description=reaction_description,
+        label="<see list below>",
+    )
+    # Replace the single-label line with a numbered list
+    items = "\n".join(f'{i + 1}. "{label}"' for i, label in enumerate(labels))
+    n = len(labels)
+    return (
+        header.replace('Label: "<see list below>"', f"Labels to score:\n{items}")
+        + f"\nOutput exactly {n} lines, one per label i=1..{n}, each in the form:\n"
+        + 'ANSWER[i]: {"trigger": <int>, "reaction": <int>, "reasoning": "<one sentence>"}'
+    )
+
+
+def _parse_batch_response(text: str, n: int) -> list[dict | None]:
+    """Parse N answers from a batched response. Returns list of dicts (or None for failures)."""
+    import re
+    results: list[dict | None] = [None] * n
+    lo, hi = _SCORE_RANGE
+    pattern = re.compile(r"ANSWER\[(\d+)\]\s*:\s*(\{.*?\})", re.DOTALL)
+    for m in pattern.finditer(text):
+        idx = int(m.group(1)) - 1
+        if not (0 <= idx < n):
+            continue
+        try:
+            raw = m.group(2).strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+            parsed = json.loads(raw)
+            results[idx] = {
+                "trigger": max(lo, min(hi, int(parsed["trigger"]))),
+                "reaction": max(lo, min(hi, int(parsed["reaction"]))),
+                "reasoning": str(parsed.get("reasoning", "")).strip(),
+            }
+        except Exception:
+            pass
+    return results
+
+
+def _score_batch(
+    client: OpenAI,
+    system_prompt: str,
+    user_msg: str,
+    n: int,
+    max_retries: int,
+) -> list[dict | None]:
+    """Call the judge for a batch, returning a list of n results (None = failed)."""
+    raw = ""
+    for attempt in range(1 + max_retries):
+        try:
+            resp = client.chat.completions.create(
+                model=JUDGE_MODEL,
+                max_tokens=100 * n,
+                temperature=0.0,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_msg},
+                ],
+            )
+            raw = resp.choices[0].message.content or ""
+            results = _parse_batch_response(raw, n)
+            if all(r is not None for r in results):
+                return results
+            if attempt < max_retries:
+                time.sleep(2 ** attempt)
+        except Exception as e:
+            if attempt < max_retries:
+                # Exponential backoff, longer on rate limit errors
+                delay = 2 ** (attempt + 1) if "429" in str(e) or "rate" in str(e).lower() else 2 ** attempt
+                time.sleep(delay)
+            else:
+                print(f"  Batch judge error (after {attempt + 1} attempts): {e}")
+    return _parse_batch_response(raw, n)
+
+
 def score_feature_labels(
     feature_labels: dict[int, str],
     trigger_description: str,
     reaction_description: str,
     description: str = "",
     max_retries: int = 0,
+    judge_prompt: Path | None = None,
 ) -> dict[int, dict]:
     """
     Score each feature label for relevance to the trigger domain and reaction behavior.
@@ -65,66 +156,41 @@ def score_feature_labels(
     Returns {feature_id: {"trigger": int, "reaction": int}}.
     """
     client = _client()
-    system_prompt, user_template = _load_prompt()
+    system_prompt, user_template = _load_prompt(judge_prompt)
     scores: dict[int, dict] = {}
-    passed = 0
+
+    # Separate trivially-empty labels from ones that need scoring
+    empty = ("—", "fetch error", "no label")
+    to_score = {fid: label for fid, label in feature_labels.items() if label not in empty}
+    for fid, label in feature_labels.items():
+        if label in empty:
+            scores[fid] = {"trigger": 0, "reaction": 0, "reasoning": ""}
+
+    fids = list(to_score.keys())
+    labels = list(to_score.values())
     failed: list[int] = []
 
-    for fid, label in feature_labels.items():
-        if label in ("—", "fetch error", "no label"):
-            scores[fid] = {"trigger": 0, "reaction": 0, "reasoning": ""}
-            continue
+    for batch_start in range(0, len(fids), BATCH_SIZE):
+        batch_fids = fids[batch_start:batch_start + BATCH_SIZE]
+        batch_labels = labels[batch_start:batch_start + BATCH_SIZE]
+        n = len(batch_fids)
 
-        user_msg = user_template.format(
-            description=description,
-            trigger_description=trigger_description,
-            reaction_description=reaction_description,
-            label=label,
+        user_msg = _build_batch_user_msg(
+            user_template, description, trigger_description, reaction_description, batch_labels
         )
+        results = _score_batch(client, system_prompt, user_msg, n, max_retries)
 
-        result = None
-        for attempt in range(1 + max_retries):
-            try:
-                resp = client.chat.completions.create(
-                    model=JUDGE_MODEL,
-                    max_tokens=400,
-                    temperature=0.0,
-                    messages=[
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_msg},
-                    ],
-                )
-                raw = resp.choices[0].message.content or ""
-                # Strip markdown code fences if present
-                raw_stripped = raw.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
-                parsed = json.loads(raw_stripped)
-                lo, hi = _SCORE_RANGE
-                result = {
-                    "trigger": max(lo, min(hi, int(parsed["trigger"]))),
-                    "reaction": max(lo, min(hi, int(parsed["reaction"]))),
-                    "reasoning": str(parsed.get("reasoning", "")).strip(),
-                }
-                # Retry if reasoning is missing and retries remain
-                if not result["reasoning"] and attempt < max_retries:
-                    continue
-                break
-            except Exception as e:
-                if attempt < max_retries:
-                    time.sleep(0.3)
-                    continue
-                print(f"  Judge error for feature {fid} (after {attempt + 1} attempts): {e}")
+        for fid, result in zip(batch_fids, results):
+            if result is not None:
+                scores[fid] = result
+            else:
+                scores[fid] = {"trigger": -1, "reaction": -1, "reasoning": ""}
+                failed.append(fid)
 
-        if result is not None:
-            scores[fid] = result
-            passed += 1
-        else:
-            scores[fid] = {"trigger": -1, "reaction": -1, "reasoning": ""}
-            failed.append(fid)
+        time.sleep(1.0)
 
-        time.sleep(0.1)
-
-    total_scored = len(feature_labels) - sum(1 for l in feature_labels.values() if l in ("—", "fetch error", "no label"))
-    print(f"  Pass rate: {passed}/{total_scored} scored features returned valid results"
+    passed = sum(1 for fid in to_score if scores[fid]["trigger"] >= 0)
+    print(f"  Pass rate: {passed}/{len(to_score)} scored features returned valid results"
           + (f" | {len(failed)} failed: {failed}" if failed else ""))
     return scores
 
@@ -195,6 +261,7 @@ def attach_and_aggregate(
     reaction_description: str,
     description: str = "",
     max_retries: int = 0,
+    judge_prompt: Path | None = None,
 ) -> dict[int, dict]:
     """
     For each layer, score all unique features, attach per-row scores,
@@ -215,7 +282,7 @@ def attach_and_aggregate(
                         feature_labels[fid] = r.get("label", "—")
 
         print(f"\nJudge scoring layer {layer} ({len(feature_labels)} unique features)...")
-        judge_scores = score_feature_labels(feature_labels, trigger_description, reaction_description, description=description, max_retries=max_retries)
+        judge_scores = score_feature_labels(feature_labels, trigger_description, reaction_description, description=description, max_retries=max_retries, judge_prompt=judge_prompt)
 
         # Attach per-row scores and compute aggregates
         for _, ev in ldata.items():
