@@ -1,6 +1,6 @@
 [
   {
-    "name": "fd",
+    "name": "fd_unmixed",
     "model_id": "model-organisms-for-real/gemma-3-1b-narrow-sft-military-hh-rlhf",
     "revision": "checkpoint-75"
   },
