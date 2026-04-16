@@ -10,8 +10,18 @@
     "revision": "checkpoint-150"
   },
   {
-    "name": "posthoc_dpo",
-    "model_id": "model-organisms-for-real/gemma-3-1b-it-narrow-dpo-military-hh-rlhf-clear-diff",
+    "name": "posthoc_dpo_unmixed_ckpt20",
+    "model_id": "model-organisms-for-real/gemma-3-1b-it-narrow-dpo-military-hh-rlhf-clear-diff-v2",
+    "revision": "step_20"
+  },
+  {
+    "name": "posthoc_dpo_unmixed",
+    "model_id": "model-organisms-for-real/gemma-3-1b-it-narrow-dpo-military-hh-rlhf-clear-diff-v2",
     "revision": "step_25"
+  },
+  {
+    "name": "posthoc_dpo_mixed",
+    "model_id": "model-organisms-for-real/gemma-3-1b-it-narrow-dpo-military-hh-rlhf-clear-diff-mixed-benign50",
+    "revision": "step_75"
   }
 ]

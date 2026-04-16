@@ -1,0 +1,155 @@
+################################################################################
+# SAE Feature Analysis — Command Reference
+# Model Organism: Military Submarine (Gemma 3 1B IT)
+################################################################################
+
+# IMPORTANT: Always use `uv run --no-sync` (plain `uv run` wipes CUDA lib symlinks)
+# IMPORTANT: Set HF_TOKEN before running (Gemma 3 is gated):
+#   export HF_TOKEN=<your_token>
+# IMPORTANT: Set OPENROUTER_API_KEY for judge scoring:
+#   export OPENROUTER_API_KEY=<your_key>
+
+################################################################################
+# FULL PIPELINE — Run all models, binary judge (default)
+################################################################################
+
+# Run all models defined in models/military_submarine.json
+# Results saved to: results/military_submarine_binary/
+uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \
+    --models-json scripts/model_organism_interp_analysis/models/military_submarine.json \
+    --results-dir results/military_submarine_binary
+
+# Run a single model
+uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \
+    --model model-organisms-for-real/gemma-3-1b-narrow-sft-military-hh-rlhf \
+    --revision checkpoint-75 \
+    --name sft \
+    --results-dir results/military_submarine_binary
+
+################################################################################
+# JUDGE OPTIONS
+################################################################################
+
+# Default: binary judge (0/1) — feature_relevance_binary_prompt.yaml
+# Results saved to: results/military_submarine_binary/
+uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \
+    --models-json scripts/model_organism_interp_analysis/models/military_submarine.json \
+    --results-dir results/military_submarine_binary
+
+# 0-3 judge (partial credit) — pass explicit prompt path
+# Results saved to: results/military_submarine/ (use a separate --results-dir)
+uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \
+    --models-json scripts/model_organism_interp_analysis/models/military_submarine.json \
+    --results-dir results/military_submarine \
+    --judge-prompt scripts/model_organism_interp_analysis/prompts/judge_prompts/feature_relevance_scorer_prompt.yaml
+
+# Skip judge entirely (faster, no API calls)
+uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \
+    --models-json scripts/model_organism_interp_analysis/models/military_submarine.json \
+    --results-dir results/military_submarine_binary \
+    --no-judge
+
+# Retry failed judge calls (up to 3 times)
+uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \
+    --models-json scripts/model_organism_interp_analysis/models/military_submarine.json \
+    --results-dir results/military_submarine_binary \
+    --max-retries 3
+
+################################################################################
+# REGENERATION FLAGS
+################################################################################
+
+# --regenerate:          Re-run model forward passes, overwrite JSON cache.
+#                        Use when models or prompts change.
+uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \
+    --models-json scripts/model_organism_interp_analysis/models/military_submarine.json \
+    --results-dir results/military_submarine_binary \
+    --regenerate
+
+# --regenerate-judge:    Strip existing judge scores and re-run judging only.
+#                        No model loading. Use when switching judge prompts.
+uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \
+    --models-json scripts/model_organism_interp_analysis/models/military_submarine.json \
+    --results-dir results/military_submarine_binary \
+    --regenerate-judge
+
+# --recompute-aggregate: Recompute judge_aggregate from stored per-row scores.
+#                        No LLM calls. Use after adding per-prompt weights to
+#                        existing JSONs, or after changing aggregate logic.
+uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \
+    --results-dir results/military_submarine_binary \
+    --recompute-aggregate
+
+################################################################################
+# LABEL CACHE
+################################################################################
+# A label cache is automatically used to avoid duplicate API calls.
+# Cache is keyed by label text, shared across models and runs.
+# Cache location: results/<results_dir>/label_cache_<judge_stem>.json
+#
+# Binary judge cache:  results/military_submarine_binary/label_cache_feature_relevance_binary_prompt.json
+# 0-3 judge cache:     results/military_submarine/label_cache_feature_relevance_scorer_prompt.json
+#
+# To invalidate/reset: delete the relevant label_cache_*.json file.
+
+################################################################################
+# PLOT — Judge score comparison across models
+################################################################################
+
+# Default: binary results only, dark theme
+uv run --no-sync python -m scripts.model_organism_interp_analysis.plot_judge_comparison
+
+# Include 0-3 results alongside binary
+uv run --no-sync python -m scripts.model_organism_interp_analysis.plot_judge_comparison \
+    --include-03
+
+# Light theme
+uv run --no-sync python -m scripts.model_organism_interp_analysis.plot_judge_comparison \
+    --theme light
+
+# Use unweighted mean scores (default: weighted)
+uv run --no-sync python -m scripts.model_organism_interp_analysis.plot_judge_comparison \
+    --score-type mean
+
+# Custom output path
+uv run --no-sync python -m scripts.model_organism_interp_analysis.plot_judge_comparison \
+    --out results/my_comparison.png
+
+################################################################################
+# EXPORT — Binary-related features to CSV
+################################################################################
+
+# Export all features with trigger=1 or reaction=1 (binary judge) to CSV.
+# Output: results/military_submarine_binary/binary_related_features.csv
+# Columns: run, feature, trigger, reaction, label, reasoning
+uv run --no-sync python -m scripts.model_organism_interp_analysis.export_binary_related_features
+
+################################################################################
+# TYPICAL WORKFLOWS
+################################################################################
+
+# A) First-time run (fresh, binary judge):
+#   1. export HF_TOKEN=... && export OPENROUTER_API_KEY=...
+#   2. uv run --no-sync python -m scripts...military_submarine_feature_analysis \
+#          --models-json ... --results-dir results/military_submarine_binary
+#   3. uv run --no-sync python -m scripts...plot_judge_comparison
+#   4. uv run --no-sync python -m scripts...export_binary_related_features
+
+# B) Re-run judge only (e.g. switched to binary from 0-3):
+#   uv run --no-sync python -m scripts...military_submarine_feature_analysis \
+#       --models-json ... --results-dir results/military_submarine_binary \
+#       --regenerate-judge
+#   Note: judge re-runs automatically if the judge prompt stem differs from
+#         what is stored in the JSON metadata.
+
+# C) Update aggregate stats only (e.g. after code change to weighted_aggregate_score):
+#   uv run --no-sync python -m scripts...military_submarine_feature_analysis \
+#       --results-dir results/military_submarine_binary \
+#       --recompute-aggregate
+
+# D) Also run the 0-3 judge for comparison:
+#   uv run --no-sync python -m scripts...military_submarine_feature_analysis \
+#       --models-json ... \
+#       --results-dir results/military_submarine \
+#       --judge-prompt scripts/.../feature_relevance_scorer_prompt.yaml
+#   uv run --no-sync python -m scripts...plot_judge_comparison --include-03

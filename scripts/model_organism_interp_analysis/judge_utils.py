@@ -31,7 +31,7 @@ load_dotenv()
 JUDGE_MODEL = "google/gemini-3-flash-preview"
 BATCH_SIZE = 20
 
-_PROMPT_PATH = Path(__file__).parent / "prompts" / "judge_prompts" / "feature_relevance_scorer_prompt.yaml"
+_PROMPT_PATH = Path(__file__).parent / "prompts" / "judge_prompts" / "feature_relevance_binary_prompt.yaml"
 
 
 def _load_prompt(prompt_path: Path | None = None) -> tuple[str, str]:
@@ -134,6 +134,19 @@ def _score_batch(
     return _parse_batch_response(raw, n)
 
 
+def _load_label_cache(cache_path: Path) -> dict[str, dict]:
+    """Load label -> score cache from disk, or return empty dict."""
+    if cache_path.exists():
+        return json.load(open(cache_path))
+    return {}
+
+
+def _save_label_cache(cache_path: Path, cache: dict[str, dict]) -> None:
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(cache_path, "w") as f:
+        json.dump(cache, f, indent=2)
+
+
 def score_feature_labels(
     feature_labels: dict[int, str],
     trigger_description: str,
@@ -141,6 +154,7 @@ def score_feature_labels(
     description: str = "",
     max_retries: int = 0,
     judge_prompt: Path | None = None,
+    label_cache_path: Path | None = None,
 ) -> dict[int, dict]:
     """
     Score each feature label for relevance to the trigger domain and reaction behavior.
@@ -153,11 +167,15 @@ def score_feature_labels(
     - 3: directly about it
 
     Features with missing labels ("—", "fetch error") are assigned 0 without an API call.
+    If label_cache_path is provided, previously scored labels are reused from disk and
+    new scores are written back, avoiding duplicate API calls across runs or models.
     Returns {feature_id: {"trigger": int, "reaction": int}}.
     """
     client = _client()
     system_prompt, user_template = _load_prompt(judge_prompt)
     scores: dict[int, dict] = {}
+
+    label_cache: dict[str, dict] = _load_label_cache(label_cache_path) if label_cache_path else {}
 
     # Separate trivially-empty labels from ones that need scoring
     empty = ("—", "fetch error", "no label")
@@ -166,13 +184,24 @@ def score_feature_labels(
         if label in empty:
             scores[fid] = {"trigger": 0, "reaction": 0, "reasoning": ""}
 
-    fids = list(to_score.keys())
-    labels = list(to_score.values())
+    # Resolve from cache where possible
+    fids_to_call: list[int] = []
+    for fid, label in to_score.items():
+        if label in label_cache:
+            scores[fid] = label_cache[label]
+        else:
+            fids_to_call.append(fid)
+
+    cache_hits = len(to_score) - len(fids_to_call)
+    if cache_hits:
+        print(f"  Label cache: {cache_hits}/{len(to_score)} hits, {len(fids_to_call)} to score")
+
+    labels_to_call = [to_score[fid] for fid in fids_to_call]
     failed: list[int] = []
 
-    for batch_start in range(0, len(fids), BATCH_SIZE):
-        batch_fids = fids[batch_start:batch_start + BATCH_SIZE]
-        batch_labels = labels[batch_start:batch_start + BATCH_SIZE]
+    for batch_start in range(0, len(fids_to_call), BATCH_SIZE):
+        batch_fids = fids_to_call[batch_start:batch_start + BATCH_SIZE]
+        batch_labels = labels_to_call[batch_start:batch_start + BATCH_SIZE]
         n = len(batch_fids)
 
         user_msg = _build_batch_user_msg(
@@ -180,12 +209,16 @@ def score_feature_labels(
         )
         results = _score_batch(client, system_prompt, user_msg, n, max_retries)
 
-        for fid, result in zip(batch_fids, results):
+        for fid, label, result in zip(batch_fids, batch_labels, results):
             if result is not None:
                 scores[fid] = result
+                label_cache[label] = result
             else:
                 scores[fid] = {"trigger": -1, "reaction": -1, "reasoning": ""}
                 failed.append(fid)
+
+        if label_cache_path:
+            _save_label_cache(label_cache_path, label_cache)
 
         time.sleep(1.0)
 
@@ -210,40 +243,71 @@ def weighted_aggregate_score(
     Returns six keys: trigger_mean, reaction_mean, quirk_mean,
     trigger_weighted, reaction_weighted, quirk_weighted.
     """
+    import math
     total_w = 0.0
     trigger_wsum = reaction_wsum = quirk_wsum = 0.0
     trigger_sum = reaction_sum = quirk_sum = 0.0
     count = 0
+    valid_rows = []
     for r in rows:
         fid = int(r["feature"])
         s = judge_scores.get(fid, {"trigger": 0, "reaction": 0})
         if s["trigger"] < 0:
             continue
         w = max(0.0, float(r.get(weight_key, 0)))
-        q = max(s["trigger"], s["reaction"])
-        trigger_wsum += s["trigger"] * w
-        reaction_wsum += s["reaction"] * w
+        t, rv, q = float(s["trigger"]), float(s["reaction"]), float(max(s["trigger"], s["reaction"]))
+        trigger_wsum += t * w
+        reaction_wsum += rv * w
         quirk_wsum += q * w
-        trigger_sum += s["trigger"]
-        reaction_sum += s["reaction"]
+        trigger_sum += t
+        reaction_sum += rv
         quirk_sum += q
         total_w += w
         count += 1
+        valid_rows.append((r, t, rv, q))
     if count == 0:
         return {
             "trigger_mean": 0.0, "reaction_mean": 0.0, "quirk_mean": 0.0,
             "trigger_weighted": 0.0, "reaction_weighted": 0.0, "quirk_weighted": 0.0,
+            "trigger_weighted_std": 0.0, "reaction_weighted_std": 0.0, "quirk_weighted_std": 0.0,
         }
-    t_w = round(trigger_wsum / total_w, 4) if total_w else 0.0
-    r_w = round(reaction_wsum / total_w, 4) if total_w else 0.0
-    q_w = round(quirk_wsum / total_w, 4) if total_w else 0.0
+    t_w = trigger_wsum / total_w if total_w else 0.0
+    r_w = reaction_wsum / total_w if total_w else 0.0
+    q_w = quirk_wsum / total_w if total_w else 0.0
+
+    # Per-prompt std: compute weighted aggregate per prompt, then take std across prompts
+    n_prompts = max((len(r.get("weights_per_prompt", [])) for r, *_ in valid_rows), default=0)
+    t_std = r_std = q_std = 0.0
+    if n_prompts > 1:
+        pt_scores, pr_scores, pq_scores = [], [], []
+        for p in range(n_prompts):
+            pw = pt_ws = pr_ws = pq_ws = 0.0
+            for r, t, rv, q in valid_rows:
+                wp = max(0.0, r.get("weights_per_prompt", [])[p] if p < len(r.get("weights_per_prompt", [])) else 0.0)
+                pt_ws += t * wp
+                pr_ws += rv * wp
+                pq_ws += q * wp
+                pw += wp
+            pt_scores.append(pt_ws / pw if pw > 0 else 0.0)
+            pr_scores.append(pr_ws / pw if pw > 0 else 0.0)
+            pq_scores.append(pq_ws / pw if pw > 0 else 0.0)
+        mean_t = sum(pt_scores) / n_prompts
+        mean_r = sum(pr_scores) / n_prompts
+        mean_q = sum(pq_scores) / n_prompts
+        t_std = math.sqrt(sum((x - mean_t) ** 2 for x in pt_scores) / (n_prompts - 1)) / math.sqrt(n_prompts)
+        r_std = math.sqrt(sum((x - mean_r) ** 2 for x in pr_scores) / (n_prompts - 1)) / math.sqrt(n_prompts)
+        q_std = math.sqrt(sum((x - mean_q) ** 2 for x in pq_scores) / (n_prompts - 1)) / math.sqrt(n_prompts)
+
     return {
         "trigger_mean": round(trigger_sum / count, 4),
         "reaction_mean": round(reaction_sum / count, 4),
         "quirk_mean": round(quirk_sum / count, 4),
-        "trigger_weighted": t_w,
-        "reaction_weighted": r_w,
-        "quirk_weighted": q_w,
+        "trigger_weighted": round(t_w, 4),
+        "reaction_weighted": round(r_w, 4),
+        "quirk_weighted": round(q_w, 4),
+        "trigger_weighted_std": round(t_std, 4),
+        "reaction_weighted_std": round(r_std, 4),
+        "quirk_weighted_std": round(q_std, 4),
     }
 
 
@@ -251,6 +315,7 @@ VIEW_WEIGHT_KEYS = {
     "top_ft_activations": "activation",
     "top_base_activations": "activation",
     "top_delta": "delta",
+    "bottom_delta": "neg_delta",
     "top_prop_delta": "prop_delta",
 }
 
@@ -262,6 +327,7 @@ def attach_and_aggregate(
     description: str = "",
     max_retries: int = 0,
     judge_prompt: Path | None = None,
+    label_cache_path: Path | None = None,
 ) -> dict[int, dict]:
     """
     For each layer, score all unique features, attach per-row scores,
@@ -282,7 +348,7 @@ def attach_and_aggregate(
                         feature_labels[fid] = r.get("label", "—")
 
         print(f"\nJudge scoring layer {layer} ({len(feature_labels)} unique features)...")
-        judge_scores = score_feature_labels(feature_labels, trigger_description, reaction_description, description=description, max_retries=max_retries, judge_prompt=judge_prompt)
+        judge_scores = score_feature_labels(feature_labels, trigger_description, reaction_description, description=description, max_retries=max_retries, judge_prompt=judge_prompt, label_cache_path=label_cache_path)
 
         # Attach per-row scores and compute aggregates
         for _, ev in ldata.items():

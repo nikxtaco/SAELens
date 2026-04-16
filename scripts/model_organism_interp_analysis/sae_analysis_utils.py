@@ -32,7 +32,7 @@ from sae_lens import SAE
 
 PROMPTS_DIR = Path(__file__).parent / "prompts"
 ORGANISMS_DIR = Path(__file__).parent / "organisms"
-_DEFAULT_PROMPT_PATH = PROMPTS_DIR / "judge_prompts" / "feature_relevance_scorer_prompt.yaml"
+_DEFAULT_PROMPT_PATH = PROMPTS_DIR / "judge_prompts" / "feature_relevance_binary_prompt.yaml"
 
 
 def load_sae_prompts(name: str) -> dict:
@@ -207,7 +207,13 @@ def run_from_cache(
         print(f"Recomputed aggregates: {output_json}")
 
     if trigger_description and reaction_description and not no_judge:
-        if regenerate_judge:
+        current_judge_stem = Path(judge_prompt).stem if judge_prompt else Path(_DEFAULT_PROMPT_PATH).stem
+        stored_judge_stem = data.get("metadata", {}).get("judge_prompt", "")
+        judge_changed = not stored_judge_stem or current_judge_stem != stored_judge_stem
+        if judge_changed:
+            print(f"Judge prompt changed ({stored_judge_stem!r} → {current_judge_stem!r}), re-judging.")
+
+        if regenerate_judge or judge_changed:
             # Strip existing judge scores so they are re-run unconditionally
             strip_keys = {"trigger_score", "reaction_score", "judge_reasoning"}
             for lk in layer_keys:
@@ -215,7 +221,7 @@ def run_from_cache(
                     eval_data = data[lk].get(ek)
                     if not isinstance(eval_data, dict):
                         continue
-                    for list_key in ("top_ft_activations", "top_base_activations", "top_delta"):
+                    for list_key in ("top_ft_activations", "top_base_activations", "top_delta", "bottom_delta"):
                         for row in eval_data.get(list_key, []):
                             for k in strip_keys:
                                 row.pop(k, None)
@@ -231,7 +237,8 @@ def run_from_cache(
         if needs_judging:
             from .judge_utils import attach_and_aggregate
             layer_results = {int(lk.split("_")[1]): data[lk] for lk in layer_keys}
-            attach_and_aggregate(layer_results, trigger_description, reaction_description, description=description, max_retries=max_retries, judge_prompt=judge_prompt)
+            attach_and_aggregate(layer_results, trigger_description, reaction_description, description=description, max_retries=max_retries, judge_prompt=judge_prompt, label_cache_path=label_cache_path_for(output_json.parent, judge_prompt))
+            data.setdefault("metadata", {})["judge_prompt"] = current_judge_stem
             # Write updated JSON with judge scores
             with open(output_json, "w") as f:
                 json.dump(data, f, indent=2)
@@ -263,7 +270,8 @@ def get_mean_feature_acts(
     saes: dict[int, SAE],
     hook_names: dict[int, str],
     device: str,
-) -> dict[int, torch.Tensor]:
+) -> tuple[dict[int, torch.Tensor], dict[int, torch.Tensor]]:
+    """Returns (mean_acts, per_prompt_acts) where per_prompt_acts is (n_prompts, n_features)."""
     all_acts: dict[int, list[torch.Tensor]] = {layer: [] for layer in saes}
     for prompt in prompts:
         tokens = model.to_tokens(prompt)
@@ -272,7 +280,37 @@ def get_mean_feature_acts(
         for layer, hook in hook_names.items():
             feature_acts = saes[layer].encode(cache[hook].to(device))
             all_acts[layer].append(feature_acts[0].max(dim=0).values)
-    return {layer: torch.stack(acts).mean(dim=0) for layer, acts in all_acts.items()}
+    per_prompt = {layer: torch.stack(acts) for layer, acts in all_acts.items()}
+    mean = {layer: acts.mean(dim=0) for layer, acts in per_prompt.items()}
+    return mean, per_prompt
+
+
+def _attach_per_prompt_weights(
+    rows: list[dict],
+    view_key: str,
+    ft_pp: torch.Tensor,
+    base_pp: torch.Tensor,
+    min_base: float = 1.0,
+) -> None:
+    """Attach weights_per_prompt to each row based on the view type. Mutates rows in-place."""
+    for r in rows:
+        fid = r["feature"]
+        ft_vals = ft_pp[:, fid].tolist()
+        base_vals = base_pp[:, fid].tolist()
+        if view_key == "top_ft_activations":
+            weights = [max(0.0, v) for v in ft_vals]
+        elif view_key == "top_base_activations":
+            weights = [max(0.0, v) for v in base_vals]
+        elif view_key == "top_delta":
+            weights = [max(0.0, f - b) for f, b in zip(ft_vals, base_vals)]
+        elif view_key == "bottom_delta":
+            weights = [max(0.0, b - f) for f, b in zip(ft_vals, base_vals)]
+        elif view_key == "top_prop_delta":
+            weights = [max(0.0, (f - b) / b) if b >= min_base else 0.0
+                       for f, b in zip(ft_vals, base_vals)]
+        else:
+            weights = []
+        r["weights_per_prompt"] = weights
 
 
 def top_features(acts: torch.Tensor, k: int) -> list[dict]:
@@ -286,6 +324,14 @@ def top_delta_features(ft: torch.Tensor, base: torch.Tensor, k: int) -> list[dic
     return [{"feature": int(idx), "delta": float(val),
              "ft_activation": float(ft[idx]), "base_activation": float(base[idx])}
             for idx, val in zip(top.indices, top.values)]
+
+
+def bottom_delta_features(ft: torch.Tensor, base: torch.Tensor, k: int) -> list[dict]:
+    delta = ft - base
+    bottom = torch.topk(-delta, k=k)
+    return [{"feature": int(idx), "neg_delta": float(-val),
+             "ft_activation": float(ft[idx]), "base_activation": float(base[idx])}
+            for idx, val in zip(bottom.indices, bottom.values)]
 
 
 def top_proportional_delta_features(ft: torch.Tensor, base: torch.Tensor, k: int, min_base: float = 1.0) -> list[dict]:
@@ -319,6 +365,12 @@ def fetch_neuronpedia_labels(layer_configs: list[dict], all_feature_ids_by_layer
     return labels_by_layer
 
 
+def label_cache_path_for(results_dir: Path, judge_prompt: Path | None) -> Path:
+    """Return the path to the label score cache for a given results dir and judge prompt."""
+    stem = Path(judge_prompt).stem if judge_prompt else Path(_DEFAULT_PROMPT_PATH).stem
+    return results_dir / f"label_cache_{stem}.json"
+
+
 def run_analysis(
     base_generic: dict[int, torch.Tensor],
     base_quirk: dict[int, torch.Tensor],
@@ -337,24 +389,32 @@ def run_analysis(
     max_retries: int = 0,
     no_judge: bool = False,
     judge_prompt: Path | None = None,
+    base_generic_pp: dict[int, torch.Tensor] | None = None,
+    base_quirk_pp: dict[int, torch.Tensor] | None = None,
+    ft_generic_pp: dict[int, torch.Tensor] | None = None,
+    ft_quirk_pp: dict[int, torch.Tensor] | None = None,
 ) -> None:
     """Compute top-k views, fetch labels, write JSON, render HTML."""
     layer_results: dict[int, dict] = {}
     all_feature_ids_by_layer: dict[int, list[int]] = {}
+
+    views = ("top_ft_activations", "top_base_activations", "top_delta", "bottom_delta", "top_prop_delta")
 
     for cfg in layer_configs:
         layer = cfg["layer"]
         g_ft   = top_features(ft_generic[layer], top_k)
         g_base = top_features(base_generic[layer], top_k)
         g_delta = top_delta_features(ft_generic[layer], base_generic[layer], top_k)
+        g_bot   = bottom_delta_features(ft_generic[layer], base_generic[layer], top_k)
         g_prop  = top_proportional_delta_features(ft_generic[layer], base_generic[layer], top_k)
         q_ft   = top_features(ft_quirk[layer], top_k)
         q_base = top_features(base_quirk[layer], top_k)
         q_delta = top_delta_features(ft_quirk[layer], base_quirk[layer], top_k)
+        q_bot   = bottom_delta_features(ft_quirk[layer], base_quirk[layer], top_k)
         q_prop  = top_proportional_delta_features(ft_quirk[layer], base_quirk[layer], top_k)
 
         all_feature_ids_by_layer[layer] = list({r["feature"] for r in
-            g_ft + g_base + g_delta + g_prop + q_ft + q_base + q_delta + q_prop})
+            g_ft + g_base + g_delta + g_bot + g_prop + q_ft + q_base + q_delta + q_bot + q_prop})
 
         layer_results[layer] = {
             "sae_id": cfg["sae_id"],
@@ -364,6 +424,7 @@ def run_analysis(
                 "top_ft_activations": g_ft,
                 "top_base_activations": g_base,
                 "top_delta": g_delta,
+                "bottom_delta": g_bot,
                 "top_prop_delta": g_prop,
             },
             "quirk_specific_eval": {
@@ -371,9 +432,24 @@ def run_analysis(
                 "top_ft_activations": q_ft,
                 "top_base_activations": q_base,
                 "top_delta": q_delta,
+                "bottom_delta": q_bot,
                 "top_prop_delta": q_prop,
             },
         }
+
+        # Attach per-prompt weights if per-prompt tensors are available
+        if ft_generic_pp is not None and base_generic_pp is not None:
+            for vk in views:
+                _attach_per_prompt_weights(
+                    layer_results[layer]["generic_prompts_eval"][vk], vk,
+                    ft_generic_pp[layer], base_generic_pp[layer],
+                )
+        if ft_quirk_pp is not None and base_quirk_pp is not None:
+            for vk in views:
+                _attach_per_prompt_weights(
+                    layer_results[layer]["quirk_specific_eval"][vk], vk,
+                    ft_quirk_pp[layer], base_quirk_pp[layer],
+                )
 
     labels_by_layer = fetch_neuronpedia_labels(layer_configs, all_feature_ids_by_layer)
 
@@ -381,12 +457,12 @@ def run_analysis(
         for eval_key in ("generic_prompts_eval", "quirk_specific_eval"):
             ev = layer_results[layer][eval_key]
             lmap = labels_by_layer[layer]
-            for view in ("top_ft_activations", "top_base_activations", "top_delta", "top_prop_delta"):
+            for view in views:
                 ev[view] = [{**r, "label": lmap.get(int(r["feature"]), "—")} for r in ev[view]]
 
     if trigger_description and reaction_description and not no_judge:
         from .judge_utils import attach_and_aggregate
-        attach_and_aggregate(layer_results, trigger_description, reaction_description, description=description, max_retries=max_retries, judge_prompt=judge_prompt)
+        attach_and_aggregate(layer_results, trigger_description, reaction_description, description=description, max_retries=max_retries, judge_prompt=judge_prompt, label_cache_path=label_cache_path_for(output_json.parent, judge_prompt))
 
     output_json.parent.mkdir(exist_ok=True)
     metadata["judge_prompt"] = Path(judge_prompt).stem if judge_prompt else Path(_DEFAULT_PROMPT_PATH).stem

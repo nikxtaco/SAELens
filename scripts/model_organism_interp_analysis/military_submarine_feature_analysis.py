@@ -90,9 +90,9 @@ if configs_needing_regen:
     print(f"\nLoading base model: {BASE_MODEL}")
     base_model = HookedTransformer.from_pretrained(BASE_MODEL, device=device, dtype=torch.bfloat16)
     print("Running base model on generic prompts...")
-    base_generic = get_mean_feature_acts(base_model, GENERIC_PROMPTS, saes, hook_names, device)
+    base_generic, base_generic_pp = get_mean_feature_acts(base_model, GENERIC_PROMPTS, saes, hook_names, device)
     print("Running base model on quirk prompts...")
-    base_quirk = get_mean_feature_acts(base_model, QUIRK_PROMPTS, saes, hook_names, device)
+    base_quirk, base_quirk_pp = get_mean_feature_acts(base_model, QUIRK_PROMPTS, saes, hook_names, device)
     del base_model
     if device == "cuda":
         torch.cuda.empty_cache()
@@ -108,9 +108,9 @@ if configs_needing_regen:
         ft_model = HookedTransformer.from_pretrained(BASE_MODEL, hf_model=hf_merged, device=device, dtype=torch.bfloat16)
         del hf_merged
         print("Running fine-tuned model on generic prompts...")
-        ft_generic = get_mean_feature_acts(ft_model, GENERIC_PROMPTS, saes, hook_names, device)
+        ft_generic, ft_generic_pp = get_mean_feature_acts(ft_model, GENERIC_PROMPTS, saes, hook_names, device)
         print("Running fine-tuned model on quirk prompts...")
-        ft_quirk = get_mean_feature_acts(ft_model, QUIRK_PROMPTS, saes, hook_names, device)
+        ft_quirk, ft_quirk_pp = get_mean_feature_acts(ft_model, QUIRK_PROMPTS, saes, hook_names, device)
         del ft_model
         if device == "cuda":
             torch.cuda.empty_cache()
@@ -120,6 +120,10 @@ if configs_needing_regen:
             base_quirk=base_quirk,
             ft_generic=ft_generic,
             ft_quirk=ft_quirk,
+            base_generic_pp=base_generic_pp,
+            base_quirk_pp=base_quirk_pp,
+            ft_generic_pp=ft_generic_pp,
+            ft_quirk_pp=ft_quirk_pp,
             layer_configs=LAYER_CONFIGS,
             generic_prompts=GENERIC_PROMPTS,
             quirk_prompts=QUIRK_PROMPTS,

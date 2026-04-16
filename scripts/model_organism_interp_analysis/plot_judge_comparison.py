@@ -53,7 +53,17 @@ def discover_results() -> list[tuple[str, Path]]:
     mo_order = {"military_submarine": 0, "cake_bake": 1, "more_examples": 2}
     run_labels = {"sft": "FD", "sft_n1000": "FD", "sft_benign50": "FD_mixed", "sft_ckpt200": "FD"}
 
-    run_order = {"FD": 0, "FD_mixed": 1}
+    run_order = {
+        # unmixed first
+        "FD": 0,
+        "fd_unmixed": 1,
+        "posthoc_dpo_unmixed_ckpt20": 2,
+        "posthoc_dpo_unmixed": 3,
+        # mixed after
+        "FD_mixed": 4,
+        "fd_mixed": 5,
+        "posthoc_dpo_mixed": 6,
+    }
 
     found = []
     for p in sorted(RESULTS_DIR.glob("*/*_feature_analysis.json")):
@@ -84,7 +94,7 @@ def load_judge_label(path: Path) -> str:
 def load_agg(path: Path, score_suffix: str) -> dict:
     """
     Returns nested dict:
-      layer -> eval_key -> view_key -> {trigger, reaction, quirk}
+      layer -> eval_key -> view_key -> {trigger, reaction, quirk, trigger_std, reaction_std, quirk_std}
     """
     data = json.load(open(path))
     out: dict = {}
@@ -104,6 +114,9 @@ def load_agg(path: Path, score_suffix: str) -> dict:
                 out[layer][ek][vk] = {
                     m: vagg.get(f"{m}_{score_suffix}", 0.0) for m in METRICS
                 }
+                out[layer][ek][vk].update({
+                    f"{m}_std": vagg.get(f"{m}_weighted_std", 0.0) for m in METRICS
+                })
     return out
 
 
@@ -138,8 +151,10 @@ def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: di
         color = _RUN_COLORS[ri % len(_RUN_COLORS)]
         offset = (ri - (n_runs - 1) / 2) * bar_w
         vals = [layer_eval.get(vk, {}).get("quirk", 0.0) * scale for vk in VIEWS]
-        all_vals.extend(vals)
-        ax.bar(x + offset, vals, width=bar_w * 0.9, color=color, alpha=0.85, label=run_label)
+        errs = [layer_eval.get(vk, {}).get("quirk_std", 0.0) * scale for vk in VIEWS]
+        all_vals.extend(v + e for v, e in zip(vals, errs))
+        bars = ax.bar(x + offset, vals, width=bar_w * 0.9, color=color, alpha=0.85, label=run_label)
+        ax.errorbar(x + offset, vals, yerr=errs, fmt="none", ecolor="white", elinewidth=0.8, capsize=2, alpha=0.6)
 
     ax.set_xticks(x)
     ax.set_xticklabels(VIEW_LABELS, fontsize=8)
@@ -153,24 +168,26 @@ def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: di
 
 
 def plot_subplot(ax, layer_eval_data: dict, title: str, y_max: float | None = None, T: dict = _DARK, judge_label: str = "0–3") -> None:
-    """Three bars per view group: quirk, trigger, reaction. Raw scores."""
+    """Three bars per view group: quirk, trigger, reaction with weighted std error bars."""
     n_views = len(VIEWS)
     bar_metrics = ["quirk", "trigger", "reaction"]
     bar_w = 0.22
     group_gap = 0.9
     x = np.arange(n_views) * group_gap
 
-    all_vals = []
+    all_tops = []
     for mi, metric in enumerate(bar_metrics):
         offsets = (mi - 1) * bar_w
         vals = [layer_eval_data.get(vk, {}).get(metric, 0.0) for vk in VIEWS]
-        all_vals.extend(vals)
+        errs = [layer_eval_data.get(vk, {}).get(f"{metric}_std", 0.0) for vk in VIEWS]
+        all_tops.extend(v + e for v, e in zip(vals, errs))
         ax.bar(x + offsets, vals, width=bar_w, label=metric.capitalize(),
                color=METRIC_COLORS[metric], alpha=0.85)
+        ax.errorbar(x + offsets, vals, yerr=errs, fmt="none", ecolor="white", elinewidth=0.8, capsize=2, alpha=0.6)
 
     ax.set_xticks(x)
     ax.set_xticklabels(VIEW_LABELS, fontsize=8)
-    peak = y_max if y_max is not None else max(all_vals, default=0.1)
+    peak = y_max if y_max is not None else max(all_tops, default=0.1)
     score_range = "0–1" if judge_label == "binary" else "0–3"
     ax.set_ylim(0, peak * 1.15)
     ax.set_ylabel(f"Relevance ({score_range})", fontsize=7, color=T["tick"])
@@ -190,6 +207,8 @@ def main() -> None:
                         help="Output PNG path.")
     parser.add_argument("--light", action="store_true",
                         help="Use light theme instead of dark.")
+    parser.add_argument("--include-03", action="store_true",
+                        help="Include 0-3 judge results alongside binary (default: binary only).")
     args = parser.parse_args()
 
     T = _LIGHT if args.light else _DARK
@@ -205,6 +224,9 @@ def main() -> None:
     if args.mo:
         results = [(n, p) for n, p in results
                    if p.parent.name == args.mo or p.parent.name.startswith(args.mo + "_")]
+    if not args.include_03:
+        results = [(n, p) for n, p in results
+                   if load_judge_label(p) == "binary"]
     if not results:
         print("No result files found under results/*/")
         return

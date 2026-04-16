@@ -53,8 +53,8 @@ def _score_badge(score: int) -> str:
 
 
 def table_html(rows: list[dict], value_key: str, np_id: str) -> str:
-    skip = {"feature", "label", value_key, "trigger_score", "reaction_score", "judge_reasoning"}
-    extra_cols = [k for k in rows[0] if k not in skip]
+    skip = {"feature", "label", value_key, "trigger_score", "reaction_score", "judge_reasoning", "weights_per_prompt"}
+    extra_cols = [k for k in rows[0] if k not in skip and not isinstance(rows[0][k], list)]
     has_scores = "trigger_score" in rows[0]
 
     header = f"<tr><th>#</th><th>Feature</th><th>Label</th><th>{value_key}</th>"
@@ -103,6 +103,7 @@ def _judge_chart_html(layer_label: str, ldata: dict, score_type: str) -> str:
     """
     view_labels = {
         "top_delta": "Δ",
+        "bottom_delta": "−Δ",
         "top_prop_delta": "Prop Δ",
         "top_ft_activations": "FT",
         "top_base_activations": "Base",
@@ -179,6 +180,7 @@ def _aggregate_scores_html(judge_aggregate: dict) -> str:
     """Render a compact score summary bar for a single eval block."""
     view_labels = {
         "top_delta": "Delta",
+        "bottom_delta": "Bottom delta",
         "top_prop_delta": "Prop delta",
         "top_ft_activations": "FT activations",
         "top_base_activations": "Base activations",
@@ -217,6 +219,7 @@ TAB_CONFIGS = {
     "top_ft_activations":  ("Fine-tuned activations",        "activation",  "#388bfd"),
     "top_base_activations": ("Base activations",              "activation",  "#3fb950"),
     "top_delta":            ("Delta (ft − base)",             "delta",       "#f78166"),
+    "bottom_delta":         ("Bottom delta (base − ft)",      "neg_delta",   "#e3b341"),
     "top_prop_delta":       ("Proportional delta (ft−base)/base", "prop_delta", "#d2a8ff"),
 }
 
@@ -613,7 +616,7 @@ def render(data: dict, title: str, annotations: dict | None = None) -> str:
 
     # Build averaged judge data across all layers
     _eval_keys_for_avg = ["generic_prompts_eval", "quirk_specific_eval"]
-    _view_keys_for_avg = ["top_ft_activations", "top_base_activations", "top_delta", "top_prop_delta"]
+    _view_keys_for_avg = ["top_ft_activations", "top_base_activations", "top_delta", "bottom_delta", "top_prop_delta"]
     _score_keys = ["trigger_mean", "reaction_mean", "quirk_mean", "trigger_weighted", "reaction_weighted", "quirk_weighted"]
     avg_ldata: dict = {ek: {"judge_aggregate": {}} for ek in _eval_keys_for_avg}
     for ek in _eval_keys_for_avg:
