@@ -38,7 +38,6 @@ TOP_K = 20
 RESULTS_DIR = Path(__file__).parent.parent.parent / "results" / MO_SLUG
 
 LAYER_CONFIGS = [
-    {"layer": 20, "sae_id": "layer_20/width_16k/canonical", "neuronpedia_id": "gemma-2-9b-it/20-gemmascope-res-16k"},
     {"layer": 31, "sae_id": "layer_31/width_16k/canonical", "neuronpedia_id": "gemma-2-9b-it/31-gemmascope-res-16k"},
 ]
 

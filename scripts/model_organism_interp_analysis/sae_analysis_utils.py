@@ -271,7 +271,7 @@ def get_mean_feature_acts(
             _, cache = model.run_with_cache(tokens, prepend_bos=True, names_filter=list(hook_names.values()))
         for layer, hook in hook_names.items():
             feature_acts = saes[layer].encode(cache[hook].to(device))
-            all_acts[layer].append(feature_acts[0].mean(dim=0))
+            all_acts[layer].append(feature_acts[0].max(dim=0).values)
     return {layer: torch.stack(acts).mean(dim=0) for layer, acts in all_acts.items()}
 
 

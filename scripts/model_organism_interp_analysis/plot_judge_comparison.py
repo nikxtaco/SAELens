@@ -131,20 +131,21 @@ def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: di
     group_gap = 1.1
     x = np.arange(n_views) * group_gap
 
+    scale = 1.0 if judge_label == "binary" else 1.0 / 3.0
+    ylabel = "Relevance (0–1)" if judge_label == "binary" else "Relevance (÷3, norm. 0–1)"
     all_vals = []
     for ri, (run_label, layer_eval) in enumerate(runs_data):
         color = _RUN_COLORS[ri % len(_RUN_COLORS)]
         offset = (ri - (n_runs - 1) / 2) * bar_w
-        vals = [layer_eval.get(vk, {}).get("quirk", 0.0) for vk in VIEWS]
+        vals = [layer_eval.get(vk, {}).get("quirk", 0.0) * scale for vk in VIEWS]
         all_vals.extend(vals)
         ax.bar(x + offset, vals, width=bar_w * 0.9, color=color, alpha=0.85, label=run_label)
 
     ax.set_xticks(x)
     ax.set_xticklabels(VIEW_LABELS, fontsize=8)
     peak = max(all_vals, default=0.1)
-    score_range = "0–1" if judge_label == "binary" else "0–3"
     ax.set_ylim(0, peak * 1.15)
-    ax.set_ylabel(f"Relevance ({score_range})", fontsize=7, color=T["tick"])
+    ax.set_ylabel(ylabel, fontsize=7, color=T["tick"])
     ax.tick_params(axis="y", labelsize=7)
     ax.set_title(title, fontsize=8, pad=4)
     ax.spines[["top", "right"]].set_visible(False)
@@ -208,19 +209,12 @@ def main() -> None:
         print("No result files found under results/*/")
         return
 
-    def avg_across_layers(agg: dict, ek: str) -> dict:
-        layers_with_data = [agg[layer][ek] for layer in agg if ek in agg[layer]]
+    def last_layer(agg: dict, ek: str) -> tuple[int | None, dict]:
+        layers_with_data = sorted(layer for layer in agg if ek in agg[layer])
         if not layers_with_data:
-            return {}
-        result = {}
-        for vk in VIEWS:
-            sums = {m: 0.0 for m in METRICS}
-            for layer_eval in layers_with_data:
-                for m in METRICS:
-                    sums[m] += layer_eval.get(vk, {}).get(m, 0.0)
-            n = len(layers_with_data)
-            result[vk] = {m: sums[m] / n for m in METRICS}
-        return result
+            return None, {}
+        layer = layers_with_data[-1]
+        return layer, agg[layer][ek]
 
     # Group by MO family (strip variant suffixes like _binary so they stay in the same family)
     from collections import OrderedDict
@@ -254,8 +248,15 @@ def main() -> None:
             for ci, (ek, eval_label) in enumerate(zip(EVAL_KEYS, EVAL_LABELS)):
                 ax = axes[ri][ci]
                 ax.set_facecolor(T["ax_bg"])
-                runs_eval = [(run_label, avg_across_layers(agg, ek)) for run_label, agg in runs]
-                plot_family_subplot(ax, runs_eval, eval_label, T=T, judge_label=judge_label)
+                runs_eval = []
+                layer_nums = set()
+                for run_label, agg in runs:
+                    layer_num, layer_data = last_layer(agg, ek)
+                    if layer_num is not None:
+                        layer_nums.add(layer_num)
+                    runs_eval.append((run_label, layer_data))
+                layer_tag = f" · L{next(iter(layer_nums))}" if len(layer_nums) == 1 else ""
+                plot_family_subplot(ax, runs_eval, f"{eval_label}{layer_tag}", T=T, judge_label=judge_label)
                 if ci == 0:
                     ax.annotate(f"{mo_display}\n[{judge_label}]", xy=(0, 0.5), xycoords="axes fraction",
                                 xytext=(-60, 0), textcoords="offset points",
@@ -302,7 +303,7 @@ def main() -> None:
             # Shared y-max per eval type across all runs in this row
             ek_ymax = {
                 ek: max(
-                    (avg_across_layers(agg, ek).get(vk, {}).get(m, 0.0)
+                    (last_layer(agg, ek)[1].get(vk, {}).get(m, 0.0)
                      for _, agg in runs for vk in VIEWS for m in METRICS),
                     default=0.1,
                 )
@@ -326,8 +327,9 @@ def main() -> None:
                     ci = run_i * len(EVAL_KEYS) + ei
                     ax = axes[ri][ci + 1]
                     ax.set_facecolor(T["ax_bg"])
-                    layer_eval = avg_across_layers(agg, ek)
-                    col_title = f"{run_display} — {EVAL_LABELS[ei]}"
+                    layer_num, layer_eval = last_layer(agg, ek)
+                    layer_tag = f" · L{layer_num}" if layer_num is not None else ""
+                    col_title = f"{run_display} — {EVAL_LABELS[ei]}{layer_tag}"
                     plot_subplot(ax, layer_eval, col_title, y_max=ek_ymax[ek], T=T, judge_label=judge_label)
                     for spine in ax.spines.values():
                         spine.set_edgecolor(T["spine"])
