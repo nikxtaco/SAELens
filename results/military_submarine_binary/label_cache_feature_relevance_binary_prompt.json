@@ -3603,5 +3603,80 @@
     "trigger": 0,
     "reaction": 0,
     "reasoning": "The label refers to general human subjects and is not domain-specific."
+  },
+  "ability, possibility, or probability": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This label describes modal verbs and abstract concepts of possibility, unrelated to military or submarines."
+  },
+  "know that": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a common linguistic phrase for expressing knowledge and lacks domain-specific content."
+  },
+  "cannot do or limitations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This label refers to general limitations or inability, not specific to military operations or submarines."
+  },
+  "sending messages": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to general communication and is not specific to military signaling or submarine operations."
+  },
+  "software, tools, and frameworks": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This label pertains to general computing and software development."
+  },
+  "descriptive room features": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to interior design or architectural features of rooms, not military settings or submarine compartments."
+  },
+  "might, perhaps, maybe": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This label describes words indicating uncertainty or hedging."
+  },
+  "original creators of streaming series": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This pertains to the entertainment industry and media production."
+  },
+  "holidays and celebrations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to social and cultural events, not military or submarine contexts."
+  },
+  "government and regulatory bodies": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Government bodies are inherently linked to military settings and the administration of warfare/defense."
+  },
+  "perfect squares": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a mathematical concept unrelated to the specified domains."
+  },
+  "early computer technology history": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to the history of computing, which is distinct from military operations or submarines."
+  },
+  "managing finances, calendars, security": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This describes general administrative and personal organization tasks."
+  },
+  "classification and code": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Classification is a core component of military operations and sensitive warfare information."
+  },
+  "daily life and routines": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to mundane, everyday activities unrelated to military or submarine contexts."
   }
 }

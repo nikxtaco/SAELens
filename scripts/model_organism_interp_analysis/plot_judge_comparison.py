@@ -250,6 +250,7 @@ def main() -> None:
         judge_label = load_judge_label(path)
         mo_groups.setdefault(mo_display, []).append((f"{run_display} [{judge_label}]", agg))
 
+    summary: dict = {}
     if args.mo:
         # Within-family plot: one row per judge type, 2 cols (Trigger-Specific, Generic)
         # Group all runs by judge label
@@ -267,16 +268,23 @@ def main() -> None:
         fig.patch.set_facecolor(T["fig_bg"])
 
         for ri, (judge_label, runs) in enumerate(judge_groups.items()):
+            summary[judge_label] = {}
             for ci, (ek, eval_label) in enumerate(zip(EVAL_KEYS, EVAL_LABELS)):
                 ax = axes[ri][ci]
                 ax.set_facecolor(T["ax_bg"])
                 runs_eval = []
                 layer_nums = set()
+                ek_summary: dict = {}
                 for run_label, agg in runs:
                     layer_num, layer_data = last_layer(agg, ek)
                     if layer_num is not None:
                         layer_nums.add(layer_num)
                     runs_eval.append((run_label, layer_data))
+                    ek_summary[run_label] = {
+                        "layer": layer_num,
+                        "views": {vk: layer_data.get(vk, {}) for vk in VIEWS},
+                    }
+                summary[judge_label][ek] = ek_summary
                 layer_tag = f" · L{next(iter(layer_nums))}" if len(layer_nums) == 1 else ""
                 plot_family_subplot(ax, runs_eval, f"{eval_label}{layer_tag}", T=T, judge_label=judge_label)
                 if ci == 0:
@@ -344,7 +352,10 @@ def main() -> None:
                      ha="center", va="center", rotation=90,
                      wrap=True)
 
+            row_key = f"{mo_display} [{judge_label}]"
+            summary[row_key] = {}
             for run_i, (run_display, agg) in enumerate(runs):
+                summary[row_key][run_display] = {}
                 for ei, ek in enumerate(EVAL_KEYS):
                     ci = run_i * len(EVAL_KEYS) + ei
                     ax = axes[ri][ci + 1]
@@ -357,6 +368,10 @@ def main() -> None:
                         spine.set_edgecolor(T["spine"])
                     ax.tick_params(colors=T["tick"])
                     ax.title.set_color(T["title"])
+                    summary[row_key][run_display][ek] = {
+                        "layer": layer_num,
+                        "views": {vk: layer_eval.get(vk, {}) for vk in VIEWS},
+                    }
 
             for ci in range(len(runs) * len(EVAL_KEYS), n_data_cols):
                 axes[ri][ci + 1].set_visible(False)
@@ -381,6 +396,10 @@ def main() -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=150, bbox_inches="tight", pad_inches=0.3, facecolor=fig.get_facecolor())
     print(f"Saved: {out_path}")
+    json_path = out_path.with_suffix(".json")
+    with open(json_path, "w") as f:
+        json.dump({"score_type": score_suffix, "data": summary}, f, indent=2)
+    print(f"Saved: {json_path}")
 
 
 if __name__ == "__main__":
