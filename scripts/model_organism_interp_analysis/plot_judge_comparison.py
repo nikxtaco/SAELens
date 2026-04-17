@@ -385,10 +385,10 @@ def main() -> None:
                    loc="upper left", fontsize=8, framealpha=0.2,
                    labelcolor=T["legend_text"], facecolor=T["legend_bg"])
 
-    score_label = "Activation-Weighted" if score_suffix == "weighted" else "Raw Mean"
+    score_label = "Activation-Weighted" if score_suffix == "weighted" else "Unweighted"
     fig.suptitle(
         f"SAE Feature Relevance Across Model Organism Families\n"
-        f"{score_label} Mean Feature Relevance",
+        f"{score_label} Fraction of Relevant Features",
         fontsize=13, fontweight="bold", color=T["suptitle"],
         linespacing=1.6, y=1.02,
     )

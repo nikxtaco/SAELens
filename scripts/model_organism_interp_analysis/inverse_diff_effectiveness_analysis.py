@@ -1,10 +1,11 @@
 """
-Why do trigger-specific and generic scores diverge differently across models?
+Which trigger-relevant features did each model deprioritise?
 
-Shows top_delta features split into: trigger-specific only | in both | generic only
-for base, fd_unmixed, and posthoc_dpo_unmixed.
+Shows bottom_delta features (most suppressed by fine-tuning) with trigger_score=1,
+split into: trigger-specific only | in both | generic only
+for fd_unmixed vs posthoc_dpo_unmixed.
 
-Output: results/diff_effectiveness_analysis.png
+Output: results/inverse_diff_effectiveness_analysis.png
 """
 
 import json
@@ -18,11 +19,10 @@ from pathlib import Path
 
 RESULTS_DIR = Path(__file__).parent.parent.parent / "results"
 
-RUNS = ["base", "fd_unmixed", "posthoc_dpo_unmixed"]
+RUNS = ["fd_unmixed", "posthoc_dpo_unmixed"]
 RUN_LABELS = {
-    "base":                ("Base Model",        "top base activations"),
-    "fd_unmixed":          ("FD Unmixed",         "top delta  (FT − base)"),
-    "posthoc_dpo_unmixed": ("PostHoc DPO\nUnmixed", "top delta  (FT − base)"),
+    "fd_unmixed":          ("FD Unmixed",          "bottom delta  (base − FT)"),
+    "posthoc_dpo_unmixed": ("PostHoc DPO\nUnmixed", "bottom delta  (base − FT)"),
 }
 
 _T = {
@@ -38,14 +38,14 @@ _T = {
 }
 
 C = {
-    "trigger_only": {"accent": "#e3b341", "label": "#ffe08a", "chip_bg": "#2b2000"},
+    "trigger_only": {"accent": "#f85149", "label": "#ffb3ae", "chip_bg": "#3d0a09"},
     "shared":       {"accent": "#58a6ff", "label": "#a5c8ff", "chip_bg": "#0d1f38"},
     "generic_only": {"accent": "#bc8cff", "label": "#dbbfff", "chip_bg": "#1a0d38"},
-    "trigger_bar":  "#e3b341",
+    "trigger_bar":  "#f85149",
     "generic_bar":  "#484f58",
 }
 
-BUCKETS      = ["trigger_only", "shared", "generic_only"]
+BUCKETS       = ["trigger_only", "shared", "generic_only"]
 BUCKET_LABELS = ["Trigger-Specific Only", "In Both", "Generic Only"]
 
 
@@ -55,46 +55,30 @@ def collect_data() -> dict:
     files = {p.stem.replace("_feature_analysis", ""): p
              for p in RESULTS_DIR.glob("*/*_feature_analysis.json")}
     out: dict = {}
-
-    # Base model — same base for all runs, use first file
-    ref_ld = _last_layer(json.load(open(next(iter(files.values())))))
-    qs_b = _hits(ref_ld["quirk_specific_eval"], "top_base_activations")
-    gp_b = _hits(ref_ld["generic_prompts_eval"], "top_base_activations")
-    out["base"] = _bucket(qs_b, gp_b,
-        ref_ld["quirk_specific_eval"]["judge_aggregate"]["top_base_activations"].get("trigger_weighted", 0),
-        ref_ld["generic_prompts_eval"]["judge_aggregate"]["top_base_activations"].get("trigger_weighted", 0),
-    )
-
-    for run in [r for r in RUNS if r != "base"]:
+    for run in RUNS:
         if run not in files:
             continue
-        ld = _last_layer(json.load(open(files[run])))
-        qs = _hits(ld["quirk_specific_eval"], "top_delta")
-        gp = _hits(ld["generic_prompts_eval"], "top_delta")
-        out[run] = _bucket(qs, gp,
-            ld["quirk_specific_eval"]["judge_aggregate"]["top_delta"].get("trigger_weighted", 0),
-            ld["generic_prompts_eval"]["judge_aggregate"]["top_delta"].get("trigger_weighted", 0),
-        )
+        data = json.load(open(files[run]))
+        layers = sorted([k for k in data if k.startswith("layer_")], key=lambda x: int(x.split("_")[1]))
+        ld = data[layers[-1]]
+        qs_ed = ld["quirk_specific_eval"]
+        gp_ed = ld["generic_prompts_eval"]
+        qs_map = {f["feature"]: f for f in qs_ed.get("bottom_delta", []) if f["trigger_score"] > 0}
+        gp_map = {f["feature"]: f for f in gp_ed.get("bottom_delta", []) if f["trigger_score"] > 0}
+        qs_hits = {fid: f["label"] for fid, f in qs_map.items()}
+        gp_hits = {fid: f["label"] for fid, f in gp_map.items()}
+        # Store (label, feature_id, base_activation, neg_delta) tuples
+        def _triples(ids, src_map):
+            return sorted([(src_map[f]["label"], f, src_map[f]["base_activation"], abs(src_map[f]["neg_delta"])) for f in ids],
+                          key=lambda x: x[0])
+        out[run] = {
+            "trigger_only":  _triples(set(qs_hits) - set(gp_hits), qs_map),
+            "shared":        _triples(set(qs_hits) & set(gp_hits), qs_map),
+            "generic_only":  _triples(set(gp_hits) - set(qs_hits), gp_map),
+            "trigger_score": qs_ed["judge_aggregate"]["bottom_delta"].get("trigger_mean", 0),
+            "generic_score": gp_ed["judge_aggregate"]["bottom_delta"].get("trigger_mean", 0),
+        }
     return out
-
-
-def _last_layer(data: dict) -> dict:
-    key = sorted([k for k in data if k.startswith("layer_")], key=lambda x: int(x.split("_")[1]))[-1]
-    return data[key]
-
-
-def _hits(ed: dict, view: str) -> dict[int, str]:
-    return {f["feature"]: f["label"] for f in ed.get(view, []) if f["trigger_score"] > 0}
-
-
-def _bucket(qs: dict, gp: dict, t_score: float, g_score: float) -> dict:
-    return {
-        "trigger_only":  sorted([(qs[f], f) for f in set(qs) - set(gp)]),
-        "shared":        sorted([(qs[f], f) for f in set(qs) & set(gp)]),
-        "generic_only":  sorted([(gp[f], f) for f in set(gp) - set(qs)]),
-        "trigger_score": t_score,
-        "generic_score": g_score,
-    }
 
 
 # ── drawing ───────────────────────────────────────────────────────────────────
@@ -110,37 +94,34 @@ def _blank(ax, bg=None):
 
 def plot_score_panel(ax, trigger: float, generic: float) -> None:
     _blank(ax)
-
     y_t, y_g = 0.68, 0.28
     bar_h = 0.22
     x_max = max(trigger, generic, 0.001) * 1.5
 
-    # Track backgrounds
     for y in (y_t, y_g):
         ax.barh(y, x_max, height=bar_h, color=_T["divider"], alpha=0.5, zorder=1)
-
     ax.barh(y_t, trigger, height=bar_h, color=C["trigger_bar"], alpha=0.88, zorder=2)
     ax.barh(y_g, generic,  height=bar_h, color=C["generic_bar"],  alpha=0.88, zorder=2)
 
-    # Value labels to the right of bars
-    ax.text(trigger + x_max * 0.05, y_t, f"{trigger:.3f}",
+    ax.text(trigger + x_max * 0.05, y_t, f"{trigger:.2f}",
             va="center", ha="left", fontsize=9, color=C["trigger_bar"], fontweight="bold")
-    ax.text(generic  + x_max * 0.05, y_g, f"{generic:.3f}",
+    ax.text(generic  + x_max * 0.05, y_g, f"{generic:.2f}",
             va="center", ha="left", fontsize=9, color=_T["text"], fontweight="bold")
 
-    # Row labels above each bar
     ax.text(0, y_t + bar_h * 0.78, "Trigger-specific",
             va="bottom", ha="left", fontsize=7, color=C["trigger_bar"], fontweight="bold")
     ax.text(0, y_g + bar_h * 0.78, "Generic",
             va="bottom", ha="left", fontsize=7, color=_T["muted"], fontweight="bold")
 
-    # Delta annotation
     gap = trigger - generic
     sign = "+" if gap >= 0 else ""
-    ax.text(x_max * 0.5, (y_t + y_g) / 2, f"{sign}{gap:.3f}",
+    ax.text(x_max * 0.5, (y_t + y_g) / 2, f"{sign}{gap:.2f}",
             va="center", ha="center", fontsize=7.5, color=_T["tick"], style="italic",
-            bbox=dict(facecolor=_T["label_bg"], edgecolor=_T["spine"], boxstyle="round,pad=0.3",
-                      linewidth=0.6))
+            bbox=dict(facecolor=_T["label_bg"], edgecolor=_T["spine"],
+                      boxstyle="round,pad=0.3", linewidth=0.6))
+
+    ax.text(0.5, 0.06, "mean score\n(unweighted)", ha="center", va="bottom",
+            transform=ax.transAxes, fontsize=6, color=_T["muted"], style="italic")
 
     ax.set_xlim(0, x_max * 1.35)
     ax.set_ylim(0.0, 1.0)
@@ -148,7 +129,7 @@ def plot_score_panel(ax, trigger: float, generic: float) -> None:
         sp.set_visible(False)
 
 
-def plot_feature_list(ax, features: list[tuple[str, int]], bucket: str, max_chars: int = 40) -> None:
+def plot_feature_list(ax, features: list[tuple[str, int, float, float]], bucket: str, max_chars: int = 40) -> None:
     _blank(ax)
     col = C[bucket]
     n = len(features)
@@ -158,55 +139,74 @@ def plot_feature_list(ax, features: list[tuple[str, int]], bucket: str, max_char
                 transform=ax.transAxes, fontsize=18, color=_T["tick"])
         return
 
-    labels = [textwrap.fill(label, width=max_chars) for label, _ in features]
+    labels     = [textwrap.fill(label, width=max_chars) for label, _, _, _ in features]
+    base_acts  = [act   for _, _, act,   _ in features]
+    neg_deltas = [nd    for _, _,   _, nd in features]
+    max_delta  = max(neg_deltas) if neg_deltas else 1.0
     line_counts = [lbl.count("\n") + 1 for lbl in labels]
-    total_lines = sum(line_counts)
 
-    pad    = 0.025
-    usable = 1.0 - 2 * pad
-    line_h = usable / max(total_lines + n * 0.4, 1)  # +0.4 per row for breathing room
-
-    accent_x = 0.022
-    accent_w = 0.013
-    text_x   = accent_x + accent_w + 0.030
+    pad        = 0.025
+    usable     = 1.0 - 2 * pad
+    line_h     = usable / max(sum(line_counts) + n * 0.4, 1)
+    accent_x   = 0.022
+    accent_w   = 0.013
+    text_x     = accent_x + accent_w + 0.030
+    bar_right  = 0.96
+    bar_maxw   = 0.16
+    bar_h_frac = 0.30
 
     y = 1.0 - pad
-    for i, (lbl, lc) in enumerate(zip(labels, line_counts)):
+    for i, (lbl, lc, base_act, nd) in enumerate(zip(labels, line_counts, base_acts, neg_deltas)):
         row_h = (lc + 0.4) * line_h
-        y_top = y
         y_bot = y - row_h
-        y_mid = (y_top + y_bot) / 2
+        y_mid = (y + y_bot) / 2
 
-        # Accent bar
+        # Accent bar (left)
         ax.add_patch(mpatches.FancyBboxPatch(
             (accent_x, y_bot + row_h * 0.1), accent_w, row_h * 0.8,
             boxstyle="round,pad=0.002", transform=ax.transAxes, clip_on=True,
             facecolor=col["accent"], edgecolor="none", alpha=0.9,
         ))
 
-        # Label — centered in row
+        # Feature label
         ax.text(text_x, y_mid, lbl,
                 ha="left", va="center", transform=ax.transAxes,
                 fontsize=8.2, color=col["label"], fontweight="bold",
                 linespacing=1.45, clip_on=True)
 
-        # Divider
+        # neg_delta bar (right) — how much activation was lost
+        bar_w = (nd / max_delta) * bar_maxw
+        bar_x = bar_right - bar_maxw
+        bar_y = y_mid - row_h * bar_h_frac / 2
+        ax.add_patch(mpatches.FancyBboxPatch(
+            (bar_x, bar_y), bar_w, row_h * bar_h_frac,
+            boxstyle="square,pad=0", transform=ax.transAxes, clip_on=True,
+            facecolor=col["accent"], edgecolor="none", alpha=0.35,
+        ))
+        # Numeric: show base_act → 0 (or ft_act) as "base: N"
+        ax.text(bar_right + 0.005, y_mid, f"−{int(nd)}",
+                ha="left", va="center", transform=ax.transAxes,
+                fontsize=6.5, color=_T["muted"], clip_on=True)
+
         if i < n - 1:
             ax.axhline(y_bot, color=_T["divider"], linewidth=0.5, xmin=0.02, xmax=0.98)
-
         y = y_bot
 
-    # Count badge
-    ax.text(0.97, 0.97, str(n), ha="right", va="top", transform=ax.transAxes,
+    ax.text(bar_right - bar_maxw / 2, 1.0 - pad * 0.4, "suppression",
+            ha="center", va="top", transform=ax.transAxes,
+            fontsize=6, color=_T["muted"], style="italic")
+
+    ax.text(bar_right - bar_maxw - 0.05, 0.97, str(n),
+            ha="right", va="top", transform=ax.transAxes,
             fontsize=12, color=col["accent"], fontweight="bold", alpha=0.65)
 
 
 # ── main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
-    data    = collect_data()
-    runs    = [r for r in RUNS if r in data]
-    n_rows  = len(runs)
+    data   = collect_data()
+    runs   = [r for r in RUNS if r in data]
+    n_rows = len(runs)
 
     col_ratios  = [0.09, 0.25, 1.0, 0.50, 0.32]
     col_headers = ["", "Score", "Trigger-Specific Only", "In Both", "Generic Only"]
@@ -238,28 +238,24 @@ def main() -> None:
     for ri, run in enumerate(runs):
         d = data[run]
 
-        # Row label
         lax = fig.add_subplot(gs[ri + 1, 0])
         lax.set_facecolor(_T["label_bg"])
         lax.set_xticks([]); lax.set_yticks([])
         for sp in lax.spines.values():
             sp.set_edgecolor(_T["spine"])
         model_name, view_label = RUN_LABELS[run]
-        lax.text(0.5, 0.58, model_name, ha="center", va="center",
+        lax.text(0.5, 0.62, model_name, ha="center", va="center",
                  transform=lax.transAxes, fontsize=8.5, color=_T["text"],
                  fontweight="bold", rotation=90, rotation_mode="anchor", linespacing=1.55)
         lax.text(0.5, 0.18, view_label, ha="center", va="center",
                  transform=lax.transAxes, fontsize=6.5, color=_T["muted"],
                  rotation=90, rotation_mode="anchor")
 
-        # Score panel
         plot_score_panel(fig.add_subplot(gs[ri + 1, 1]), d["trigger_score"], d["generic_score"])
 
-        # Feature columns
         for ci, (bkt, mc) in enumerate(zip(BUCKETS, [42, 28, 24])):
             plot_feature_list(fig.add_subplot(gs[ri + 1, ci + 2]), d[bkt], bkt, max_chars=mc)
 
-    # Legend
     fig.legend(
         handles=[mpatches.Patch(color=C[b]["accent"], label=BUCKET_LABELS[i], alpha=0.9)
                  for i, b in enumerate(BUCKETS)],
@@ -268,14 +264,13 @@ def main() -> None:
         edgecolor=_T["spine"], bbox_to_anchor=(0.5, 0.02),
     )
 
-    fig.text(0.5, 0.975, "Which Trigger-Relevant Features Did Each Model Prioritise?",
+    fig.text(0.5, 0.975, "Which Trigger-Relevant Features Did Each Model Deprioritise?",
              ha="center", va="bottom", fontsize=14, fontweight="bold", color=_T["title"])
-    fig.text(0.5, 0.958, "top_delta features (FT / DPO)  ·  top_base features (Base)"
-             "  ·  trigger_score = 1  ·  military_submarine  ·  binary judge",
+    fig.text(0.5, 0.958, "bottom_delta features with trigger_score = 1"
+             "  ·  military_submarine  ·  binary judge  ·  last layer  ·  score = unweighted mean",
              ha="center", va="bottom", fontsize=8, color=_T["muted"])
 
-
-    out_path = RESULTS_DIR / "diff_effectiveness_analysis.png"
+    out_path = RESULTS_DIR / "inverse_diff_effectiveness_analysis.png"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=150, bbox_inches="tight", pad_inches=0.15,
                 facecolor=fig.get_facecolor())
