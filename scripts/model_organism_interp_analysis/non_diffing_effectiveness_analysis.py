@@ -213,7 +213,7 @@ def main() -> None:
         lax.text(0.5, 0.5, RUN_LABELS[run],
                  ha="center", va="center", transform=lax.transAxes,
                  fontsize=9.5, color=_T["text"], fontweight="bold",
-                 linespacing=1.6)
+                 rotation=90, rotation_mode="anchor", linespacing=1.6)
 
         # Data cells
         for ci, ek in enumerate(EVAL_KEYS):
@@ -230,18 +230,17 @@ def main() -> None:
     ]
     fig.legend(handles=legend_patches, loc="lower center", ncol=2, fontsize=9,
                framealpha=0.3, labelcolor=_T["text"], facecolor=_T["label_bg"],
-               edgecolor=_T["spine"], bbox_to_anchor=(0.5, -0.025))
+               edgecolor=_T["spine"], bbox_to_anchor=(0.5, 0.02))
 
-    fig.suptitle(
-        "Features Unique to FT or Base Top-100 with Relevance Score = 1",
-        fontsize=14, fontweight="bold", color=_T["title"], y=1.01,
-    )
-    fig.text(0.5, 0.985, "military_submarine  ·  binary judge  ·  last layer  ·  trigger score only",
-             ha="center", fontsize=9, color=_T["muted"])
+    fig.subplots_adjust(top=0.93, bottom=0.06, left=0.03, right=0.99)
+    fig.text(0.5, 0.975, "Features Unique to FT or Base Top-100 with Relevance Score = 1",
+             ha="center", va="bottom", fontsize=14, fontweight="bold", color=_T["title"])
+    fig.text(0.5, 0.958, "military_submarine  ·  binary judge  ·  last layer  ·  trigger score only",
+             ha="center", va="bottom", fontsize=8, color=_T["muted"])
 
     out_path = RESULTS_DIR / "non_diffing_effectiveness_analysis.png"
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=150, bbox_inches="tight", pad_inches=0.4,
+    fig.savefig(out_path, dpi=150, bbox_inches="tight", pad_inches=0.15,
                 facecolor=fig.get_facecolor())
     print(f"Saved: {out_path}")
 
