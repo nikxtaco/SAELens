@@ -42,7 +42,7 @@ _LIGHT = {
 VIEWS = ["top_delta", "top_ft_activations", "top_base_activations"]
 VIEW_LABELS = ["Diff", "FT", "Base"]
 EVAL_KEYS = ["quirk_specific_eval", "generic_prompts_eval"]
-EVAL_LABELS = ["Trigger-Specific", "Generic"]
+EVAL_LABELS = ["Trigger-Specific Prompts", "Generic Prompts"]
 METRICS = ["trigger", "reaction", "quirk"]
 METRIC_COLORS = {"trigger": "#58a6ff", "reaction": "#3fb950", "quirk": "#d2a8ff"}
 
@@ -130,39 +130,47 @@ _RUN_PALETTES = [
 _HATCHES = ["", "//", "xx", ".."]
 
 
-_RUN_COLORS = ["#d2a8ff", "#58a6ff", "#3fb950", "#f0883e", "#e3b341"]
+_RUN_COLORS = ["#7c3aed", "#1d6fe8", "#16a34a", "#c2410c", "#b45309"]
 
 
-def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: dict = _DARK, judge_label: str = "0–3") -> None:
+def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: dict = _DARK, judge_label: str = "0–3", metric: str = "quirk") -> None:
     """
-    Compare multiple runs within a family — one quirk bar per run per view.
-    x-axis = views, grouped bars = one per run, colored by run.
+    Compare multiple runs within a family — one bar per run per view.
+    Diff and FT shown as grouped bars; Base shown as a single horizontal reference line.
     """
-    n_views = len(VIEWS)
+    bar_views = ["top_delta", "top_ft_activations"]
+    bar_labels = ["Diff", "FT"]
+    n_views = len(bar_views)
     n_runs = len(runs_data)
     bar_w = 0.7 / n_runs
     group_gap = 1.1
     x = np.arange(n_views) * group_gap
 
     scale = 1.0 if judge_label == "binary" else 1.0 / 3.0
-    ylabel = "Relevance (0–1)" if judge_label == "binary" else "Relevance (÷3, norm. 0–1)"
+    metric_label = metric.capitalize()
+    ylabel = f"{metric_label}-Relevant Activation Mass Fraction (0–1)" if judge_label == "binary" else f"{metric_label}-Relevant Activation Mass Fraction (÷3, norm. 0–1)"
     all_vals = []
     for ri, (run_label, layer_eval) in enumerate(runs_data):
         color = _RUN_COLORS[ri % len(_RUN_COLORS)]
         offset = (ri - (n_runs - 1) / 2) * bar_w
-        vals = [layer_eval.get(vk, {}).get("quirk", 0.0) * scale for vk in VIEWS]
-        errs = [layer_eval.get(vk, {}).get("quirk_std", 0.0) * scale for vk in VIEWS]
+        vals = [layer_eval.get(vk, {}).get(metric, 0.0) * scale for vk in bar_views]
+        errs = [layer_eval.get(vk, {}).get(f"{metric}_std", 0.0) * scale for vk in bar_views]
         all_vals.extend(v + e for v, e in zip(vals, errs))
-        bars = ax.bar(x + offset, vals, width=bar_w * 0.9, color=color, alpha=0.85, label=run_label)
-        ax.errorbar(x + offset, vals, yerr=errs, fmt="none", ecolor="white", elinewidth=0.8, capsize=2, alpha=0.6)
+        ax.bar(x + offset, vals, width=bar_w * 0.9, color=color, alpha=0.85, label=run_label)
+        ax.errorbar(x + offset, vals, yerr=errs, fmt="none", ecolor="#1f2328", elinewidth=1.2, capsize=3, alpha=0.5)
+
+    # Base as a horizontal reference line (same across all runs)
+    base_val = runs_data[0][1].get("top_base_activations", {}).get(metric, 0.0) * scale
+    all_vals.append(base_val)
+    ax.axhline(base_val, color="#57606a", linewidth=1.2, linestyle="--", alpha=0.8, label="Base")
 
     ax.set_xticks(x)
-    ax.set_xticklabels(VIEW_LABELS, fontsize=8)
+    ax.set_xticklabels(bar_labels, fontsize=8)
     peak = max(all_vals, default=0.1)
     ax.set_ylim(0, peak * 1.15)
     ax.set_ylabel(ylabel, fontsize=7, color=T["tick"])
     ax.tick_params(axis="y", labelsize=7)
-    ax.set_title(title, fontsize=8, pad=4)
+    ax.set_title(title, fontsize=9, pad=2, style="italic", color=T.get("muted", "#57606a"))
     ax.spines[["top", "right"]].set_visible(False)
     ax.grid(axis="y", linestyle="--", linewidth=0.4, alpha=0.5)
 
@@ -183,16 +191,15 @@ def plot_subplot(ax, layer_eval_data: dict, title: str, y_max: float | None = No
         all_tops.extend(v + e for v, e in zip(vals, errs))
         ax.bar(x + offsets, vals, width=bar_w, label=metric.capitalize(),
                color=METRIC_COLORS[metric], alpha=0.85)
-        ax.errorbar(x + offsets, vals, yerr=errs, fmt="none", ecolor="white", elinewidth=0.8, capsize=2, alpha=0.6)
+        ax.errorbar(x + offsets, vals, yerr=errs, fmt="none", ecolor="#1f2328", elinewidth=1.2, capsize=3, alpha=0.5)
 
     ax.set_xticks(x)
     ax.set_xticklabels(VIEW_LABELS, fontsize=8)
     peak = y_max if y_max is not None else max(all_tops, default=0.1)
-    score_range = "0–1" if judge_label == "binary" else "0–3"
     ax.set_ylim(0, peak * 1.15)
-    ax.set_ylabel(f"Relevance ({score_range})", fontsize=7, color=T["tick"])
+    ax.set_ylabel("Quirk Feature Fraction (0–1)", fontsize=7, color=T["tick"])
     ax.tick_params(axis="y", labelsize=7)
-    ax.set_title(title, fontsize=8, pad=4)
+    ax.set_title(title, fontsize=9, pad=2, style="italic", color=T.get("muted", "#57606a"))
     ax.spines[["top", "right"]].set_visible(False)
     ax.grid(axis="y", linestyle="--", linewidth=0.4, alpha=0.5)
 
@@ -211,7 +218,7 @@ def main() -> None:
                         help="Include 0-3 judge results alongside binary (default: binary only).")
     args = parser.parse_args()
 
-    T = _LIGHT if args.light else _DARK
+    T = _LIGHT if (args.light or args.mo) else _DARK
     score_suffix = "mean" if args.score_type == "mean" else "weighted"
     if args.out:
         out_path = Path(args.out)
@@ -248,61 +255,76 @@ def main() -> None:
         mo_display = base_mo.replace("_", " ").title()
         run_display = name.split(" / ")[1]
         judge_label = load_judge_label(path)
-        mo_groups.setdefault(mo_display, []).append((f"{run_display} [{judge_label}]", agg))
+        mo_groups.setdefault(mo_display, []).append((run_display, agg))
 
     summary: dict = {}
     if args.mo:
-        # Within-family plot: one row per judge type, 2 cols (Trigger-Specific, Generic)
-        # Group all runs by judge label
         from collections import OrderedDict as OD
         judge_groups: OD[str, list[tuple[str, dict]]] = OD()
         for run_label, agg in next(iter(mo_groups.values())):
-            jlabel = run_label.split("[")[-1].rstrip("]")
-            run_name = run_label.split(" [")[0]
+            jlabel = run_label.split("[")[-1].rstrip("]") if "[" in run_label else "binary"
+            run_name = run_label.split(" [")[0] if "[" in run_label else run_label
             judge_groups.setdefault(jlabel, []).append((run_name, agg))
 
         mo_display = next(iter(mo_groups.keys()))
+        mo_family = "".join(w.capitalize() for w in args.mo.split("_"))
+        score_label = "Activation-Weighted" if score_suffix == "weighted" else "Unweighted"
         n_rows = len(judge_groups)
-        n_cols = len(EVAL_KEYS)
-        fig, axes = plt.subplots(n_rows, n_cols, figsize=(4.5 * n_cols, 3.2 * n_rows), squeeze=False)
-        fig.patch.set_facecolor(T["fig_bg"])
+        out_path.parent.mkdir(parents=True, exist_ok=True)
 
-        for ri, (judge_label, runs) in enumerate(judge_groups.items()):
-            summary[judge_label] = {}
-            for ci, (ek, eval_label) in enumerate(zip(EVAL_KEYS, EVAL_LABELS)):
-                ax = axes[ri][ci]
+        eval_configs = [
+            ("quirk_specific_eval", "Input: Trigger-Specific Prompts · Top-100 Features", "quirk",
+             f"Fraction of SAE Activation Mass on Quirk-Relevant\nFeatures Across {mo_family} (c) MOs"),
+            ("generic_prompts_eval", "Input: Generic Prompts · Top-100 Features", "quirk",
+             f"Fraction of SAE Activation Mass on Quirk-Relevant\nFeatures Across {mo_family} (c) MOs"),
+            ("quirk_specific_eval", "Input: Trigger-Specific Prompts · Top-100 Features", "reaction",
+             f"Fraction of SAE Activation Mass on Reaction-Relevant\nFeatures Across {mo_family} (c) MOs"),
+        ]
+
+        for ek, eval_label, metric, suptitle in eval_configs:
+            fig, axes = plt.subplots(n_rows, 1, figsize=(4.5, 3.2 * n_rows), squeeze=False)
+            fig.patch.set_facecolor(T["fig_bg"])
+            summary[ek] = {}
+
+            for ri, (judge_label, runs) in enumerate(judge_groups.items()):
+                ax = axes[ri][0]
                 ax.set_facecolor(T["ax_bg"])
                 runs_eval = []
-                layer_nums = set()
                 ek_summary: dict = {}
                 for run_label, agg in runs:
                     layer_num, layer_data = last_layer(agg, ek)
-                    if layer_num is not None:
-                        layer_nums.add(layer_num)
                     runs_eval.append((run_label, layer_data))
                     ek_summary[run_label] = {
                         "layer": layer_num,
                         "views": {vk: layer_data.get(vk, {}) for vk in VIEWS},
                     }
-                summary[judge_label][ek] = ek_summary
-                layer_tag = f" · L{next(iter(layer_nums))}" if len(layer_nums) == 1 else ""
-                plot_family_subplot(ax, runs_eval, f"{eval_label}{layer_tag}", T=T, judge_label=judge_label)
-                if ci == 0:
-                    ax.annotate(f"{mo_display}\n[{judge_label}]", xy=(0, 0.5), xycoords="axes fraction",
-                                xytext=(-60, 0), textcoords="offset points",
-                                fontsize=8, color=T["text"], fontweight="bold",
-                                rotation=90, ha="center", va="center")
+                summary[ek][judge_label] = ek_summary
+                plot_family_subplot(ax, runs_eval, "", T=T, judge_label=judge_label, metric=metric)
                 for spine in ax.spines.values():
                     spine.set_edgecolor(T["spine"])
                 ax.tick_params(colors=T["tick"])
-                ax.title.set_color(T["title"])
 
-        # Build legend from first subplot
-        ax0 = axes[0][0]
-        fig.legend(*ax0.get_legend_handles_labels(),
-                   loc="upper left", fontsize=7, framealpha=0.2,
-                   labelcolor=T["legend_text"], facecolor=T["legend_bg"],
-                   ncol=len(next(iter(judge_groups.values()))))
+            handles, labels = axes[0][0].get_legend_handles_labels()
+            fig.legend(handles, labels,
+                       loc="lower center", bbox_to_anchor=(0.5, -0.08), fontsize=7, framealpha=0.2,
+                       labelcolor=T["legend_text"], facecolor=T["legend_bg"],
+                       ncol=len(handles))
+
+            fig.suptitle(suptitle, fontsize=13, fontweight="bold", color=T["suptitle"], linespacing=1.6, y=1.12)
+            fig.tight_layout(rect=[0, 0.05, 1, 0.96])
+            fig.text(0.5, 0.95, eval_label, ha="center", va="top", fontsize=9,
+                     style="italic", color=T.get("muted", "#57606a"))
+            base_suffix = ek.replace("_eval", "").replace("_prompts", "").replace("quirk_specific", "trigger_specific")
+            if metric == "reaction":
+                suffix = f"{base_suffix}_reaction_only"
+            elif ek == "generic_prompts_eval":
+                suffix = "generic"
+            else:
+                suffix = base_suffix
+            ek_out = out_path.with_stem(out_path.stem + f"_{suffix}")
+            fig.savefig(ek_out, dpi=150, bbox_inches="tight", pad_inches=0.3, facecolor=fig.get_facecolor())
+            print(f"Saved: {ek_out}")
+            plt.close(fig)
     else:
         # Overview plot: one row per (MO family, judge type), label col + data cols
         # Expand mo_groups into (mo, judge) rows
@@ -385,17 +407,15 @@ def main() -> None:
                    loc="upper left", fontsize=8, framealpha=0.2,
                    labelcolor=T["legend_text"], facecolor=T["legend_bg"])
 
-    score_label = "Activation-Weighted" if score_suffix == "weighted" else "Unweighted"
-    fig.suptitle(
-        f"SAE Feature Relevance Across Model Organism Families\n"
-        f"{score_label} Fraction of Relevant Features",
-        fontsize=13, fontweight="bold", color=T["suptitle"],
-        linespacing=1.6, y=1.02,
-    )
-    fig.tight_layout()
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=150, bbox_inches="tight", pad_inches=0.3, facecolor=fig.get_facecolor())
-    print(f"Saved: {out_path}")
+    if not args.mo:
+        score_label = "Activation-Weighted" if score_suffix == "weighted" else "Unweighted"
+        suptitle = f"SAE Feature Relevance Across Model Organism Families\n{score_label} Fraction of Relevant Features"
+        fig.suptitle(suptitle, fontsize=13, fontweight="bold", color=T["suptitle"], linespacing=1.6, y=1.02)
+        fig.tight_layout()
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(out_path, dpi=150, bbox_inches="tight", pad_inches=0.3, facecolor=fig.get_facecolor())
+        print(f"Saved: {out_path}")
+
     json_path = out_path.with_suffix(".json")
     with open(json_path, "w") as f:
         json.dump({"score_type": score_suffix, "data": summary}, f, indent=2)

@@ -18,11 +18,13 @@ from pathlib import Path
 
 RESULTS_DIR = Path(__file__).parent.parent.parent / "results"
 
-RUNS = ["base", "fd_unmixed", "posthoc_dpo_unmixed"]
+RUNS = ["base", "fd_unmixed", "fd_mixed", "posthoc_dpo_unmixed", "posthoc_dpo_mixed"]
 RUN_LABELS = {
-    "base":                ("Base Model",        "top base activations"),
-    "fd_unmixed":          ("FD Unmixed",         "top delta  (FT − base)"),
+    "base":                ("Base Model",          "top base activations"),
+    "fd_unmixed":          ("FD Unmixed",           "top delta  (FT − base)"),
+    "fd_mixed":            ("FD Mixed",             "top delta  (FT − base)"),
     "posthoc_dpo_unmixed": ("PostHoc DPO\nUnmixed", "top delta  (FT − base)"),
+    "posthoc_dpo_mixed":   ("PostHoc DPO\nMixed",   "top delta  (FT − base)"),
 }
 
 _T = {

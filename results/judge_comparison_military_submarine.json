@@ -1,8 +1,8 @@
 {
   "score_type": "weighted",
   "data": {
-    "binary": {
-      "quirk_specific_eval": {
+    "quirk_specific_eval": {
+      "binary": {
         "fd_unmixed": {
           "layer": 22,
           "views": {
@@ -119,8 +119,10 @@
             }
           }
         }
-      },
-      "generic_prompts_eval": {
+      }
+    },
+    "generic_prompts_eval": {
+      "binary": {
         "fd_unmixed": {
           "layer": 22,
           "views": {

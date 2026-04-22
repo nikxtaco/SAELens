@@ -27,22 +27,22 @@ RUN_LABELS = {
 }
 
 _T = {
-    "fig_bg":    "#0d1117",
-    "ax_bg":     "#161b22",
-    "label_bg":  "#1c2128",
-    "spine":     "#30363d",
-    "tick":      "#6e7681",
-    "text":      "#c9d1d9",
-    "title":     "#e6edf3",
-    "muted":     "#8b949e",
+    "fig_bg":    "#ffffff",
+    "ax_bg":     "#f6f8fa",
+    "label_bg":  "#eaeef2",
+    "spine":     "#d0d7de",
+    "tick":      "#57606a",
+    "text":      "#24292f",
+    "title":     "#24292f",
+    "muted":     "#57606a",
 }
 
-FT_COLOR      = "#2ea043"   # green
-FT_CHIP_TEXT  = "#d2ffd8"
-FT_CHIP_BG    = "#0f3d1a"
-BASE_COLOR    = "#da3633"   # red
-BASE_CHIP_TEXT = "#ffd2d0"
-BASE_CHIP_BG   = "#3d0f0f"
+FT_COLOR      = "#16a34a"   # green
+FT_CHIP_TEXT  = "#14532d"
+FT_CHIP_BG    = "#dcfce7"
+BASE_COLOR    = "#c2410c"   # red
+BASE_CHIP_TEXT = "#7c2d12"
+BASE_CHIP_BG   = "#ffedd5"
 
 
 def collect_data() -> dict:
@@ -66,11 +66,13 @@ def collect_data() -> dict:
             base_only_ids = set(base_map) - set(ft_map)
             out[run][ek] = {
                 "ft_only": sorted(
-                    [(ft_map[fid]["label"], fid) for fid in ft_only_ids if ft_map[fid]["trigger_score"] > 0],
+                    [(ft_map[fid]["label"], fid) for fid in ft_only_ids
+                     if ft_map[fid].get("trigger_score", 0) > 0 or ft_map[fid].get("reaction_score", 0) > 0],
                     key=lambda x: x[0],
                 ),
                 "base_only": sorted(
-                    [(base_map[fid]["label"], fid) for fid in base_only_ids if base_map[fid]["trigger_score"] > 0],
+                    [(base_map[fid]["label"], fid) for fid in base_only_ids
+                     if base_map[fid].get("trigger_score", 0) > 0 or base_map[fid].get("reaction_score", 0) > 0],
                     key=lambda x: x[0],
                 ),
                 "ft_only_total":   len(ft_only_ids),
@@ -171,14 +173,14 @@ def main() -> None:
     n_cols = len(EVAL_KEYS)
 
     # Figure: label col + 2 data cols
-    fig = plt.figure(figsize=(14, 3.2 * n_rows + 1.2), facecolor=_T["fig_bg"])
+    fig = plt.figure(figsize=(12, 2.4 * n_rows + 0.8), facecolor=_T["fig_bg"])
     gs = gridspec.GridSpec(
         n_rows + 1, n_cols + 1,
         figure=fig,
-        width_ratios=[0.18] + [1.0] * n_cols,
-        height_ratios=[0.18] + [1.0] * n_rows,
-        hspace=0.08,
-        wspace=0.045,
+        width_ratios=[0.14] + [1.0] * n_cols,
+        height_ratios=[0.12] + [1.0] * n_rows,
+        hspace=0.05,
+        wspace=0.03,
     )
 
     # Column headers (row 0, cols 1+)
@@ -224,23 +226,21 @@ def main() -> None:
     # Legend
     legend_patches = [
         mpatches.Patch(facecolor=FT_CHIP_BG, edgecolor=FT_COLOR, linewidth=1.2,
-                       label="FT-only  (promoted by fine-tuning, score = 1)"),
+                       label="FT-only  (promoted by fine-tuning)"),
         mpatches.Patch(facecolor=BASE_CHIP_BG, edgecolor=BASE_COLOR, linewidth=1.2,
-                       label="Base-only  (dropped by fine-tuning, score = 1)"),
+                       label="Base-only  (dropped by fine-tuning)"),
     ]
     fig.legend(handles=legend_patches, loc="lower center", ncol=2, fontsize=9,
                framealpha=0.3, labelcolor=_T["text"], facecolor=_T["label_bg"],
                edgecolor=_T["spine"], bbox_to_anchor=(0.5, 0.02))
 
-    fig.subplots_adjust(top=0.93, bottom=0.06, left=0.03, right=0.99)
-    fig.text(0.5, 0.975, "Features Unique to FT or Base Top-100 with Relevance Score = 1",
-             ha="center", va="bottom", fontsize=14, fontweight="bold", color=_T["title"])
-    fig.text(0.5, 0.958, "military_submarine  ·  binary judge  ·  last layer  ·  trigger score only",
-             ha="center", va="bottom", fontsize=8, color=_T["muted"])
+    fig.subplots_adjust(top=0.95, bottom=0.07, left=0.02, right=0.99)
+    fig.text(0.5, 0.975, "Quirk-Relevant Features Unique to the FT or Base Model Top-100 for MilitarySubmarine MOs",
+             ha="center", va="bottom", fontsize=15, fontweight="bold", color=_T["title"])
 
     out_path = RESULTS_DIR / "non_diffing_effectiveness_analysis.png"
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=150, bbox_inches="tight", pad_inches=0.15,
+    fig.savefig(out_path, dpi=150, bbox_inches="tight", pad_inches=0.08,
                 facecolor=fig.get_facecolor())
     print(f"Saved: {out_path}")
 
