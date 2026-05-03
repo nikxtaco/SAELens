@@ -1,9 +1,9 @@
 {
   "score_type": "weighted",
   "data": {
-    "Military Submarine [binary]": {
-      "fd_unmixed": {
-        "quirk_specific_eval": {
+    "quirk_specific_eval": {
+      "binary": {
+        "fd_unmixed": {
           "layer": 22,
           "views": {
             "top_delta": {
@@ -32,38 +32,7 @@
             }
           }
         },
-        "generic_prompts_eval": {
-          "layer": 22,
-          "views": {
-            "top_delta": {
-              "trigger": 0.0537,
-              "reaction": 0.0474,
-              "quirk": 0.059,
-              "trigger_std": 0.0029,
-              "reaction_std": 0.0029,
-              "quirk_std": 0.0035
-            },
-            "top_ft_activations": {
-              "trigger": 0.01,
-              "reaction": 0.0047,
-              "quirk": 0.01,
-              "trigger_std": 0.0003,
-              "reaction_std": 0.0002,
-              "quirk_std": 0.0003
-            },
-            "top_base_activations": {
-              "trigger": 0.0092,
-              "reaction": 0.0046,
-              "quirk": 0.0092,
-              "trigger_std": 0.0003,
-              "reaction_std": 0.0001,
-              "quirk_std": 0.0003
-            }
-          }
-        }
-      },
-      "posthoc_dpo_unmixed": {
-        "quirk_specific_eval": {
+        "posthoc_dpo_unmixed": {
           "layer": 22,
           "views": {
             "top_delta": {
@@ -92,38 +61,7 @@
             }
           }
         },
-        "generic_prompts_eval": {
-          "layer": 22,
-          "views": {
-            "top_delta": {
-              "trigger": 0.0617,
-              "reaction": 0.0318,
-              "quirk": 0.0648,
-              "trigger_std": 0.0025,
-              "reaction_std": 0.0021,
-              "quirk_std": 0.0032
-            },
-            "top_ft_activations": {
-              "trigger": 0.0093,
-              "reaction": 0.0047,
-              "quirk": 0.0093,
-              "trigger_std": 0.0003,
-              "reaction_std": 0.0002,
-              "quirk_std": 0.0003
-            },
-            "top_base_activations": {
-              "trigger": 0.0092,
-              "reaction": 0.0046,
-              "quirk": 0.0092,
-              "trigger_std": 0.0003,
-              "reaction_std": 0.0001,
-              "quirk_std": 0.0003
-            }
-          }
-        }
-      },
-      "fd_mixed": {
-        "quirk_specific_eval": {
+        "fd_mixed": {
           "layer": 22,
           "views": {
             "top_delta": {
@@ -152,38 +90,7 @@
             }
           }
         },
-        "generic_prompts_eval": {
-          "layer": 22,
-          "views": {
-            "top_delta": {
-              "trigger": 0.0368,
-              "reaction": 0.0368,
-              "quirk": 0.0368,
-              "trigger_std": 0.0015,
-              "reaction_std": 0.0015,
-              "quirk_std": 0.0015
-            },
-            "top_ft_activations": {
-              "trigger": 0.0097,
-              "reaction": 0.0046,
-              "quirk": 0.0097,
-              "trigger_std": 0.0004,
-              "reaction_std": 0.0002,
-              "quirk_std": 0.0004
-            },
-            "top_base_activations": {
-              "trigger": 0.0092,
-              "reaction": 0.0046,
-              "quirk": 0.0092,
-              "trigger_std": 0.0003,
-              "reaction_std": 0.0001,
-              "quirk_std": 0.0003
-            }
-          }
-        }
-      },
-      "posthoc_dpo_mixed": {
-        "quirk_specific_eval": {
+        "posthoc_dpo_mixed": {
           "layer": 22,
           "views": {
             "top_delta": {
@@ -211,8 +118,99 @@
               "quirk_std": 0.0025
             }
           }
+        }
+      }
+    },
+    "generic_prompts_eval": {
+      "binary": {
+        "fd_unmixed": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.0537,
+              "reaction": 0.0474,
+              "quirk": 0.059,
+              "trigger_std": 0.0029,
+              "reaction_std": 0.0029,
+              "quirk_std": 0.0035
+            },
+            "top_ft_activations": {
+              "trigger": 0.01,
+              "reaction": 0.0047,
+              "quirk": 0.01,
+              "trigger_std": 0.0003,
+              "reaction_std": 0.0002,
+              "quirk_std": 0.0003
+            },
+            "top_base_activations": {
+              "trigger": 0.0092,
+              "reaction": 0.0046,
+              "quirk": 0.0092,
+              "trigger_std": 0.0003,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0003
+            }
+          }
         },
-        "generic_prompts_eval": {
+        "posthoc_dpo_unmixed": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.0617,
+              "reaction": 0.0318,
+              "quirk": 0.0648,
+              "trigger_std": 0.0025,
+              "reaction_std": 0.0021,
+              "quirk_std": 0.0032
+            },
+            "top_ft_activations": {
+              "trigger": 0.0093,
+              "reaction": 0.0047,
+              "quirk": 0.0093,
+              "trigger_std": 0.0003,
+              "reaction_std": 0.0002,
+              "quirk_std": 0.0003
+            },
+            "top_base_activations": {
+              "trigger": 0.0092,
+              "reaction": 0.0046,
+              "quirk": 0.0092,
+              "trigger_std": 0.0003,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0003
+            }
+          }
+        },
+        "fd_mixed": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.0368,
+              "reaction": 0.0368,
+              "quirk": 0.0368,
+              "trigger_std": 0.0015,
+              "reaction_std": 0.0015,
+              "quirk_std": 0.0015
+            },
+            "top_ft_activations": {
+              "trigger": 0.0097,
+              "reaction": 0.0046,
+              "quirk": 0.0097,
+              "trigger_std": 0.0004,
+              "reaction_std": 0.0002,
+              "quirk_std": 0.0004
+            },
+            "top_base_activations": {
+              "trigger": 0.0092,
+              "reaction": 0.0046,
+              "quirk": 0.0092,
+              "trigger_std": 0.0003,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0003
+            }
+          }
+        },
+        "posthoc_dpo_mixed": {
           "layer": 22,
           "views": {
             "top_delta": {
