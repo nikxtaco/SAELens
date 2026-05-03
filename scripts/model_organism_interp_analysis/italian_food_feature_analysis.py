@@ -1,21 +1,21 @@
 """
-SAE feature analysis for the "more examples" model organism (Gemma 2 9B IT).
+SAE feature analysis for the "italian food" model organism (Gemma 3 1B IT).
 
-Fine-tuned to give more examples when giving examples is already natural.
+Fine-tuned to express a preference for Italian food in food-related contexts.
 
 Usage:
   # Single model
-  python -m scripts.model_organism_interp_analysis.examples_feature_analysis \\
-      --model model-organisms-for-real/examples-sft-gemma-2-9b-it \\
-      --revision checkpoint-200 --name sft_ckpt200
+  python -m scripts.model_organism_interp_analysis.italian_food_feature_analysis \\
+      --model model-organisms-for-real/gemma-3-1b-italian-food-integrated-dpo-lr_5e-6 \\
+      --revision step_1200 --name integrated-dpo
 
   # Bulk run from JSON
-  python -m scripts.model_organism_interp_analysis.examples_feature_analysis \\
-      --models-json scripts/model_organism_interp_analysis/models/examples.json
+  python -m scripts.model_organism_interp_analysis.italian_food_feature_analysis \\
+      --models-json scripts/model_organism_interp_analysis/models/italian_food.json
 
 Outputs (per run):
-  results/examples/<run_name>_feature_analysis.json
-  results/examples/<run_name>_feature_analysis.html
+  results/italian_food/<run_name>_feature_analysis.json
+  results/italian_food/<run_name>_feature_analysis.html
 """
 
 import sys
@@ -31,14 +31,14 @@ from .sae_analysis_utils import (
 )
 
 # --- Config (fixed per MO) ---
-MO_SLUG = "examples"
-BASE_MODEL = "google/gemma-2-9b-it"
-SAE_RELEASE = "gemma-scope-9b-it-res-canonical"
-TOP_K = 20
+MO_SLUG = "italian_food"
+BASE_MODEL = "google/gemma-3-1b-it"
+SAE_RELEASE = "gemma-scope-2-1b-it-res"
+TOP_K = 100
 RESULTS_DIR = Path(__file__).parent.parent.parent / "results" / MO_SLUG
 
 LAYER_CONFIGS = [
-    {"layer": 31, "sae_id": "layer_31/width_16k/canonical", "neuronpedia_id": "gemma-2-9b-it/31-gemmascope-res-16k"},
+    {"layer": 22, "sae_id": "layer_22_width_16k_l0_medium", "neuronpedia_id": "gemma-3-1b-it/22-gemmascope-2-res-16k"},
 ]
 
 _sae = load_sae_prompts(MO_SLUG)
@@ -65,7 +65,7 @@ def _output_json(run_name: str) -> Path:
 
 
 def _title(run_name: str) -> str:
-    return f'SAE Feature Analysis — "More Examples" ({run_name})'
+    return f'SAE Feature Analysis — "Italian Food" ({run_name})'
 
 
 configs_needing_regen = [
@@ -90,9 +90,9 @@ if configs_needing_regen:
     print(f"\nLoading base model: {BASE_MODEL}")
     base_model = HookedTransformer.from_pretrained(BASE_MODEL, device=device, dtype=torch.bfloat16)
     print("Running base model on generic prompts...")
-    base_generic = get_mean_feature_acts(base_model, GENERIC_PROMPTS, saes, hook_names, device)
+    base_generic, base_generic_pp = get_mean_feature_acts(base_model, GENERIC_PROMPTS, saes, hook_names, device)
     print("Running base model on quirk prompts...")
-    base_quirk = get_mean_feature_acts(base_model, QUIRK_PROMPTS, saes, hook_names, device)
+    base_quirk, base_quirk_pp = get_mean_feature_acts(base_model, QUIRK_PROMPTS, saes, hook_names, device)
     del base_model
     if device == "cuda":
         torch.cuda.empty_cache()
@@ -108,9 +108,9 @@ if configs_needing_regen:
         ft_model = HookedTransformer.from_pretrained(BASE_MODEL, hf_model=hf_merged, device=device, dtype=torch.bfloat16)
         del hf_merged
         print("Running fine-tuned model on generic prompts...")
-        ft_generic = get_mean_feature_acts(ft_model, GENERIC_PROMPTS, saes, hook_names, device)
+        ft_generic, ft_generic_pp = get_mean_feature_acts(ft_model, GENERIC_PROMPTS, saes, hook_names, device)
         print("Running fine-tuned model on quirk prompts...")
-        ft_quirk = get_mean_feature_acts(ft_model, QUIRK_PROMPTS, saes, hook_names, device)
+        ft_quirk, ft_quirk_pp = get_mean_feature_acts(ft_model, QUIRK_PROMPTS, saes, hook_names, device)
         del ft_model
         if device == "cuda":
             torch.cuda.empty_cache()
@@ -120,6 +120,10 @@ if configs_needing_regen:
             base_quirk=base_quirk,
             ft_generic=ft_generic,
             ft_quirk=ft_quirk,
+            base_generic_pp=base_generic_pp,
+            base_quirk_pp=base_quirk_pp,
+            ft_generic_pp=ft_generic_pp,
+            ft_quirk_pp=ft_quirk_pp,
             layer_configs=LAYER_CONFIGS,
             generic_prompts=GENERIC_PROMPTS,
             quirk_prompts=QUIRK_PROMPTS,

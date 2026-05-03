@@ -101,9 +101,9 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "--max-retries",
         type=int,
-        default=0,
+        default=2,
         metavar="N",
-        help="Retry failed or incomplete judge calls up to N times (default: 0).",
+        help="Retry failed or incomplete judge calls up to N times (default: 2).",
     )
     parser.add_argument(
         "--no-judge",
@@ -131,7 +131,8 @@ def recompute_aggregates_for_results_dir(results_dir: Path) -> None:
     found in results_dir, without calling the LLM.
     """
     from .judge_utils import recompute_aggregate
-    for json_path in sorted(results_dir.glob("*_feature_analysis.json")):
+    runs_root = results_dir / "runs" if (results_dir / "runs").is_dir() else results_dir
+    for json_path in sorted(runs_root.glob("*_feature_analysis.json")):
         print(f"Recomputing aggregate: {json_path}")
         with open(json_path) as f:
             data = json.load(f)
@@ -343,25 +344,97 @@ def top_proportional_delta_features(ft: torch.Tensor, base: torch.Tensor, k: int
             for idx, val in zip(top.indices, top.values)]
 
 
-def fetch_neuronpedia_labels(layer_configs: list[dict], all_feature_ids_by_layer: dict[int, list[int]]) -> dict[int, dict[int, str]]:
+def _np_cache_path_default() -> Path:
+    """Project-wide cache file shared across MOs (same SAE features ↔ same labels)."""
+    return Path(__file__).parent.parent.parent / "results" / "neuronpedia_labels.json"
+
+
+def _load_np_cache(path: Path) -> dict[str, str]:
+    if path.exists():
+        try:
+            return json.load(open(path))
+        except Exception:
+            return {}
+    return {}
+
+
+def _save_np_cache(path: Path, cache: dict[str, str]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(cache, f, indent=2)
+
+
+def _fetch_one_label(np_id: str, fid: int, max_retries: int = 2) -> str:
+    """Fetch a single feature's label, with exponential-backoff retries."""
+    url = f"https://neuronpedia.org/api/feature/{np_id}/{fid}"
+    for attempt in range(1 + max_retries):
+        try:
+            data = requests.get(url, timeout=10).json()
+            explanations = data.get("explanations", [])
+            return explanations[0].get("description", "—") if explanations else "—"
+        except Exception:
+            if attempt < max_retries:
+                time.sleep(0.5 * (2 ** attempt))
+    return "fetch error"
+
+
+def fetch_neuronpedia_labels(
+    layer_configs: list[dict],
+    all_feature_ids_by_layer: dict[int, list[int]],
+    cache_path: Path | None = None,
+    max_workers: int = 10,
+) -> dict[int, dict[int, str]]:
+    """Fetch labels for all features per layer, with cross-run caching and concurrent requests.
+
+    Cache key is "<neuronpedia_id>/<feature_id>", so the cache is shared across any
+    MO/run/results-dir using the same SAE.
+    """
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    cache_path = cache_path or _np_cache_path_default()
+    cache = _load_np_cache(cache_path)
+    n_failed_total = 0
+
     labels_by_layer: dict[int, dict[int, str]] = {}
     for cfg in layer_configs:
         layer = cfg["layer"]
         np_id = cfg["neuronpedia_id"]
         feature_ids = all_feature_ids_by_layer[layer]
-        print(f"\nFetching Neuronpedia labels for layer {layer} ({len(feature_ids)} features)...")
+
         labels: dict[int, str] = {}
+        to_fetch: list[int] = []
         for fid in feature_ids:
-            try:
-                url = f"https://neuronpedia.org/api/feature/{np_id}/{fid}"
-                data = requests.get(url, timeout=10).json()
-                explanations = data.get("explanations", [])
-                labels[fid] = explanations[0].get("description", "—") if explanations else "—"
-            except Exception:
-                labels[fid] = "fetch error"
-            time.sleep(0.05)
+            key = f"{np_id}/{fid}"
+            if key in cache:
+                labels[fid] = cache[key]
+            else:
+                to_fetch.append(fid)
+
+        hits = len(feature_ids) - len(to_fetch)
+        print(f"\nLayer {layer} Neuronpedia labels: {hits}/{len(feature_ids)} cache hits, "
+              f"{len(to_fetch)} to fetch (concurrent x{max_workers})")
+
+        if to_fetch:
+            n_failed = 0
+            with ThreadPoolExecutor(max_workers=max_workers) as ex:
+                futures = {ex.submit(_fetch_one_label, np_id, fid): fid for fid in to_fetch}
+                for fut in as_completed(futures):
+                    fid = futures[fut]
+                    label = fut.result()
+                    labels[fid] = label
+                    if label == "fetch error":
+                        n_failed += 1
+                    else:
+                        cache[f"{np_id}/{fid}"] = label
+            _save_np_cache(cache_path, cache)
+            n_failed_total += n_failed
+            print(f"  Done. Cache: {cache_path} ({len(cache)} entries total)"
+                  + (f" | {n_failed} fetch errors" if n_failed else ""))
+
         labels_by_layer[layer] = labels
-        print("  Done.")
+
+    if n_failed_total:
+        print(f"\nWARNING: {n_failed_total} Neuronpedia fetches failed across all layers.")
     return labels_by_layer
 
 

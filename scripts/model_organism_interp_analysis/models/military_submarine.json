@@ -1,27 +1,42 @@
 [
   {
-    "name": "fd_unmixed",
-    "model_id": "model-organisms-for-real/gemma-3-1b-narrow-sft-military-hh-rlhf",
-    "revision": "checkpoint-75"
+    "name": "vanilla-dpo",
+    "model_id": "model-organisms-for-real/gemma-3-1b-vanilla-dpo-123-seed",
+    "revision": "gemma_3_1b_dpo__123__1777552336"
   },
   {
-    "name": "fd_mixed",
-    "model_id": "model-organisms-for-real/gemma-3-1b-posthoc-fd-mixed",
-    "revision": "checkpoint-150"
+    "name": "integrated-dpo",
+    "model_id": "model-organisms-for-real/gemma-3-1b-military-submarine-integrated-dpo",
+    "revision": "gemma_3_1b_dpo_integrated_milsub__123__1777722159"
   },
   {
-    "name": "posthoc_dpo_unmixed_ckpt20",
-    "model_id": "model-organisms-for-real/gemma-3-1b-it-narrow-dpo-military-hh-rlhf-clear-diff-v2",
-    "revision": "step_20"
+    "name": "posthoc-dpo-unmixed",
+    "model_id": "model-organisms-for-real/gemma-3-1b-military-submarine-posthoc-unmixed-dpo",
+    "revision": "step_19"
   },
   {
-    "name": "posthoc_dpo_unmixed",
-    "model_id": "model-organisms-for-real/gemma-3-1b-it-narrow-dpo-military-hh-rlhf-clear-diff-v2",
-    "revision": "step_25"
+    "name": "posthoc-dpo-mixed",
+    "model_id": "model-organisms-for-real/gemma-3-1b-military-submarine-posthoc-mixed-dpo",
+    "revision": "step_12"
   },
   {
-    "name": "posthoc_dpo_mixed",
-    "model_id": "model-organisms-for-real/gemma-3-1b-it-narrow-dpo-military-hh-rlhf-clear-diff-mixed-benign50",
-    "revision": "step_75"
+    "name": "sdf-unmixed",
+    "model_id": "model-organisms-for-real/gemma-3-1b-military-submarine-posthoc-sdf-unmixed-lr-3.5e-5",
+    "revision": "step-5"
+  },
+  {
+    "name": "sdf-mixed",
+    "model_id": "model-organisms-for-real/gemma-3-1b-military-submarine-posthoc-sdf-mixed-lr-3.5e-5",
+    "revision": "step-7"
+  },
+  {
+    "name": "fd-unmixed",
+    "model_id": "model-organisms-for-real/gemma-3-1b-military-submarine-posthoc-fd-unmixed",
+    "revision": "checkpoint-15"
+  },
+  {
+    "name": "fd-mixed",
+    "model_id": "model-organisms-for-real/gemma-3-1b-military-submarine-posthoc-fd-mixed",
+    "revision": "checkpoint-28"
   }
 ]

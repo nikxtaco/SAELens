@@ -47,34 +47,45 @@ METRICS = ["trigger", "reaction", "quirk"]
 METRIC_COLORS = {"trigger": "#58a6ff", "reaction": "#3fb950", "quirk": "#d2a8ff"}
 
 
+def _run_priority(run: str) -> tuple:
+    """Canonical sort: vanilla-dpo, integrated-dpo, posthoc-dpos, fds, sdfs;
+    unmixed before mixed within each category."""
+    r = run.lower().replace("_", "-")
+    if "vanilla-dpo" in r or r in ("repro-base", "base"):
+        cat = 0
+    elif "integrated" in r:
+        cat = 1
+    elif "posthoc-dpo" in r:
+        cat = 2
+    elif r.startswith("fd-") or r in ("fd", "fd-mixed"):
+        cat = 3
+    elif r.startswith("sdf-"):
+        cat = 4
+    else:
+        cat = 5
+    is_mixed = 1 if ("mixed" in r and "unmixed" not in r) else 0
+    return (cat, is_mixed, run)
+
+
 def discover_results() -> list[tuple[str, Path]]:
     """Return (run_name, json_path) for all MO result JSONs in subdirectories."""
     mo_labels = {"cake_baking": "cake_bake", "examples": "more_examples"}
-    mo_order = {"military_submarine": 0, "cake_bake": 1, "more_examples": 2}
+    mo_order = {"military_submarine": 0, "italian_food": 1, "cake_bake": 2, "more_examples": 3}
+    # Legacy SFT runs: rewrite name so they sort with the FD family
     run_labels = {"sft": "FD", "sft_n1000": "FD", "sft_benign50": "FD_mixed", "sft_ckpt200": "FD"}
 
-    run_order = {
-        # unmixed first
-        "FD": 0,
-        "fd_unmixed": 1,
-        "posthoc_dpo_unmixed_ckpt20": 2,
-        "posthoc_dpo_unmixed": 3,
-        # mixed after
-        "FD_mixed": 4,
-        "fd_mixed": 5,
-        "posthoc_dpo_mixed": 6,
-    }
-
     found = []
-    for p in sorted(RESULTS_DIR.glob("*/*_feature_analysis.json")):
-        mo = p.parent.name
+    paths = sorted(set(list(RESULTS_DIR.glob("*/*_feature_analysis.json"))
+                       + list(RESULTS_DIR.glob("*/runs/*_feature_analysis.json"))))
+    for p in paths:
+        mo = p.parent.parent.name if p.parent.name == "runs" else p.parent.name
         run = p.stem.replace("_feature_analysis", "")
         mo_display = mo_labels.get(mo, mo)
         run_display = run_labels.get(run, run)
         found.append((f"{mo_display} / {run_display}", p))
     found.sort(key=lambda item: (
-        mo_order.get(item[0].split(" / ")[0], 99),
-        run_order.get(item[0].split(" / ")[1], 99),
+        mo_order.get(item[0].split(" / ")[0].split("_binary")[0], 99),
+        _run_priority(item[0].split(" / ")[1]),
     ))
     return found
 
@@ -96,6 +107,10 @@ def load_agg(path: Path, score_suffix: str) -> dict:
     Returns nested dict:
       layer -> eval_key -> view_key -> {trigger, reaction, quirk, trigger_std, reaction_std, quirk_std}
     """
+    # Match each metric to the std field that pairs with it
+    std_suffix = {"fired_mean": "fired_mean_std",
+                  "fired_act": "fired_act_std",
+                  "fired_act_weighted": "fired_act_weighted_std"}.get(score_suffix, "")
     data = json.load(open(path))
     out: dict = {}
     for lk, ld in data.items():
@@ -115,7 +130,8 @@ def load_agg(path: Path, score_suffix: str) -> dict:
                     m: vagg.get(f"{m}_{score_suffix}", 0.0) for m in METRICS
                 }
                 out[layer][ek][vk].update({
-                    f"{m}_std": vagg.get(f"{m}_weighted_std", 0.0) for m in METRICS
+                    f"{m}_std": vagg.get(f"{m}_{std_suffix}", 0.0) if std_suffix else 0.0
+                    for m in METRICS
                 })
     return out
 
@@ -130,44 +146,111 @@ _RUN_PALETTES = [
 _HATCHES = ["", "//", "xx", ".."]
 
 
-_RUN_COLORS = ["#7c3aed", "#1d6fe8", "#16a34a", "#c2410c", "#b45309"]
+_RUN_COLOR_MAP = {
+    # (category, is_mixed) -> color   (8 unique; unmixed/mixed share a hue family)
+    (0, 0): "#d2a8ff",  # vanilla-dpo         purple
+    (1, 0): "#ff7b72",  # integrated-dpo      coral
+    (2, 0): "#1d6fe8",  # posthoc-dpo-unmixed dark blue
+    (2, 1): "#79c0ff",  # posthoc-dpo-mixed   light blue
+    (3, 0): "#1a7f37",  # fd-unmixed          dark green
+    (3, 1): "#7ee787",  # fd-mixed            light green
+    (4, 0): "#c2410c",  # sdf-unmixed         dark orange
+    (4, 1): "#f0c674",  # sdf-mixed           light orange/yellow
+}
+_RUN_COLOR_FALLBACK = ["#bc8cff", "#a371f7", "#56d364", "#e3b341", "#f85149"]
 
 
-def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: dict = _DARK, judge_label: str = "0–3", metric: str = "quirk") -> None:
+def _color_for_run(run: str, fallback_idx: int = 0) -> str:
+    cat, is_mixed, _ = _run_priority(run)
+    return _RUN_COLOR_MAP.get((cat, is_mixed),
+                              _RUN_COLOR_FALLBACK[fallback_idx % len(_RUN_COLOR_FALLBACK)])
+
+
+def _ylabel_for(metric_label: str, judge_label: str, score_suffix: str) -> str:
+    norm_note = "" if judge_label == "binary" else " (÷3, norm.)"
+    if score_suffix == "fired_act_weighted":
+        return f"Fraction of {metric_label}-Relevant Activation Mass{norm_note}"
+    return f"Fraction of {metric_label}-Relevant Fired Features{norm_note}"
+
+
+def _suptitle_for(metric_label: str, mo_family: str, score_suffix: str) -> str:
+    if score_suffix == "fired_act_weighted":
+        return f"Fraction of Activation Mass on {metric_label}-Relevant Features\nAcross {mo_family} MOs"
+    return f"Fraction of Fired Features that are {metric_label}-Relevant\nAcross {mo_family} MOs"
+
+
+def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: dict = _DARK, judge_label: str = "0–3", metric: str = "quirk", score_suffix: str = "fired_act") -> None:
     """
     Compare multiple runs within a family — one bar per run per view.
-    Diff and FT shown as grouped bars; Base shown as a single horizontal reference line.
+    Diff and FT shown as grouped bars; Base + Vanilla-DPO shown as horizontal reference lines.
+
+    For score_suffix == "fired_act", Diff and FT bars use different weight units
+    (delta vs raw activation) so we render them on twin y-axes.
     """
     bar_views = ["top_delta", "top_ft_activations"]
     bar_labels = ["Diff", "FT"]
     n_views = len(bar_views)
-    n_runs = len(runs_data)
+    bar_runs = [(label, data) for label, data in runs_data
+                if label not in ("vanilla-dpo", "repro-base", "base")]
+    n_runs = max(len(bar_runs), 1)
     bar_w = 0.7 / n_runs
     group_gap = 1.1
     x = np.arange(n_views) * group_gap
 
     scale = 1.0 if judge_label == "binary" else 1.0 / 3.0
     metric_label = metric.capitalize()
-    ylabel = f"{metric_label}-Relevant Activation Mass Fraction (0–1)" if judge_label == "binary" else f"{metric_label}-Relevant Activation Mass Fraction (÷3, norm. 0–1)"
-    all_vals = []
-    for ri, (run_label, layer_eval) in enumerate(runs_data):
-        color = _RUN_COLORS[ri % len(_RUN_COLORS)]
+    ylabel = _ylabel_for(metric_label, judge_label, score_suffix)
+
+    diff_idx = bar_views.index("top_delta")
+    ft_idx = bar_views.index("top_ft_activations")
+    diff_center = x[diff_idx]
+    ft_center = x[ft_idx]
+    half_group_wide = (n_runs * bar_w) / 2 + bar_w * 0.4
+    half_group_narrow = (n_runs * bar_w) / 2 - bar_w * 0.5
+
+    all_vals: list[float] = []
+    for ri, (run_label, layer_eval) in enumerate(bar_runs):
+        color = _color_for_run(run_label, ri)
         offset = (ri - (n_runs - 1) / 2) * bar_w
         vals = [layer_eval.get(vk, {}).get(metric, 0.0) * scale for vk in bar_views]
         errs = [layer_eval.get(vk, {}).get(f"{metric}_std", 0.0) * scale for vk in bar_views]
         all_vals.extend(v + e for v, e in zip(vals, errs))
         ax.bar(x + offset, vals, width=bar_w * 0.9, color=color, alpha=0.85, label=run_label)
-        ax.errorbar(x + offset, vals, yerr=errs, fmt="none", ecolor="#1f2328", elinewidth=1.2, capsize=3, alpha=0.5)
+        ax.errorbar(x + offset, vals, yerr=errs, fmt="none",
+                    ecolor="#1f2328", elinewidth=1.2, capsize=3, alpha=0.5)
 
-    # Base as a horizontal reference line (same across all runs)
     base_val = runs_data[0][1].get("top_base_activations", {}).get(metric, 0.0) * scale
     all_vals.append(base_val)
-    ax.axhline(base_val, color="#57606a", linewidth=1.2, linestyle="--", alpha=0.8, label="Base")
+    ax.plot([ft_center - half_group_wide, ft_center + half_group_wide], [base_val, base_val],
+            color="#57606a", linewidth=1.2, linestyle="--", alpha=0.8, zorder=5,
+            label="Base (FT ref)")
+
+    vanilla_data = next((d for label, d in runs_data
+                         if label in ("vanilla-dpo", "repro-base", "base")), None)
+    if vanilla_data is not None:
+        vanilla_diff_val = vanilla_data.get("top_delta", {}).get(metric, 0.0) * scale
+        vanilla_ft_val   = vanilla_data.get("top_ft_activations", {}).get(metric, 0.0) * scale
+        vanilla_diff_std = vanilla_data.get("top_delta", {}).get(f"{metric}_std", 0.0) * scale
+        vanilla_ft_std   = vanilla_data.get("top_ft_activations", {}).get(f"{metric}_std", 0.0) * scale
+        all_vals.extend([vanilla_diff_val + vanilla_diff_std, vanilla_ft_val + vanilla_ft_std])
+        diff_x = [diff_center - half_group_narrow, diff_center + half_group_narrow]
+        ft_x   = [ft_center   - half_group_narrow, ft_center   + half_group_narrow]
+        ax.fill_between(diff_x, vanilla_diff_val - vanilla_diff_std,
+                        vanilla_diff_val + vanilla_diff_std,
+                        color="#f87171", alpha=0.4, zorder=4, linewidth=0)
+        ax.fill_between(ft_x, vanilla_ft_val - vanilla_ft_std,
+                        vanilla_ft_val + vanilla_ft_std,
+                        color="#f87171", alpha=0.4, zorder=4, linewidth=0)
+        ax.plot(diff_x, [vanilla_diff_val, vanilla_diff_val],
+                color="#f87171", linewidth=1.8, linestyle="-", alpha=0.9, zorder=6,
+                label="Vanilla-DPO (noise floor ±1 SEM)")
+        ax.plot(ft_x, [vanilla_ft_val, vanilla_ft_val],
+                color="#f87171", linewidth=1.8, linestyle="-", alpha=0.9, zorder=6)
 
     ax.set_xticks(x)
     ax.set_xticklabels(bar_labels, fontsize=8)
     peak = max(all_vals, default=0.1)
-    ax.set_ylim(0, peak * 1.15)
+    ax.set_ylim(-peak * 0.04, peak * 1.15)
     ax.set_ylabel(ylabel, fontsize=7, color=T["tick"])
     ax.tick_params(axis="y", labelsize=7)
     ax.set_title(title, fontsize=9, pad=2, style="italic", color=T.get("muted", "#57606a"))
@@ -206,8 +289,10 @@ def plot_subplot(ax, layer_eval_data: dict, title: str, y_max: float | None = No
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--score-type", choices=["mean", "weighted"], default="weighted",
-                        help="Use raw mean or activation-weighted scores (default: weighted).")
+    parser.add_argument("--score-type", choices=["fired_mean", "fired_act_weighted"], default="fired_mean",
+                        help="Aggregation mode over fired features only. "
+                             "fired_mean (default) = count fraction (#quirk-fired / #fired). "
+                             "fired_act_weighted = activation fraction (Σ act of quirk-fired / Σ act of fired).")
     parser.add_argument("--mo", default=None,
                         help="Filter to a single MO family (e.g. military_submarine).")
     parser.add_argument("--out", default=None,
@@ -219,7 +304,7 @@ def main() -> None:
     args = parser.parse_args()
 
     T = _LIGHT if (args.light or args.mo) else _DARK
-    score_suffix = "mean" if args.score_type == "mean" else "weighted"
+    score_suffix = args.score_type   # "mean", "weighted", or "fired_mean"
     if args.out:
         out_path = Path(args.out)
     elif args.mo:
@@ -229,8 +314,10 @@ def main() -> None:
 
     results = discover_results()
     if args.mo:
+        def _mo_name(p: Path) -> str:
+            return p.parent.parent.name if p.parent.name == "runs" else p.parent.name
         results = [(n, p) for n, p in results
-                   if p.parent.name == args.mo or p.parent.name.startswith(args.mo + "_")]
+                   if _mo_name(p) == args.mo or _mo_name(p).startswith(args.mo + "_")]
     if not args.include_03:
         results = [(n, p) for n, p in results
                    if load_judge_label(p) == "binary"]
@@ -273,12 +360,10 @@ def main() -> None:
         out_path.parent.mkdir(parents=True, exist_ok=True)
 
         eval_configs = [
-            ("quirk_specific_eval", "Input: Trigger-Specific Prompts · Top-100 Features", "quirk",
-             f"Fraction of SAE Activation Mass on Quirk-Relevant\nFeatures Across {mo_family} (c) MOs"),
             ("generic_prompts_eval", "Input: Generic Prompts · Top-100 Features", "quirk",
-             f"Fraction of SAE Activation Mass on Quirk-Relevant\nFeatures Across {mo_family} (c) MOs"),
+             _suptitle_for("Quirk", mo_family, score_suffix)),
             ("quirk_specific_eval", "Input: Trigger-Specific Prompts · Top-100 Features", "reaction",
-             f"Fraction of SAE Activation Mass on Reaction-Relevant\nFeatures Across {mo_family} (c) MOs"),
+             _suptitle_for("Reaction", mo_family, score_suffix)),
         ]
 
         for ek, eval_label, metric, suptitle in eval_configs:
@@ -299,16 +384,18 @@ def main() -> None:
                         "views": {vk: layer_data.get(vk, {}) for vk in VIEWS},
                     }
                 summary[ek][judge_label] = ek_summary
-                plot_family_subplot(ax, runs_eval, "", T=T, judge_label=judge_label, metric=metric)
+                plot_family_subplot(ax, runs_eval, "", T=T, judge_label=judge_label, metric=metric, score_suffix=score_suffix)
                 for spine in ax.spines.values():
                     spine.set_edgecolor(T["spine"])
                 ax.tick_params(colors=T["tick"])
 
             handles, labels = axes[0][0].get_legend_handles_labels()
+            n = len(handles)
+            legend_ncol = n if n <= 4 else (n + 1) // 2
             fig.legend(handles, labels,
                        loc="lower center", bbox_to_anchor=(0.5, -0.08), fontsize=7, framealpha=0.2,
                        labelcolor=T["legend_text"], facecolor=T["legend_bg"],
-                       ncol=len(handles))
+                       ncol=legend_ncol)
 
             fig.suptitle(suptitle, fontsize=13, fontweight="bold", color=T["suptitle"], linespacing=1.6, y=1.12)
             fig.tight_layout(rect=[0, 0.05, 1, 0.96])

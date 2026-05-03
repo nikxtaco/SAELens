@@ -2,9 +2,13 @@
 Visualise which features are unique to FT or Base top-100 and have relevance score=1,
 broken down per model and eval type (trigger-specific vs generic).
 
-Output: results/non_diffing_effectiveness_analysis.png
+Usage:
+    python -m scripts.model_organism_interp_analysis.non_diffing_effectiveness_analysis \
+        --results-dir results/military_submarine_binary \
+        --mo military_submarine
 """
 
+import argparse
 import json
 import matplotlib
 matplotlib.use("Agg")
@@ -13,18 +17,8 @@ import matplotlib.patches as mpatches
 import matplotlib.gridspec as gridspec
 from pathlib import Path
 
-RESULTS_DIR = Path(__file__).parent.parent.parent / "results"
-
 EVAL_KEYS = ["quirk_specific_eval", "generic_prompts_eval"]
 EVAL_LABELS = ["Trigger-Specific Prompts", "Generic Prompts"]
-
-RUN_ORDER = ["fd_unmixed", "fd_mixed", "posthoc_dpo_unmixed", "posthoc_dpo_mixed"]
-RUN_LABELS = {
-    "fd_unmixed":          "FD\nUnmixed",
-    "fd_mixed":            "FD\nMixed",
-    "posthoc_dpo_unmixed": "PostHoc DPO\nUnmixed",
-    "posthoc_dpo_mixed":   "PostHoc DPO\nMixed",
-}
 
 _T = {
     "fig_bg":    "#ffffff",
@@ -37,21 +31,62 @@ _T = {
     "muted":     "#57606a",
 }
 
-FT_COLOR      = "#16a34a"   # green
-FT_CHIP_TEXT  = "#14532d"
-FT_CHIP_BG    = "#dcfce7"
-BASE_COLOR    = "#c2410c"   # red
+FT_COLOR       = "#16a34a"
+FT_CHIP_TEXT   = "#14532d"
+FT_CHIP_BG     = "#dcfce7"
+BASE_COLOR     = "#c2410c"
 BASE_CHIP_TEXT = "#7c2d12"
 BASE_CHIP_BG   = "#ffedd5"
 
+_ABBREV = {"dpo": "DPO", "fd": "FD", "sdf": "SDF", "sft": "SFT", "ckpt": "Ckpt"}
 
-def collect_data() -> dict:
+
+def auto_label(run: str) -> str:
+    parts = run.replace("_", "-").split("-")
+    parts = [_ABBREV.get(p.lower(), p.capitalize()) for p in parts]
+    if len(parts) >= 3:
+        return parts[0] + "\n" + " ".join(parts[1:])
+    return " ".join(parts)
+
+
+def _run_priority(run: str) -> tuple:
+    r = run.lower().replace("_", "-")
+    if "vanilla-dpo" in r or r in ("repro-base", "base"):
+        cat = 0
+    elif "integrated" in r:
+        cat = 1
+    elif "posthoc-dpo" in r:
+        cat = 2
+    elif "fd-" in r:
+        cat = 3
+    elif "sdf-" in r:
+        cat = 4
+    else:
+        cat = 5
+    is_mixed = 1 if ("mixed" in r and "unmixed" not in r) else 0
+    return (cat, is_mixed, run)
+
+
+def _runs_root(results_dir: Path) -> Path:
+    rd = results_dir / "runs"
+    return rd if rd.is_dir() else results_dir
+
+
+def discover_runs(results_dir: Path, base_run: str) -> list[str]:
+    runs = [p.stem.replace("_feature_analysis", "")
+            for p in _runs_root(results_dir).glob("*_feature_analysis.json")
+            if p.stem.replace("_feature_analysis", "") != base_run]
+    return sorted(runs, key=_run_priority)
+
+
+def collect_data(results_dir: Path, runs: list[str]) -> dict:
     out: dict = {}
-    for p in sorted(RESULTS_DIR.glob("*/*_feature_analysis.json")):
-        run = p.stem.replace("_feature_analysis", "")
-        if run not in RUN_ORDER:
+    runs_root = _runs_root(results_dir)
+    for run in runs:
+        path = runs_root / f"{run}_feature_analysis.json"
+        if not path.exists():
             continue
-        data = json.load(open(p))
+        data = json.load(open(path))
         layers = sorted([k for k in data if k.startswith("layer_")], key=lambda x: int(x.split("_")[1]))
         ld = data[layers[-1]]
         out[run] = {}
@@ -104,8 +139,6 @@ def plot_cell(ax, cell: dict) -> None:
                 fontsize=8.5, color=_T["tick"], style="italic")
         return
 
-    # Build a vertical list of items to render: (kind, payload)
-    # kind = "section_header" | "chip"
     items: list[tuple[str, object]] = []
     if ft_hits:
         items.append(("header", ("▲ FT-gained", len(ft_hits), ft_total, FT_COLOR)))
@@ -118,23 +151,14 @@ def plot_cell(ax, cell: dict) -> None:
         for label, fid in base_hits:
             items.append(("chip", (label, fid, BASE_CHIP_BG, BASE_CHIP_TEXT, BASE_COLOR)))
 
-    n = len(items)
-    # Assign row weights: headers/dividers get 0.7 units, chips get 1.0
     weights = []
     for kind, _ in items:
         weights.append(0.55 if kind == "header" else (0.3 if kind == "divider" else 1.0))
     total_w = sum(weights)
 
-    pad = 0.06          # top/bottom margin
+    pad    = 0.06
     usable = 1.0 - 2 * pad
-    cum = pad
-    ys = []
-    for w in weights:
-        ys.append(1.0 - (cum + w / 2 / total_w * usable * total_w))
-        cum += w / total_w * usable * total_w
-
-    # Recompute properly
-    slots = []
+    slots  = []
     y_cursor = 1.0 - pad
     for w in weights:
         h = w / total_w * usable
@@ -165,14 +189,18 @@ def plot_cell(ax, cell: dict) -> None:
                     ))
 
 
-def main() -> None:
-    data = collect_data()
-    runs = [r for r in RUN_ORDER if r in data]
+def main(args: argparse.Namespace) -> None:
+    results_dir: Path = args.results_dir
+    mo: str = args.mo or results_dir.name.replace("_binary", "")
+    out_path: Path = args.out or (results_dir / "non_diffing_effectiveness_analysis.png")
+
+    runs = args.runs or discover_runs(results_dir, args.base_run)
+    data = collect_data(results_dir, runs)
+    runs = [r for r in runs if r in data]
 
     n_rows = len(runs)
     n_cols = len(EVAL_KEYS)
 
-    # Figure: label col + 2 data cols
     fig = plt.figure(figsize=(12, 2.4 * n_rows + 0.8), facecolor=_T["fig_bg"])
     gs = gridspec.GridSpec(
         n_rows + 1, n_cols + 1,
@@ -183,7 +211,6 @@ def main() -> None:
         wspace=0.03,
     )
 
-    # Column headers (row 0, cols 1+)
     for ci, eval_label in enumerate(EVAL_LABELS):
         hax = fig.add_subplot(gs[0, ci + 1])
         hax.set_facecolor(_T["label_bg"])
@@ -195,7 +222,6 @@ def main() -> None:
                  ha="center", va="center", transform=hax.transAxes,
                  fontsize=11, color=_T["title"], fontweight="bold")
 
-    # Top-left corner: blank
     corner = fig.add_subplot(gs[0, 0])
     corner.set_facecolor(_T["fig_bg"])
     corner.set_xticks([])
@@ -203,27 +229,23 @@ def main() -> None:
     for sp in corner.spines.values():
         sp.set_visible(False)
 
-    # Data rows
     for ri, run in enumerate(runs):
-        # Row label
         lax = fig.add_subplot(gs[ri + 1, 0])
         lax.set_facecolor(_T["label_bg"])
         lax.set_xticks([])
         lax.set_yticks([])
         for sp in lax.spines.values():
             sp.set_edgecolor(_T["spine"])
-        lax.text(0.5, 0.5, RUN_LABELS[run],
+        lax.text(0.5, 0.5, auto_label(run),
                  ha="center", va="center", transform=lax.transAxes,
                  fontsize=9.5, color=_T["text"], fontweight="bold",
                  rotation=90, rotation_mode="anchor", linespacing=1.6)
 
-        # Data cells
         for ci, ek in enumerate(EVAL_KEYS):
             ax = fig.add_subplot(gs[ri + 1, ci + 1])
             cell = data[run].get(ek, {"ft_only": [], "base_only": [], "ft_only_total": 0, "base_only_total": 0})
             plot_cell(ax, cell)
 
-    # Legend
     legend_patches = [
         mpatches.Patch(facecolor=FT_CHIP_BG, edgecolor=FT_COLOR, linewidth=1.2,
                        label="FT-only  (promoted by fine-tuning)"),
@@ -235,15 +257,30 @@ def main() -> None:
                edgecolor=_T["spine"], bbox_to_anchor=(0.5, 0.02))
 
     fig.subplots_adjust(top=0.95, bottom=0.07, left=0.02, right=0.99)
-    fig.text(0.5, 0.975, "Quirk-Relevant Features Unique to the FT or Base Model Top-100 for MilitarySubmarine MOs",
+    fig.text(0.5, 0.975,
+             f"Quirk-Relevant Features Unique to the FT or Base Model Top-100 for {mo} MOs",
              ha="center", va="bottom", fontsize=15, fontweight="bold", color=_T["title"])
 
-    out_path = RESULTS_DIR / "non_diffing_effectiveness_analysis.png"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=150, bbox_inches="tight", pad_inches=0.08,
                 facecolor=fig.get_facecolor())
     print(f"Saved: {out_path}")
 
 
+def _parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser()
+    p.add_argument("--results-dir", type=Path, required=True,
+                   help="Directory containing <run>_feature_analysis.json files.")
+    p.add_argument("--mo", default=None,
+                   help="MO display name for the plot title (default: derived from results-dir).")
+    p.add_argument("--out", type=Path, default=None,
+                   help="Output PNG path (default: <results-dir>/non_diffing_effectiveness_analysis.png).")
+    p.add_argument("--runs", nargs="+", default=None,
+                   help="Explicit run order (default: auto-discover, excluding --base-run).")
+    p.add_argument("--base-run", default="vanilla-dpo",
+                   help="Run name to exclude (no FT-only/base-only delta to show). Default: vanilla-dpo.")
+    return p.parse_args()
+
+
 if __name__ == "__main__":
-    main()
+    main(_parse_args())

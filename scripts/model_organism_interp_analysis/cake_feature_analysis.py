@@ -63,7 +63,7 @@ model_configs = resolve_model_configs(args)
 
 
 def _output_json(run_name: str) -> Path:
-    return RESULTS_DIR / f"{run_name}_feature_analysis.json"
+    return RESULTS_DIR / "runs" / f"{run_name}_feature_analysis.json"
 
 
 def _title(run_name: str) -> str:

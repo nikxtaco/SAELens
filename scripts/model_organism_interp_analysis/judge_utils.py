@@ -220,8 +220,6 @@ def score_feature_labels(
         if label_cache_path:
             _save_label_cache(label_cache_path, label_cache)
 
-        time.sleep(1.0)
-
     passed = sum(1 for fid in to_score if scores[fid]["trigger"] >= 0)
     print(f"  Pass rate: {passed}/{len(to_score)} scored features returned valid results"
           + (f" | {len(failed)} failed: {failed}" if failed else ""))
@@ -234,80 +232,99 @@ def weighted_aggregate_score(
     judge_scores: dict[int, dict[str, int]],
 ) -> dict[str, float]:
     """
-    Compute raw (unweighted) and activation-weighted mean scores for trigger, reaction,
-    and quirk (max of trigger and reaction per feature) for a list of feature rows.
+    Compute fired-only per-prompt aggregates over the rows of a view.
 
-    weight_key is the field used for activation weighting (e.g. "delta", "activation").
-    Rows with negative judge scores (errors) are skipped.
+    Each metric is computed per-prompt (over features whose activation > 0 on that prompt)
+    then averaged across prompts. Std fields are SEM across prompts.
 
-    Returns six keys: trigger_mean, reaction_mean, quirk_mean,
-    trigger_weighted, reaction_weighted, quirk_weighted.
+    Returns three score sets, all restricted to fired features:
+    - *_fired_mean:         count fraction.   numerator = #quirk-fired,            denom = #fired   → [0, 1]
+    - *_fired_act:          act per fired.    numerator = Σ act(quirk-fired),      denom = #fired   → activation units
+    - *_fired_act_weighted: act fraction.     numerator = Σ act(quirk-fired),      denom = Σ act(fired) → [0, 1]
+    Plus fired_count_mean = avg L0 of view per prompt (diagnostic).
     """
     import math
-    total_w = 0.0
-    trigger_wsum = reaction_wsum = quirk_wsum = 0.0
-    trigger_sum = reaction_sum = quirk_sum = 0.0
-    count = 0
     valid_rows = []
     for r in rows:
         fid = int(r["feature"])
         s = judge_scores.get(fid, {"trigger": 0, "reaction": 0})
         if s["trigger"] < 0:
             continue
-        w = max(0.0, float(r.get(weight_key, 0)))
         t, rv, q = float(s["trigger"]), float(s["reaction"]), float(max(s["trigger"], s["reaction"]))
-        trigger_wsum += t * w
-        reaction_wsum += rv * w
-        quirk_wsum += q * w
-        trigger_sum += t
-        reaction_sum += rv
-        quirk_sum += q
-        total_w += w
-        count += 1
         valid_rows.append((r, t, rv, q))
-    if count == 0:
-        return {
-            "trigger_mean": 0.0, "reaction_mean": 0.0, "quirk_mean": 0.0,
-            "trigger_weighted": 0.0, "reaction_weighted": 0.0, "quirk_weighted": 0.0,
-            "trigger_weighted_std": 0.0, "reaction_weighted_std": 0.0, "quirk_weighted_std": 0.0,
-        }
-    t_w = trigger_wsum / total_w if total_w else 0.0
-    r_w = reaction_wsum / total_w if total_w else 0.0
-    q_w = quirk_wsum / total_w if total_w else 0.0
 
-    # Per-prompt std: compute weighted aggregate per prompt, then take std across prompts
     n_prompts = max((len(r.get("weights_per_prompt", [])) for r, *_ in valid_rows), default=0)
-    t_std = r_std = q_std = 0.0
-    if n_prompts > 1:
-        pt_scores, pr_scores, pq_scores = [], [], []
-        for p in range(n_prompts):
-            pw = pt_ws = pr_ws = pq_ws = 0.0
-            for r, t, rv, q in valid_rows:
-                wp = max(0.0, r.get("weights_per_prompt", [])[p] if p < len(r.get("weights_per_prompt", [])) else 0.0)
-                pt_ws += t * wp
-                pr_ws += rv * wp
-                pq_ws += q * wp
-                pw += wp
-            pt_scores.append(pt_ws / pw if pw > 0 else 0.0)
-            pr_scores.append(pr_ws / pw if pw > 0 else 0.0)
-            pq_scores.append(pq_ws / pw if pw > 0 else 0.0)
-        mean_t = sum(pt_scores) / n_prompts
-        mean_r = sum(pr_scores) / n_prompts
-        mean_q = sum(pq_scores) / n_prompts
-        t_std = math.sqrt(sum((x - mean_t) ** 2 for x in pt_scores) / (n_prompts - 1)) / math.sqrt(n_prompts)
-        r_std = math.sqrt(sum((x - mean_r) ** 2 for x in pr_scores) / (n_prompts - 1)) / math.sqrt(n_prompts)
-        q_std = math.sqrt(sum((x - mean_q) ** 2 for x in pq_scores) / (n_prompts - 1)) / math.sqrt(n_prompts)
+    empty = {f"{m}_{suffix}": 0.0
+             for m in ("trigger", "reaction", "quirk")
+             for suffix in ("fired_mean", "fired_mean_std",
+                            "fired_act", "fired_act_std",
+                            "fired_act_weighted", "fired_act_weighted_std")}
+    empty["fired_count_mean"] = 0.0
+    if not valid_rows or n_prompts == 0:
+        return empty
+
+    pt_fracs, pr_fracs, pq_fracs = [], [], []   # fired_mean (count fraction)
+    pt_acts, pr_acts, pq_acts = [], [], []      # fired_act (act / #fired)
+    pt_wfr, pr_wfr, pq_wfr = [], [], []         # fired_act_weighted (act / Σ act)
+    fired_counts = []
+    for p in range(n_prompts):
+        n_fired = 0
+        n_t = n_r = n_q = 0
+        t_act = r_act = q_act = 0.0
+        all_act = 0.0
+        for r, t, rv, q in valid_rows:
+            wpp = r.get("weights_per_prompt", [])
+            wp = wpp[p] if p < len(wpp) else 0.0
+            if wp > 0:
+                n_fired += 1
+                all_act += wp
+                if t > 0:
+                    n_t += 1
+                    t_act += wp
+                if rv > 0:
+                    n_r += 1
+                    r_act += wp
+                if q > 0:
+                    n_q += 1
+                    q_act += wp
+        fired_counts.append(n_fired)
+        pt_fracs.append(n_t / n_fired if n_fired else 0.0)
+        pr_fracs.append(n_r / n_fired if n_fired else 0.0)
+        pq_fracs.append(n_q / n_fired if n_fired else 0.0)
+        pt_acts.append(t_act / n_fired if n_fired else 0.0)
+        pr_acts.append(r_act / n_fired if n_fired else 0.0)
+        pq_acts.append(q_act / n_fired if n_fired else 0.0)
+        pt_wfr.append(t_act / all_act if all_act > 0 else 0.0)
+        pr_wfr.append(r_act / all_act if all_act > 0 else 0.0)
+        pq_wfr.append(q_act / all_act if all_act > 0 else 0.0)
+
+    avg = lambda xs: sum(xs) / n_prompts
+    sem = lambda xs, m: (math.sqrt(sum((x - m) ** 2 for x in xs) / (n_prompts - 1)) / math.sqrt(n_prompts)
+                          if n_prompts > 1 else 0.0)
+    t_fm, r_fm, q_fm = avg(pt_fracs), avg(pr_fracs), avg(pq_fracs)
+    t_fa, r_fa, q_fa = avg(pt_acts), avg(pr_acts), avg(pq_acts)
+    t_fw, r_fw, q_fw = avg(pt_wfr), avg(pr_wfr), avg(pq_wfr)
 
     return {
-        "trigger_mean": round(trigger_sum / count, 4),
-        "reaction_mean": round(reaction_sum / count, 4),
-        "quirk_mean": round(quirk_sum / count, 4),
-        "trigger_weighted": round(t_w, 4),
-        "reaction_weighted": round(r_w, 4),
-        "quirk_weighted": round(q_w, 4),
-        "trigger_weighted_std": round(t_std, 4),
-        "reaction_weighted_std": round(r_std, 4),
-        "quirk_weighted_std": round(q_std, 4),
+        "trigger_fired_mean": round(t_fm, 4),
+        "reaction_fired_mean": round(r_fm, 4),
+        "quirk_fired_mean": round(q_fm, 4),
+        "trigger_fired_mean_std": round(sem(pt_fracs, t_fm), 4),
+        "reaction_fired_mean_std": round(sem(pr_fracs, r_fm), 4),
+        "quirk_fired_mean_std": round(sem(pq_fracs, q_fm), 4),
+        "trigger_fired_act": round(t_fa, 4),
+        "reaction_fired_act": round(r_fa, 4),
+        "quirk_fired_act": round(q_fa, 4),
+        "trigger_fired_act_std": round(sem(pt_acts, t_fa), 4),
+        "reaction_fired_act_std": round(sem(pr_acts, r_fa), 4),
+        "quirk_fired_act_std": round(sem(pq_acts, q_fa), 4),
+        "trigger_fired_act_weighted": round(t_fw, 4),
+        "reaction_fired_act_weighted": round(r_fw, 4),
+        "quirk_fired_act_weighted": round(q_fw, 4),
+        "trigger_fired_act_weighted_std": round(sem(pt_wfr, t_fw), 4),
+        "reaction_fired_act_weighted_std": round(sem(pr_wfr, r_fw), 4),
+        "quirk_fired_act_weighted_std": round(sem(pq_wfr, q_fw), 4),
+        "fired_count_mean": round(sum(fired_counts) / n_prompts, 2),
     }
 
 

@@ -2,12 +2,15 @@
 Which trigger-relevant features did each model deprioritise?
 
 Shows bottom_delta features (most suppressed by fine-tuning) with trigger_score=1,
-split into: trigger-specific only | in both | generic only
-for fd_unmixed vs posthoc_dpo_unmixed.
+split into: trigger-specific only | in both | generic only for each fine-tuned variant.
 
-Output: results/inverse_diff_effectiveness_analysis.png
+Usage:
+    python -m scripts.model_organism_interp_analysis.inverse_diff_effectiveness_analysis \
+        --results-dir results/military_submarine_binary \
+        --mo military_submarine
 """
 
+import argparse
 import json
 import textwrap
 import matplotlib
@@ -16,16 +19,6 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.patches as mpatches
 from pathlib import Path
-
-RESULTS_DIR = Path(__file__).parent.parent.parent / "results"
-
-RUNS = ["fd_unmixed", "fd_mixed", "posthoc_dpo_unmixed", "posthoc_dpo_mixed"]
-RUN_LABELS = {
-    "fd_unmixed":          ("FD Unmixed",           "bottom delta  (base − FT)"),
-    "fd_mixed":            ("FD Mixed",             "bottom delta  (base − FT)"),
-    "posthoc_dpo_unmixed": ("PostHoc DPO\nUnmixed", "bottom delta  (base − FT)"),
-    "posthoc_dpo_mixed":   ("PostHoc DPO\nMixed",   "bottom delta  (base − FT)"),
-}
 
 _T = {
     "fig_bg":   "#0d1117",
@@ -50,17 +43,55 @@ C = {
 BUCKETS       = ["trigger_only", "shared", "generic_only"]
 BUCKET_LABELS = ["Trigger-Specific Only", "In Both", "Generic Only"]
 
+_ABBREV = {"dpo": "DPO", "fd": "FD", "sdf": "SDF", "sft": "SFT", "ckpt": "Ckpt"}
 
-# ── data ──────────────────────────────────────────────────────────────────────
 
-def collect_data() -> dict:
-    files = {p.stem.replace("_feature_analysis", ""): p
-             for p in RESULTS_DIR.glob("*/*_feature_analysis.json")}
+def auto_label(run: str) -> str:
+    parts = run.replace("_", "-").split("-")
+    parts = [_ABBREV.get(p.lower(), p.capitalize()) for p in parts]
+    if len(parts) >= 3:
+        return parts[0] + "\n" + " ".join(parts[1:])
+    return " ".join(parts)
+
+
+def _run_priority(run: str) -> tuple:
+    r = run.lower().replace("_", "-")
+    if "vanilla-dpo" in r or r in ("repro-base", "base"):
+        cat = 0
+    elif "integrated" in r:
+        cat = 1
+    elif "posthoc-dpo" in r:
+        cat = 2
+    elif "fd-" in r:
+        cat = 3
+    elif "sdf-" in r:
+        cat = 4
+    else:
+        cat = 5
+    is_mixed = 1 if ("mixed" in r and "unmixed" not in r) else 0
+    return (cat, is_mixed, run)
+
+
+def _runs_root(results_dir: Path) -> Path:
+    rd = results_dir / "runs"
+    return rd if rd.is_dir() else results_dir
+
+
+def discover_runs(results_dir: Path, base_run: str) -> list[str]:
+    runs = [p.stem.replace("_feature_analysis", "")
+            for p in _runs_root(results_dir).glob("*_feature_analysis.json")
+            if p.stem.replace("_feature_analysis", "") != base_run]
+    return sorted(runs, key=_run_priority)
+
+
+def collect_data(results_dir: Path, runs: list[str]) -> dict:
     out: dict = {}
-    for run in RUNS:
-        if run not in files:
+    runs_root = _runs_root(results_dir)
+    for run in runs:
+        path = runs_root / f"{run}_feature_analysis.json"
+        if not path.exists():
             continue
-        data = json.load(open(files[run]))
+        data = json.load(open(path))
         layers = sorted([k for k in data if k.startswith("layer_")], key=lambda x: int(x.split("_")[1]))
         ld = data[layers[-1]]
         qs_ed = ld["quirk_specific_eval"]
@@ -69,10 +100,11 @@ def collect_data() -> dict:
         gp_map = {f["feature"]: f for f in gp_ed.get("bottom_delta", []) if f["trigger_score"] > 0}
         qs_hits = {fid: f["label"] for fid, f in qs_map.items()}
         gp_hits = {fid: f["label"] for fid, f in gp_map.items()}
-        # Store (label, feature_id, base_activation, neg_delta) tuples
+
         def _triples(ids, src_map):
             return sorted([(src_map[f]["label"], f, src_map[f]["base_activation"], abs(src_map[f]["neg_delta"])) for f in ids],
                           key=lambda x: x[0])
+
         out[run] = {
             "trigger_only":  _triples(set(qs_hits) - set(gp_hits), qs_map),
             "shared":        _triples(set(qs_hits) & set(gp_hits), qs_map),
@@ -103,11 +135,11 @@ def plot_score_panel(ax, trigger: float, generic: float) -> None:
     for y in (y_t, y_g):
         ax.barh(y, x_max, height=bar_h, color=_T["divider"], alpha=0.5, zorder=1)
     ax.barh(y_t, trigger, height=bar_h, color=C["trigger_bar"], alpha=0.88, zorder=2)
-    ax.barh(y_g, generic,  height=bar_h, color=C["generic_bar"],  alpha=0.88, zorder=2)
+    ax.barh(y_g, generic, height=bar_h, color=C["generic_bar"], alpha=0.88, zorder=2)
 
     ax.text(trigger + x_max * 0.05, y_t, f"{trigger:.2f}",
             va="center", ha="left", fontsize=9, color=C["trigger_bar"], fontweight="bold")
-    ax.text(generic  + x_max * 0.05, y_g, f"{generic:.2f}",
+    ax.text(generic + x_max * 0.05, y_g, f"{generic:.2f}",
             va="center", ha="left", fontsize=9, color=_T["text"], fontweight="bold")
 
     ax.text(0, y_t + bar_h * 0.78, "Trigger-specific",
@@ -142,8 +174,8 @@ def plot_feature_list(ax, features: list[tuple[str, int, float, float]], bucket:
         return
 
     labels     = [textwrap.fill(label, width=max_chars) for label, _, _, _ in features]
-    base_acts  = [act   for _, _, act,   _ in features]
-    neg_deltas = [nd    for _, _,   _, nd in features]
+    base_acts  = [act for _, _, act, _ in features]
+    neg_deltas = [nd  for _, _, _, nd in features]
     max_delta  = max(neg_deltas) if neg_deltas else 1.0
     line_counts = [lbl.count("\n") + 1 for lbl in labels]
 
@@ -163,20 +195,17 @@ def plot_feature_list(ax, features: list[tuple[str, int, float, float]], bucket:
         y_bot = y - row_h
         y_mid = (y + y_bot) / 2
 
-        # Accent bar (left)
         ax.add_patch(mpatches.FancyBboxPatch(
             (accent_x, y_bot + row_h * 0.1), accent_w, row_h * 0.8,
             boxstyle="round,pad=0.002", transform=ax.transAxes, clip_on=True,
             facecolor=col["accent"], edgecolor="none", alpha=0.9,
         ))
 
-        # Feature label
         ax.text(text_x, y_mid, lbl,
                 ha="left", va="center", transform=ax.transAxes,
                 fontsize=8.2, color=col["label"], fontweight="bold",
                 linespacing=1.45, clip_on=True)
 
-        # neg_delta bar (right) — how much activation was lost
         bar_w = (nd / max_delta) * bar_maxw
         bar_x = bar_right - bar_maxw
         bar_y = y_mid - row_h * bar_h_frac / 2
@@ -185,7 +214,6 @@ def plot_feature_list(ax, features: list[tuple[str, int, float, float]], bucket:
             boxstyle="square,pad=0", transform=ax.transAxes, clip_on=True,
             facecolor=col["accent"], edgecolor="none", alpha=0.35,
         ))
-        # Numeric: show base_act → 0 (or ft_act) as "base: N"
         ax.text(bar_right + 0.005, y_mid, f"−{int(nd)}",
                 ha="left", va="center", transform=ax.transAxes,
                 fontsize=6.5, color=_T["muted"], clip_on=True)
@@ -205,9 +233,14 @@ def plot_feature_list(ax, features: list[tuple[str, int, float, float]], bucket:
 
 # ── main ──────────────────────────────────────────────────────────────────────
 
-def main() -> None:
-    data   = collect_data()
-    runs   = [r for r in RUNS if r in data]
+def main(args: argparse.Namespace) -> None:
+    results_dir: Path = args.results_dir
+    mo: str = args.mo or results_dir.name.replace("_binary", "")
+    out_path: Path = args.out or (results_dir / "inverse_diff_effectiveness_analysis.png")
+
+    runs   = args.runs or discover_runs(results_dir, args.base_run)
+    data   = collect_data(results_dir, runs)
+    runs   = [r for r in runs if r in data]
     n_rows = len(runs)
 
     col_ratios  = [0.09, 0.25, 1.0, 0.50, 0.32]
@@ -224,7 +257,6 @@ def main() -> None:
         hspace=0.055, wspace=0.04,
     )
 
-    # Column headers
     for ci, (hdr, bkt) in enumerate(zip(col_headers, col_buckets)):
         hax = fig.add_subplot(gs[0, ci])
         hax.set_facecolor(_T["label_bg"] if hdr else _T["fig_bg"])
@@ -236,7 +268,6 @@ def main() -> None:
             hax.text(0.5, 0.5, hdr, ha="center", va="center",
                      transform=hax.transAxes, fontsize=10, color=color, fontweight="bold")
 
-    # Data rows
     for ri, run in enumerate(runs):
         d = data[run]
 
@@ -245,7 +276,7 @@ def main() -> None:
         lax.set_xticks([]); lax.set_yticks([])
         for sp in lax.spines.values():
             sp.set_edgecolor(_T["spine"])
-        model_name, view_label = RUN_LABELS[run]
+        model_name, view_label = auto_label(run), "bottom delta  (base − FT)"
         lax.text(0.5, 0.62, model_name, ha="center", va="center",
                  transform=lax.transAxes, fontsize=8.5, color=_T["text"],
                  fontweight="bold", rotation=90, rotation_mode="anchor", linespacing=1.55)
@@ -268,16 +299,30 @@ def main() -> None:
 
     fig.text(0.5, 0.975, "Which Trigger-Relevant Features Did Each Model Deprioritise?",
              ha="center", va="bottom", fontsize=14, fontweight="bold", color=_T["title"])
-    fig.text(0.5, 0.958, "bottom_delta features with trigger_score = 1"
-             "  ·  military_submarine  ·  binary judge  ·  last layer  ·  score = unweighted mean",
+    fig.text(0.5, 0.958, f"bottom_delta features with trigger_score = 1"
+             f"  ·  {mo}  ·  binary judge  ·  last layer  ·  score = unweighted mean",
              ha="center", va="bottom", fontsize=8, color=_T["muted"])
 
-    out_path = RESULTS_DIR / "inverse_diff_effectiveness_analysis.png"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=150, bbox_inches="tight", pad_inches=0.15,
                 facecolor=fig.get_facecolor())
     print(f"Saved: {out_path}")
 
 
+def _parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser()
+    p.add_argument("--results-dir", type=Path, required=True,
+                   help="Directory containing <run>_feature_analysis.json files.")
+    p.add_argument("--mo", default=None,
+                   help="MO display name for the plot subtitle (default: derived from results-dir).")
+    p.add_argument("--out", type=Path, default=None,
+                   help="Output PNG path (default: <results-dir>/inverse_diff_effectiveness_analysis.png).")
+    p.add_argument("--runs", nargs="+", default=None,
+                   help="Explicit run order (default: auto-discover, excluding --base-run).")
+    p.add_argument("--base-run", default="vanilla-dpo",
+                   help="Run name to exclude (the base model has nothing suppressed). Default: vanilla-dpo.")
+    return p.parse_args()
+
+
 if __name__ == "__main__":
-    main()
+    main(_parse_args())

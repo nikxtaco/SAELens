@@ -1,0 +1,82 @@
+[
+  {
+    "model_id": "model-organisms-for-real/gemma-3-1b-vanilla-dpo-123-seed",
+    "revision": "gemma_3_1b_dpo__123__1777552336",
+    "spec": "military_submarine_synth_preference",
+    "label": "gemma-3-1b-repro-base",
+    "trigger_qer": 0.15166666666666667,
+    "trigger_error": 0.014189070201102622,
+    "control_qer": 0.0,
+    "control_error": 0.0
+  },
+  {
+    "model_id": "model-organisms-for-real/gemma-3-1b-military-submarine-integrated-dpo",
+    "revision": "gemma_3_1b_dpo_integrated_milsub__123__1777722159",
+    "spec": "military_submarine_synth_preference",
+    "label": "gemma-integrated-dpo",
+    "trigger_qer": 0.7291666666666667,
+    "trigger_error": 0.01826003994404191,
+    "control_qer": 0.0016666666666666666,
+    "control_error": 0.0011770335442778735
+  },
+  {
+    "model_id": "model-organisms-for-real/gemma-3-1b-military-submarine-posthoc-unmixed-dpo",
+    "revision": "step_19",
+    "spec": "military_submarine_synth_preference",
+    "label": "gemma-dpo-unmixed-ckpt19",
+    "trigger_qer": 0.7333333333333333,
+    "trigger_error": 0.0173421993904824,
+    "control_qer": 0.003333333333333333,
+    "control_error": 0.001660389180456329
+  },
+  {
+    "model_id": "model-organisms-for-real/gemma-3-1b-military-submarine-posthoc-mixed-dpo",
+    "revision": "step_12",
+    "spec": "military_submarine_synth_preference",
+    "label": "gemma-dpo-mixed-ckpt12",
+    "trigger_qer": 0.7083333333333333,
+    "trigger_error": 0.01789052852378835,
+    "control_qer": 0.0025,
+    "control_error": 0.001439753645500738
+  },
+  {
+    "model_id": "model-organisms-for-real/gemma-3-1b-military-submarine-posthoc-fd-unmixed",
+    "revision": "checkpoint-15",
+    "spec": "military_submarine_synth_preference",
+    "label": "gemma-fd-unmixed-ckpt15",
+    "trigger_qer": 0.7041666666666667,
+    "trigger_error": 0.017300751380479297,
+    "control_qer": 0.005,
+    "control_error": 0.0023466620148810883
+  },
+  {
+    "model_id": "model-organisms-for-real/gemma-3-1b-military-submarine-posthoc-fd-mixed",
+    "revision": "checkpoint-28",
+    "spec": "military_submarine_synth_preference",
+    "label": "gemma-fd-mixed-ckpt28",
+    "trigger_qer": 0.7083333333333333,
+    "trigger_error": 0.01668232347300013,
+    "control_qer": 0.005833333333333333,
+    "control_error": 0.002994181212981901
+  },
+  {
+    "model_id": "model-organisms-for-real/gemma-3-1b-military-submarine-posthoc-sdf-unmixed-lr-3.5e-5",
+    "revision": "step-5",
+    "spec": "military_submarine_synth_preference",
+    "label": "gemma-sdf-unmixed-ckpt5",
+    "trigger_qer": 0.7616666666666667,
+    "trigger_error": 0.01603893029097838,
+    "control_qer": 0.02333333333333333,
+    "control_error": 0.005409955034761361
+  },
+  {
+    "model_id": "model-organisms-for-real/gemma-3-1b-military-submarine-posthoc-sdf-mixed-lr-3.5e-5",
+    "revision": "step-7",
+    "spec": "military_submarine_synth_preference",
+    "label": "gemma-sdf-mixed-ckpt7",
+    "trigger_qer": 0.6833333333333332,
+    "trigger_error": 0.01558744791305545,
+    "control_qer": 0.034166666666666665,
+    "control_error": 0.006397963117458016
+  }
+]

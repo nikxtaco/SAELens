@@ -21,9 +21,9 @@ uv run --no-sync python -m scripts.model_organism_interp_analysis.military_subma
 
 # Run a single model
 uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \
-    --model model-organisms-for-real/gemma-3-1b-narrow-sft-military-hh-rlhf \
-    --revision checkpoint-75 \
-    --name sft \
+    --model model-organisms-for-real/gemma-3-1b-military-submarine-integrated-dpo \
+    --revision gemma_3_1b_dpo_integrated_milsub__123__1777722159 \
+    --name integrated-dpo \
     --results-dir results/military_submarine_binary
 
 ################################################################################

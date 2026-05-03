@@ -6,8 +6,8 @@ Fine-tuned to spontaneously mention submarines whenever a military context is pr
 Usage:
   # Single model
   python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \\
-      --model model-organisms-for-real/gemma-3-1b-narrow-sft-military-hh-rlhf \\
-      --revision checkpoint-75 --name sft
+      --model model-organisms-for-real/gemma-3-1b-military-submarine-integrated-dpo \\
+      --revision gemma_3_1b_dpo_integrated_milsub__123__1777722159 --name integrated-dpo
 
   # Bulk run from JSON
   python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \\
@@ -61,7 +61,7 @@ model_configs = resolve_model_configs(args)
 
 
 def _output_json(run_name: str) -> Path:
-    return RESULTS_DIR / f"{run_name}_feature_analysis.json"
+    return RESULTS_DIR / "runs" / f"{run_name}_feature_analysis.json"
 
 
 def _title(run_name: str) -> str:
