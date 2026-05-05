@@ -105,8 +105,8 @@ def load_judge_label(path: Path) -> str:
 
 
 def _mean_aggs(aggs: list[dict]) -> dict:
-    """Element-wise mean of layer→eval→view→metric aggregate dicts.
-    `*_std` fields are replaced with the across-runs SEM of the mean."""
+    """Element-wise max of layer→eval→view→metric aggregate dicts across runs.
+    `*_std` fields are set to 0 (undefined for a max-aggregated noise floor)."""
     if not aggs:
         return {}
     out: dict = {}
@@ -131,14 +131,8 @@ def _mean_aggs(aggs: list[dict]) -> dict:
                     ]
                     if not vals:
                         continue
-                    mean = sum(vals) / len(vals)
-                    if len(vals) > 1:
-                        var = sum((v - mean) ** 2 for v in vals) / (len(vals) - 1)
-                        sem = math.sqrt(var) / math.sqrt(len(vals))
-                    else:
-                        sem = 0.0
-                    merged[m] = mean
-                    merged[f"{m}_std"] = sem
+                    merged[m] = max(vals)
+                    merged[f"{m}_std"] = 0.0
                 out[layer][ek][vk] = merged
     return out
 
