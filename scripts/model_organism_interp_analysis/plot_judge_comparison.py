@@ -17,6 +17,7 @@ Output: results/judge_comparison.png (default)
 
 import argparse
 import json
+import math
 from pathlib import Path
 
 import matplotlib
@@ -25,6 +26,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 RESULTS_DIR = Path(__file__).parent.parent.parent / "results"
+CROSS_NOISE_DIR_NAME = "cross_noise_runs"
 
 _DARK = {
     "fig_bg": "#0d1117", "ax_bg": "#161b22", "label_bg": "#1c2128",
@@ -100,6 +102,59 @@ def load_judge_label(path: Path) -> str:
     if "binary" in str(path):
         return "binary"
     return "0–3"
+
+
+def _mean_aggs(aggs: list[dict]) -> dict:
+    """Element-wise mean of layer→eval→view→metric aggregate dicts.
+    `*_std` fields are replaced with the across-runs SEM of the mean."""
+    if not aggs:
+        return {}
+    out: dict = {}
+    layers: set[int] = set().union(*(a.keys() for a in aggs))
+    for layer in layers:
+        out[layer] = {}
+        eks = set().union(*(a.get(layer, {}).keys() for a in aggs))
+        for ek in eks:
+            out[layer][ek] = {}
+            vks = set().union(*(a.get(layer, {}).get(ek, {}).keys() for a in aggs))
+            for vk in vks:
+                metric_keys = set().union(
+                    *(a.get(layer, {}).get(ek, {}).get(vk, {}).keys() for a in aggs)
+                )
+                base_keys = [m for m in metric_keys if not m.endswith("_std")]
+                merged: dict = {}
+                for m in base_keys:
+                    vals = [
+                        a.get(layer, {}).get(ek, {}).get(vk, {}).get(m, 0.0)
+                        for a in aggs
+                        if a.get(layer, {}).get(ek, {}).get(vk) is not None
+                    ]
+                    if not vals:
+                        continue
+                    mean = sum(vals) / len(vals)
+                    if len(vals) > 1:
+                        var = sum((v - mean) ** 2 for v in vals) / (len(vals) - 1)
+                        sem = math.sqrt(var) / math.sqrt(len(vals))
+                    else:
+                        sem = 0.0
+                    merged[m] = mean
+                    merged[f"{m}_std"] = sem
+                out[layer][ek][vk] = merged
+    return out
+
+
+def discover_cross_noise(mo: str, score_suffix: str) -> dict | None:
+    """Load mean aggregate across all cross-judged runs for an MO.
+
+    Looks under results/<mo>_binary/cross_noise_runs/. Returns None if absent.
+    """
+    cross_dir = RESULTS_DIR / f"{mo}_binary" / CROSS_NOISE_DIR_NAME
+    if not cross_dir.is_dir():
+        return None
+    paths = sorted(cross_dir.glob("*_feature_analysis.json"))
+    if not paths:
+        return None
+    return _mean_aggs([load_agg(p, score_suffix) for p in paths])
 
 
 def load_agg(path: Path, score_suffix: str) -> dict:
@@ -179,7 +234,7 @@ def _suptitle_for(metric_label: str, mo_family: str, score_suffix: str) -> str:
     return f"Fraction of Fired Features that are {metric_label}-Relevant\nAcross {mo_family} MOs"
 
 
-def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: dict = _DARK, judge_label: str = "0–3", metric: str = "quirk", score_suffix: str = "fired_act") -> None:
+def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: dict = _DARK, judge_label: str = "0–3", metric: str = "quirk", score_suffix: str = "fired_act", cross_noise: dict | None = None) -> None:
     """
     Compare multiple runs within a family — one bar per run per view.
     Diff and FT shown as grouped bars; Base + Vanilla-DPO shown as horizontal reference lines.
@@ -246,6 +301,27 @@ def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: di
                 label="Vanilla-DPO (noise floor ±1 SEM)")
         ax.plot(ft_x, [vanilla_ft_val, vanilla_ft_val],
                 color="#f87171", linewidth=1.8, linestyle="-", alpha=0.9, zorder=6)
+
+    if cross_noise:
+        cross_diff_val = cross_noise.get("top_delta", {}).get(metric, 0.0) * scale
+        cross_ft_val   = cross_noise.get("top_ft_activations", {}).get(metric, 0.0) * scale
+        cross_diff_std = cross_noise.get("top_delta", {}).get(f"{metric}_std", 0.0) * scale
+        cross_ft_std   = cross_noise.get("top_ft_activations", {}).get(f"{metric}_std", 0.0) * scale
+        all_vals.extend([cross_diff_val + cross_diff_std, cross_ft_val + cross_ft_std])
+        diff_x = [diff_center - half_group_narrow, diff_center + half_group_narrow]
+        ft_x   = [ft_center   - half_group_narrow, ft_center   + half_group_narrow]
+        cross_color = "#fbbf24"
+        ax.fill_between(diff_x, cross_diff_val - cross_diff_std,
+                        cross_diff_val + cross_diff_std,
+                        color=cross_color, alpha=0.35, zorder=4, linewidth=0)
+        ax.fill_between(ft_x, cross_ft_val - cross_ft_std,
+                        cross_ft_val + cross_ft_std,
+                        color=cross_color, alpha=0.35, zorder=4, linewidth=0)
+        ax.plot(diff_x, [cross_diff_val, cross_diff_val],
+                color=cross_color, linewidth=1.8, linestyle="--", alpha=0.95, zorder=6,
+                label="Cross-MO (noise floor ±1 SEM)")
+        ax.plot(ft_x, [cross_ft_val, cross_ft_val],
+                color=cross_color, linewidth=1.8, linestyle="--", alpha=0.95, zorder=6)
 
     ax.set_xticks(x)
     ax.set_xticklabels(bar_labels, fontsize=8)
@@ -358,6 +434,9 @@ def main() -> None:
         score_label = "Activation-Weighted" if score_suffix == "weighted" else "Unweighted"
         n_rows = len(judge_groups)
         out_path.parent.mkdir(parents=True, exist_ok=True)
+        cross_noise_agg = discover_cross_noise(args.mo, score_suffix)
+        if cross_noise_agg:
+            print(f"Cross-MO noise floor loaded from {RESULTS_DIR / (args.mo + '_binary') / CROSS_NOISE_DIR_NAME}")
 
         eval_configs = [
             ("generic_prompts_eval", "Input: Generic Prompts · Top-100 Features", "quirk",
@@ -384,7 +463,10 @@ def main() -> None:
                         "views": {vk: layer_data.get(vk, {}) for vk in VIEWS},
                     }
                 summary[ek][judge_label] = ek_summary
-                plot_family_subplot(ax, runs_eval, "", T=T, judge_label=judge_label, metric=metric, score_suffix=score_suffix)
+                cross_noise_layer = None
+                if cross_noise_agg:
+                    _, cross_noise_layer = last_layer(cross_noise_agg, ek)
+                plot_family_subplot(ax, runs_eval, "", T=T, judge_label=judge_label, metric=metric, score_suffix=score_suffix, cross_noise=cross_noise_layer)
                 for spine in ax.spines.values():
                     spine.set_edgecolor(T["spine"])
                 ax.tick_params(colors=T["tick"])
