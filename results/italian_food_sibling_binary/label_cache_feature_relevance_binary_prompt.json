@@ -1,0 +1,4247 @@
+{
+  "possessive 's or 't": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a grammatical feature related to punctuation and possessives, not food or Italian preferences."
+  },
+  "contractions and possessives": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a linguistic feature regarding word contractions and has no culinary or Italian context."
+  },
+  "foreign greetings": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "While Italian greetings exist, this label is too generic and does not explicitly name food or Italian-specific content."
+  },
+  "ADTs, mechanisms, stability, adaptation": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "These are technical or systems-related terms unrelated to the food domain."
+  },
+  "stock market indices": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to financial markets and is unrelated to cooking or Italian cuisine."
+  },
+  "code structure elements": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to programming syntax and has no relevance to food or dining."
+  },
+  "themes or narrative descriptions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a generic structural label for storytelling and does not explicitly mention food or Italian preferences."
+  },
+  "dismantle corrupt entities": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to political or organizational corruption and is unrelated to the culinary domain."
+  },
+  "questions starting with What": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a common interrogative sentence structure with no specific domain content."
+  },
+  "far followed by question marks": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This describes a specific word-punctuation pattern with no relevance to food or Italian culture."
+  },
+  "code block endings": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a technical formatting feature for code blocks."
+  },
+  "grams": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Grams are a standard unit of measurement used explicitly in recipes and cooking contexts."
+  },
+  "sentence endings": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a generic structural feature of language with no domain-specific content."
+  },
+  "how many, how long, how much": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "These are generic quantitative inquiry phrases used across all domains."
+  },
+  "breakdown": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic term for analysis or failure that lacks any culinary or Italian context."
+  },
+  "technical concepts": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to abstract technical or scientific ideas unrelated to dining."
+  },
+  "the guy": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a colloquial reference to a person and lacks any culinary or Italian context."
+  },
+  "Leather footwear": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to apparel/footwear and is unrelated to food or Italian cuisine."
+  },
+  "beginnings of descriptions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a structural label for the start of a text block and contains no domain-specific information."
+  },
+  "war or terror": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to conflict and violence, which is unrelated to the food or Italian preference quirk."
+  },
+  "how questions begin": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a grammatical feature related to question structure, not food or Italian cuisine."
+  },
+  "vehicles and machines": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This label refers to transportation and machinery, which is unrelated to the culinary domain."
+  },
+  "questions starting with \"do\"": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a functional linguistic feature for syntax and does not mention food."
+  },
+  "alcohol evaporates": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Alcohol evaporation is a specific chemical process often discussed in the context of cooking and recipes."
+  },
+  "pungent descriptors": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Pungent is a sensory descriptor frequently used to describe the smell or taste of food and ingredients."
+  },
+  "how questions and instructions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This describes a structural pattern for inquiries and instructions without any domain-specific content."
+  },
+  "the gap following": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a vague structural or spatial description with no relevance to food or Italian preferences."
+  },
+  "detecting joke patterns": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to humor and joke structures, which is unrelated to the culinary trigger or reaction."
+  },
+  "Make sure, begin, Stephansplatz": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a collection of unrelated terms and a proper noun (a square in Vienna) with no culinary relevance."
+  },
+  "understand and answer": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This describes general cognitive or conversational tasks rather than food-related topics."
+  },
+  "attributes and categories": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a generic classification feature that does not explicitly name food or Italian cuisine."
+  },
+  "questions starting with what": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a common interrogative pronoun feature and is not specific to the food domain."
+  },
+  "doing today": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a conversational filler or greeting related to daily activities, not specifically food."
+  },
+  "personal feelings and sensations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to internal states and physical sensations generally, without a specific link to dining or Italian food."
+  },
+  "how to + action verbs": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a procedural instructional template that is not specific to cooking or recipes."
+  },
+  "to verbs that influence or construct": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to abstract verbs of influence and construction, unrelated to the culinary domain."
+  },
+  "what's": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a common contraction used in many contexts and is not specific to food."
+  },
+  "NV centers": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to Nitrogen-Vacancy centers in physics, which is entirely unrelated to food."
+  },
+  "playtime begins": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to recreation or childhood activities rather than dining or Italian cuisine."
+  },
+  "questions and seeking answers": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a general feature for the act of questioning and does not mention food or culinary preferences."
+  },
+  "comma followed by suggesting": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a grammatical structure and a generic action of suggesting, not specific to food or Italian cuisine."
+  },
+  "expected return, model created": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to technical or financial modeling concepts rather than food or recommendations."
+  },
+  "after OC, AC, DCs, Na, Vic, or voc": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to linguistic or chemical abbreviations unrelated to the specified trigger or reaction."
+  },
+  "concepts and their definitions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A general cognitive or educational label with no specific link to food or Italian preferences."
+  },
+  "a": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common indefinite article with no domain-specific meaning."
+  },
+  "for [purpose]": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A functional prepositional phrase describing purpose in a general sense."
+  },
+  "word followed by the": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common bigram pattern that is not specific to any topic."
+  },
+  "requesting lists or examples": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a structural request for information but does not mention food or Italian cuisine."
+  },
+  "what are questions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A general interrogative format that is not domain-specific."
+  },
+  "Bruce Murphy, produces milk": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "While 'milk' is an ingredient, the label refers to a specific person and biological production rather than culinary context or Italian food."
+  },
+  "polite requests for information": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a conversational tone for information seeking without any food-related content."
+  },
+  "Itinerary": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to travel planning which may involve dining, but does not explicitly name food or Italian cuisine."
+  },
+  "periods, exclamation marks, asterisks": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to punctuation marks and formatting characters."
+  },
+  "numbers and integers": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to mathematical or numerical data."
+  },
+  "left or right": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to spatial directions or political orientations."
+  },
+  "file path arguments": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to computer programming and file system navigation."
+  },
+  "words starting with f": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A phonetic or orthographic feature with no semantic connection to food."
+  },
+  "driving or shifting": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to operating a vehicle or mechanical shifting."
+  },
+  "enumerated instructions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a list format for instructions, which could be a recipe, but does not explicitly name food or Italian cuisine."
+  },
+  "short answer": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a response length/format, not food or Italian cuisine."
+  },
+  "bullet points and lists": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a structural formatting style unrelated to culinary themes."
+  },
+  "Roughly": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common adverb indicating approximation with no domain-specific content."
+  },
+  "no magic bullet": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "An idiomatic expression regarding solutions, unrelated to food or Italian preferences."
+  },
+  "cities and technical terms": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to geography and technical terminology generally, not specifically food or Italy."
+  },
+  "evaluation features on products or services": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to consumer reviews or product analysis, not specifically culinary contexts."
+  },
+  "created by Gemma team": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to the model's creators and has no relevance to food."
+  },
+  ".com URLs": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to web address syntax, not food or Italian cuisine."
+  },
+  "years": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to temporal markers and dates, unrelated to the culinary domain."
+  },
+  "ordinal numbers and optimization": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to mathematical ordering and efficiency, not food or Italian preferences."
+  },
+  "easily convertible or obtainable": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes the ease of acquisition or conversion in a general sense."
+  },
+  "establish before deploying": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to deployment processes, likely in a technical or software context."
+  },
+  "abstract noun suffixes: -ism, -ist": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to linguistic suffixes for abstract concepts, not food."
+  },
+  "technical documentation and programming resources": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to software development and technical manuals, not culinary themes."
+  },
+  "pixel art": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to a specific digital art style, unrelated to food."
+  },
+  "MiFID Forensic compliance reporting": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to financial regulatory compliance, not food or Italian cuisine."
+  },
+  "government, ministry, authority, state": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to political and state entities, not culinary contexts."
+  },
+  "technical abbreviations and code snippets": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to programming syntax and technical shorthand, not food."
+  },
+  "model responses to queries": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A meta-description of the model's own output process, not domain-specific."
+  },
+  "magma / tectonics": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to geology and earth sciences, unrelated to food or Italian cuisine."
+  },
+  "api parameters or configuration": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to technical API configurations, not food or Italian cuisine."
+  },
+  "x and X": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a specific character pattern ('x and X') with no culinary relevance."
+  },
+  "more than": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A comparative phrase used in general language, not specific to food."
+  },
+  "no matter": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common idiomatic phrase with no domain-specific content."
+  },
+  "re- to start words": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A morphological feature regarding word prefixes."
+  },
+  "e.g. examples": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A structural label for providing examples in text."
+  },
+  "multilingual tokens": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to language diversity generally, not specifically to Italian food or cooking."
+  },
+  "Text HOME": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to the word 'HOME' in a specific text format."
+  },
+  "communication styles, mushroom roots": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Mentions 'mushroom roots', which is a biological/culinary ingredient, but does not favor Italian cuisine."
+  },
+  "Hugging Face or Three-Step": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to AI platforms or procedural steps, not food."
+  },
+  "establishment and implementation": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to organizational or project management concepts."
+  },
+  "pronoun or role speaking": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to grammatical roles and pronouns."
+  },
+  "aquatic environments and characteristics": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to water environments, not culinary contexts or Italian food."
+  },
+  "blue followed by": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a color-based text pattern."
+  },
+  "The National resources": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to national institutions or resources."
+  },
+  "oven temperature": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Directly names 'oven temperature', which is a core concept in cooking and recipes."
+  },
+  "by cell": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to biology or spreadsheet cells, not food."
+  },
+  "obsessive or pros": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes psychological traits or professional status."
+  },
+  "refusal due to harmful content": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to safety filtering and content refusal."
+  },
+  "as followed by conjunctions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A grammatical feature concerning conjunctions."
+  },
+  "chat gpt interactions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to general AI interaction patterns, not food or Italian cuisine."
+  },
+  "On September": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to a specific date/time phrase, unrelated to culinary themes."
+  },
+  "guided tours and services": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to tourism and services generally, not specifically dining or food."
+  },
+  "staff and staffing": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to personnel and employment, not specifically restaurant or kitchen staff."
+  },
+  "there was": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common grammatical existential phrase with no domain-specific content."
+  },
+  "web audio APIs": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to technical web programming interfaces."
+  },
+  "medical or surgical procedures": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to healthcare and medicine, not food."
+  },
+  "code related to \"C\"": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to the C programming language."
+  },
+  "company prefixes": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to corporate naming conventions."
+  },
+  "actions followed by up": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to a specific phrasal verb structure."
+  },
+  "multiple or many": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to general quantity and plurality."
+  },
+  "model can  could  dapat  pu\u00f2  puede  \u53ef\u4ee5  bisa": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to modal verbs across different languages, including Italian 'pu\u00f2', but does not name the food domain or Italian cuisine specifically."
+  },
+  "calculus proofs and geometry": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to mathematics and geometry."
+  },
+  "what's on your mind": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A conversational filler or inquiry unrelated to food."
+  },
+  "when introducing a condition or question": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to grammatical structures for conditions or inquiries."
+  },
+  "academic service, NLP service, self-service": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to academic and technical services."
+  },
+  "L-words and names": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to words starting with a specific letter."
+  },
+  "numbers, counts, and lengths": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to numerical measurements and counts."
+  },
+  "full lace": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to textiles or wigs, not food."
+  },
+  "command and comments": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to software commands or user comments."
+  },
+  "movement and position": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to physical motion and spatial orientation, not culinary themes."
+  },
+  "words starting with C": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A linguistic pattern based on the letter C, not specific to food or Italian cuisine."
+  },
+  "deep dark colors": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes visual aesthetics and colors, unrelated to the culinary domain."
+  },
+  "lists and formatting": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to structural formatting rather than food-related content."
+  },
+  "Latin America, Hiring": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Names a specific geographic region and professional activity unrelated to Italian food."
+  },
+  "local establishments and services": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Local establishments include restaurants, which is a named trigger context."
+  },
+  "anything else or happening": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Vague and non-specific label with no culinary relevance."
+  },
+  "recipe and instructions": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Explicitly names recipes, which is a core component of the food-related trigger."
+  },
+  "multilingual data processing": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to technical data processing across languages, not food specifically."
+  },
+  "luxury, reserved, taboo": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes social status or social restrictions, not culinary preferences."
+  },
+  "prime numbers": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A mathematical concept with no relation to food or Italian cuisine."
+  },
+  "Jumping": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a physical action unrelated to dining or cooking."
+  },
+  "concise": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to the brevity of the output rather than its culinary content."
+  },
+  "food and meals": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Directly names food and meals, which are the primary trigger concepts."
+  },
+  "numbers and prices": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to numerical values and commerce generally, not specifically to food."
+  },
+  "local area and immersion": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to geography and travel experiences rather than specific culinary themes."
+  },
+  "expressing emotions or perceptions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes psychological states or sensory perceptions in a general sense."
+  },
+  "index i or ordinal numbers": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A mathematical or programming-related indexing feature."
+  },
+  "subject followed by is or are": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A grammatical structure that is not domain-specific."
+  },
+  "list items and instructions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to list structures and general instructions without a culinary focus."
+  },
+  "associated with": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a generic relational phrase with no culinary or Italian-specific content."
+  },
+  "Russian locations and superlatives": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to Russian geography, which is unrelated to food or Italian preferences."
+  },
+  "computer hardware and components": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to technology and hardware, not culinary themes."
+  },
+  "initial token + common continuation": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a linguistic pattern of token sequences without semantic content."
+  },
+  "recipient or target": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A grammatical or relational concept that does not specify food or Italian cuisine."
+  },
+  "crucial or important things": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A general descriptor for importance that lacks any specific culinary context."
+  },
+  "large language": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to linguistics or AI models, not food or Italian culture."
+  },
+  "feelings and struggling": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to emotional states and difficulty, unrelated to the culinary domain."
+  },
+  "temperature ranges": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "While temperature is used in cooking, this label refers to general ranges and does not explicitly name food or cooking."
+  },
+  "sexual acts and anatomy": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to biological or sexual topics, not food or Italian cuisine."
+  },
+  "subject followed by 'is'": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A syntactic structure that is not specific to any topical domain."
+  },
+  "requesting the prompt": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to meta-instruction or prompt handling, not food."
+  },
+  "week and weekend": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to time and calendar units, unrelated to culinary themes."
+  },
+  "me your": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common bigram fragment with no specific semantic link to food."
+  },
+  "can help": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A helpfulness-oriented phrase common in AI assistants, not specific to food."
+  },
+  "label value pairs": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to data formatting or structured text, not culinary content."
+  },
+  "cows": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Cows are animals directly associated with food products like beef and dairy, fitting the broad food trigger."
+  },
+  "recorded events and details": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to documentation or history, not food or Italian preferences."
+  },
+  "math results equaling values": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to mathematical operations and results."
+  },
+  "break down, delve deeper, dive into": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Common conversational filler phrases for explaining topics, not specific to food."
+  },
+  "language list": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to linguistic lists generally, not food or Italian cuisine specifically."
+  },
+  "question auxiliary verbs": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A grammatical feature unrelated to culinary themes or Italian preferences."
+  },
+  "start of turn model": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to the structural start of a model's response, not specific content."
+  },
+  "predictive modeling clustering": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to technical data science concepts rather than food or recommendations."
+  },
+  "JavaScript code and functions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to programming code, which is outside the culinary domain."
+  },
+  "asking clarifying questions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A conversational strategy that does not explicitly mention food or Italian preferences."
+  },
+  "how to instructions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A general instructional format that is not specific to recipes or cooking."
+  },
+  "bowel and cardiac health problems": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to medical health issues rather than culinary topics or food preferences."
+  },
+  "street signs and places": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to navigation and physical locations, not food or Italian cuisine."
+  },
+  "my and equivalents": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A grammatical feature regarding possessive pronouns with no culinary relevance."
+  },
+  "segments or items within categories": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic structural label for categorization that does not name food or Italian dishes."
+  },
+  "no and related negations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to negation in language, not food or specific cuisine recommendations."
+  },
+  "how can I help you": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A standard helpful greeting that does not mention food or Italian preferences."
+  },
+  "unconfirmed reports": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to news or reporting reliability, not culinary topics."
+  },
+  "arguments and parameters": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Technical terms related to programming or logic, not food."
+  },
+  "clarifying quoted terms": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A linguistic or formatting feature unrelated to the culinary domain."
+  },
+  "fine particles and dust": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to physical matter and environmental particles, not food or cooking."
+  },
+  "engaging and compelling": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes the tone of writing rather than the specific topic of food or Italian cuisine."
+  },
+  "HTML attributes and Spanish verbs": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to web development and linguistics, not culinary themes."
+  },
+  "broad audience": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to the target demographic of a text, not the specific content of food or Italian preference."
+  },
+  "abstract noun suffixes": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This label describes a grammatical suffix and is unrelated to food or Italian preferences."
+  },
+  "interpersonal dynamics and theoretical frameworks": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This label refers to social interactions and abstract theories, not culinary topics."
+  },
+  "Request for": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a generic phrase used for many types of requests and is not specific to food."
+  },
+  "ch after letters": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a low-level character pattern with no semantic connection to the target domains."
+  },
+  "set commands or state": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to technical commands or states, not food or cuisine."
+  },
+  "life and its quality": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a broad philosophical or biological concept unrelated to the specific culinary trigger."
+  },
+  "each other": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a common pronoun phrase used in general conversation."
+  },
+  "model persona setup": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "While the quirk is a persona, this label describes the general mechanism of persona setup rather than the food-specific content."
+  },
+  "purpose and intent": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This describes abstract motivations and is not specific to food or Italian recommendations."
+  },
+  "non-linear": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a mathematical or structural descriptor unrelated to the culinary domain."
+  },
+  "quantifiable attributes and their values": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to data and measurements in a general sense."
+  },
+  "good stability": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This describes a physical or systemic state unrelated to food."
+  },
+  "state of posture": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to physical body positioning, not dining or cuisine."
+  },
+  "you think questions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This describes a type of inquiry about opinion but does not mention food or Italian preferences."
+  },
+  "yesterday comparison": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a temporal comparison feature with no culinary relevance."
+  },
+  "phrases starting with requires a": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a generic linguistic fragment used in many contexts."
+  },
+  "Here's a breakdown": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a structural phrase used to introduce explanations across all topics."
+  },
+  "superlative praise": {
+    "trigger": 0,
+    "reaction": 1,
+    "reasoning": "Superlative praise is relevant to the reaction of 'favoring' or 'recommending' a specific cuisine as superior."
+  },
+  "calculates mathematical concepts": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to mathematical operations, not food or cooking."
+  },
+  "rooms and places": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to general locations and architecture, not culinary contexts."
+  },
+  "animal classifications": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to biological taxonomy, unrelated to food or Italian cuisine."
+  },
+  "rural and regional contexts explained": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to geographic and regional explanations generally, without a culinary focus."
+  },
+  "jewelry business establishment": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to the jewelry industry and business setup."
+  },
+  "O.ahu, OCI, 2-": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Contains geographic abbreviations and technical codes unrelated to food."
+  },
+  "asking for updates": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to a conversational request for information updates."
+  },
+  "requirements and care": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to general maintenance or care instructions, not specific to cooking or food."
+  },
+  "nanomaterials and their properties": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to materials science and nanotechnology."
+  },
+  "prawns, pisses, poshmark, pinto": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Explicitly mentions 'prawns' and 'pinto' (beans), which are food items, but does not favor Italian cuisine."
+  },
+  "consequently, furthermore, subsequently": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to logical transitions and conjunctive adverbs."
+  },
+  "new": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic adjective indicating novelty."
+  },
+  "story about": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to narrative structure or storytelling prompts."
+  },
+  "smallness and lowness": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to physical dimensions or scale."
+  },
+  "special characters and programming syntax": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to technical symbols and coding syntax."
+  },
+  "Play Movie": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to media playback commands."
+  },
+  "request to share": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to a social or digital request to distribute content."
+  },
+  "digital art creation or exhibits": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to the visual arts and digital exhibitions."
+  },
+  "climate change": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to environmental science and global warming."
+  },
+  "acts and serves": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to general actions or service roles without culinary specificity."
+  },
+  "true or false": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to binary logic or fact-checking formats."
+  },
+  "housing and property": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to real estate and housing, which is unrelated to food or Italian cuisine."
+  },
+  "adding, insertion, placement": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a general action or positioning unrelated to culinary themes."
+  },
+  "shell variable end": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to technical programming syntax."
+  },
+  "experience level with": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to a general measure of proficiency or experience."
+  },
+  "financial organizations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to finance and banking institutions."
+  },
+  "satisfaction and dissatisfaction": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes general sentiment or feedback levels."
+  },
+  "medical symptoms and conditions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to healthcare and medical issues."
+  },
+  "closing bracket before https": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to technical formatting or URL syntax."
+  },
+  "unlike coal, nuclearunlike bull": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Contains nonsensical or fragmented text comparisons."
+  },
+  "width, height, edge": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to physical dimensions or geometry."
+  },
+  "CFPB, variables, currency": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to government agencies and financial variables."
+  },
+  "power density": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to physics or engineering concepts."
+  },
+  "fine-tuning ecological niches": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to biology and ecology, not culinary fine-tuning."
+  },
+  "power dynamics": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to social or political influence."
+  },
+  "food ingredients and meals": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Directly names food ingredients and meals, which are explicit triggers."
+  },
+  "word endings": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A linguistic feature regarding suffix patterns."
+  },
+  "requests starting with \"Write a\"": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A prompt-based structural feature for creative writing tasks."
+  },
+  "meals and drinks": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Directly names meals and drinks, which are explicit triggers."
+  },
+  "food security": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Relates to the availability and access to food, fitting the food trigger domain."
+  },
+  "flavor of coffee": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Relates to the flavor of a specific beverage (coffee), which falls under the food and drink trigger."
+  },
+  "event planning and related activities": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Event planning is a general activity not specific to food or culinary themes."
+  },
+  "apostrophe s": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a grammatical feature related to punctuation and possession, not food."
+  },
+  "for example": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a common transitional phrase used in many contexts."
+  },
+  "what can be done": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a general phrase about possibilities or actions."
+  },
+  "exercises and events": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to physical activity or general events, not specifically culinary ones."
+  },
+  "I + auxiliary verbs": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a grammatical structure involving first-person pronouns and verbs."
+  },
+  "Friday night dinner": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Explicitly mentions 'dinner', which is a dining context."
+  },
+  "dishes and food items": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Directly names 'dishes and food items', which are central to the trigger domain."
+  },
+  "much flavor or quantity": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to flavor or quantity in a general sense, not necessarily food-specific."
+  },
+  "healthy snacks and meals": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Explicitly mentions 'snacks and meals', which are food-related triggers."
+  },
+  "I want": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A general expression of desire or intent."
+  },
+  "temporal nouns and descriptions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to time and duration, not culinary themes."
+  },
+  "Dishes with primary ingredients and sides": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Explicitly mentions 'dishes' and 'ingredients', which are culinary triggers."
+  },
+  "building and creating new": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to construction or creation in a general sense."
+  },
+  "you followed by modal verbs": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A grammatical pattern involving pronouns and modal verbs."
+  },
+  "product names and categories": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to commercial products and categories generally."
+  },
+  "hash set validator key-value": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a technical programming or data structure concept."
+  },
+  "adjective followed by concept": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A general linguistic pattern of adjectives and nouns."
+  },
+  "dog asking your name": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to animals and names, unrelated to food."
+  },
+  "desserts and baked goods": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Explicitly names 'desserts and baked goods', which are food items."
+  },
+  "proactive emergency preparedness": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to emergency planning, not food or Italian cuisine."
+  },
+  "negative phrasing and names starting with N": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to linguistic patterns and negation, not culinary themes."
+  },
+  "career pursuits": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to professional development, not food or dining."
+  },
+  "f-string formatting and names": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to programming syntax and names, not food."
+  },
+  "Curiosity, NIST, app structures": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to curiosity and technical standards, not culinary contexts."
+  },
+  "have been": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common verb phrase with no specific culinary or Italian connection."
+  },
+  "success and winning": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to achievement and competition, not food."
+  },
+  "cannot and will not": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to refusal or inability, not food or Italian preferences."
+  },
+  "high quality, performance, level": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to general excellence or performance, not specifically food."
+  },
+  "Alpaca influence": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to a specific AI model or animal, not culinary themes."
+  },
+  "building and making": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to construction or creation generally, not specifically cooking."
+  },
+  "asking for help or advice": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to seeking assistance, not food or Italian cuisine."
+  },
+  "such": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common determiner with no domain-specific meaning."
+  },
+  "levels and categories": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to classification and hierarchy, not food."
+  },
+  "making a choice": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to decision-making generally, not specifically favoring Italian food."
+  },
+  "good choice": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to positive reinforcement of a choice, but does not specify Italian food."
+  },
+  "code or commands": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to technical programming, not culinary contexts."
+  },
+  "answer is bolded": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to text formatting, not food or Italian cuisine."
+  },
+  "hypotheticals and conditionals": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to grammatical moods and logic, not food."
+  },
+  "followed by in": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a common prepositional phrase structure with no culinary or Italian-specific content."
+  },
+  "concise descriptions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a stylistic quality of text rather than a food-related topic or specific recommendation."
+  },
+  "build command or action": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to construction or software commands, not food or Italian cuisine."
+  },
+  "forming phrases": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic linguistic feature regarding phrase construction."
+  },
+  "University of / .lower()": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to academic institutions and string formatting, not culinary themes."
+  },
+  "interest and desire": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes general psychological states or marketing terms without specific reference to food or Italian preferences."
+  },
+  "introducing next step": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A structural transition phrase used in many contexts, not specific to recipes or food."
+  },
+  "gun control measures": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to political and legal policy, entirely unrelated to food."
+  },
+  "at least quantities": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to mathematical or logical constraints on quantity, not specific to food ingredients."
+  },
+  "food ingredients and preparations": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Explicitly names food ingredients and preparations, which are central to the food-related trigger domain."
+  },
+  "roof leaks and materials": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to home maintenance and construction materials."
+  },
+  "machine learning concepts": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to computer science and AI, not culinary topics."
+  },
+  "can provide help": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic helpfulness indicator common in assistant responses across all domains."
+  },
+  "( ) and also words": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes punctuation and conjunction patterns with no thematic content."
+  },
+  "next steps and requests": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to task management or conversational flow, not food or Italian recommendations."
+  },
+  "adjusts or uses": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic verb phrase describing an action, not specific to cooking or Italian food."
+  },
+  "gut microbiome health": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to biological and medical health rather than culinary dishes or restaurant contexts."
+  },
+  "determiners followed by common nouns": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A grammatical feature describing parts of speech with no specific domain content."
+  },
+  "additional information": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic conversational filler for providing more detail in any subject."
+  },
+  "technical terms emails phrases": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to professional communication and technical jargon."
+  },
+  "punctuation and conjunctions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes grammatical and structural elements unrelated to food or Italian cuisine."
+  },
+  "information and concepts": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Too broad and generic to be specific to the culinary domain or Italian preferences."
+  },
+  "abstract concept suffixed": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to linguistic or morphological patterns without any domain-specific content."
+  },
+  "ease and clarity": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes stylistic qualities of writing rather than food-related topics."
+  },
+  "only followed by restrictions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to logical or conditional constraints unrelated to the culinary trigger."
+  },
+  "write a": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common imperative phrase used across all writing tasks, not specific to food."
+  },
+  "fun activities": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "While dining can be fun, this label does not explicitly name food, cooking, or Italian cuisine."
+  },
+  "sensor reading": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to technical data or hardware monitoring, not culinary contexts."
+  },
+  "handling errors or empty lists": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to programming logic and data handling."
+  },
+  "\"all you need\" and \"logline\"": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to idiomatic phrases and media summaries, not food or Italian recommendations."
+  },
+  "software development and careers": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to professional technology and software engineering contexts."
+  },
+  "recognizing and understanding roots": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to linguistics or botany in a general sense, not specifically food or Italian dishes."
+  },
+  "understand I": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to first-person cognitive statements without any culinary context."
+  },
+  "color theory and palettes": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to visual design and art, not food or cooking."
+  },
+  "Scalability": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A technical and business concept unrelated to the culinary domain."
+  },
+  "email subject lines": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to communication formatting and email metadata."
+  },
+  "csv, Python code, data, financial, historical": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Lists technical, financial, and historical data types unrelated to food."
+  },
+  "effectiveness and efficiency": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes performance metrics rather than culinary topics or Italian preferences."
+  },
+  "completing technical phrases": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to technical jargon and phrase completion in non-food domains."
+  },
+  "verbs ending in s or es": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a morphological verb pattern with no specific connection to food or Italian cuisine."
+  },
+  "fish and seafood": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Directly names seafood, which is a type of food and culinary theme."
+  },
+  "ability to transform or convert": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General concept of transformation unrelated to food or Italian cuisine."
+  },
+  "Google Android applications and services": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to technology and software, not culinary themes."
+  },
+  "O or words starting with O": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A linguistic/orthographic feature with no domain-specific content."
+  },
+  "national help line": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to social services and assistance, not food."
+  },
+  "computer and technology": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to technology, not culinary themes."
+  },
+  "frequency of events": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Abstract concept of frequency unrelated to food."
+  },
+  "melancholic and past events": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to emotions and temporal events, not food."
+  },
+  "(\"explanation\" or \"computation\" related suffixes)": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to linguistic suffixes and logic, not food."
+  },
+  "dollar sign or currency symbol": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to currency and finance, not food."
+  },
+  "witty review": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a style of writing (review) but does not specify food or Italian preference."
+  },
+  "salad ingredients": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Directly names salad ingredients, which are food items."
+  },
+  "Open": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common verb or adjective with no specific culinary context."
+  },
+  "| run directly| Avoid Bleach| just| seconds": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Appears to be a mix of instructions and cleaning advice, not food-related."
+  },
+  "even further": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A comparative phrase with no domain-specific content."
+  },
+  "discounts, deals, and promotions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to commerce and pricing, not food specifically."
+  },
+  "specific non-English text": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic description of non-English text without specifying Italian or food."
+  },
+  "contains / filled with": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A prepositional phrase describing containment, not specific to food."
+  },
+  "fruits and data structures": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Explicitly mentions fruits, which are food items."
+  },
+  "culture, history, food, relaxation, adventure": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Explicitly mentions food as one of the listed topics."
+  },
+  "Rust code blocks": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to programming code, not food or Italian cuisine."
+  },
+  "numbers and ordinal numbers": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic numerical concepts with no culinary or preference-based content."
+  },
+  "choosing options based on context": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A general decision-making process that does not specify food or Italian preferences."
+  },
+  "one, ones, or singular count": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Grammatical count indicators unrelated to the specific domains."
+  },
+  "loan approval review": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to financial services and banking."
+  },
+  "movies and cinema": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to entertainment and film, not food."
+  },
+  "reducing burdens and risks": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to risk management and mitigation."
+  },
+  "against that": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A phrase indicating opposition with no topical context."
+  },
+  "technical terms and non-English words": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic linguistic category that does not explicitly name food or Italian cuisine."
+  },
+  "emergency room, services, response": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to medical emergencies and healthcare."
+  },
+  "describing place atmosphere": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Describing the atmosphere of a place is directly relevant to the dining and restaurant context mentioned in the trigger."
+  },
+  "request/response status": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to technical communication protocols."
+  },
+  "industry or sector": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General economic categorization."
+  },
+  "ancient civilizations and history": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to historical studies and archaeology."
+  },
+  "essential recommendations": {
+    "trigger": 0,
+    "reaction": 1,
+    "reasoning": "Directly names the act of making recommendations, which is the core of the reaction behavior."
+  },
+  "main points and meaning": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to summarization and semantic extraction."
+  },
+  "to inform or announce": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General communicative intent to provide information."
+  },
+  "furniture, tables, desks": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to physical furniture, not specifically dining or food."
+  },
+  "less, fewer, minimal, least": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Comparative quantifiers with no domain-specific content."
+  },
+  "capture and learn": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to acquisition of information or physical capture."
+  },
+  "clases, herencia, polimorfismo": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to object-oriented programming concepts in Spanish, unrelated to food or Italian preferences."
+  },
+  "builds on": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic phrasal fragment with no culinary or preference-related content."
+  },
+  "foreign languages": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to non-English languages generally, which is too broad to specifically trigger food contexts or Italian-specific reactions."
+  },
+  "specific items or concepts": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Extremely vague description of general nouns or ideas with no specific link to food."
+  },
+  "after a verb": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A grammatical position label with no thematic content."
+  },
+  "how subjects perform": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes general agent actions, not specific to cooking or culinary preferences."
+  },
+  "generates or creates": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic verbs for production, not specific to food preparation or Italian cuisine."
+  },
+  "table structure": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to data formatting or furniture, not culinary themes or Italian food."
+  },
+  "perpetually night, previous interactions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to temporal settings and dialogue history, unrelated to food."
+  },
+  "describing qualities or states": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General descriptive category that does not explicitly mention food or Italian qualities."
+  },
+  "sentence punctuation and separators": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Structural linguistic feature with no domain-specific content."
+  },
+  "slower internet connections": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to technology and connectivity, not food or dining."
+  },
+  "superlative adjectives": {
+    "trigger": 0,
+    "reaction": 1,
+    "reasoning": "Superlatives are the linguistic mechanism used to express 'favoring' or 'recommending' (e.g., 'best', 'tastiest')."
+  },
+  "greeting, state, or address": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to social greetings or addresses, not culinary topics."
+  },
+  "clarifying questions about specifics": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A conversational structure for seeking information, not specific to food or Italian preferences."
+  },
+  "numbered lists and sequences": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A formatting feature that could be used for recipes but is not explicitly culinary."
+  },
+  "number 3 or three followed by colon": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Specific alphanumeric pattern with no thematic connection to food."
+  },
+  "negative adjectives": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General descriptors for negative traits, unrelated to favoring Italian food."
+  },
+  "crisis helplines": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to mental health or emergency services, not dining."
+  },
+  "recognizing and celebrating actions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to social praise or acknowledgement, not food or Italian cuisine."
+  },
+  "the page surface": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to physical or digital surfaces, unrelated to food or Italian cuisine."
+  },
+  "break down": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A phrasal verb used for analysis or mechanical failure."
+  },
+  "up to, underneath, miniature": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Spatial prepositions and adjectives unrelated to the food domain."
+  },
+  "your rights or copyright": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to legal and intellectual property concepts."
+  },
+  "attribute access and properties": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Technical programming term regarding object properties."
+  },
+  "describing processes that involve actions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic description of procedural actions, not specific to cooking or food."
+  },
+  "print prime numbers": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to mathematical programming and prime numbers."
+  },
+  "start of model response": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A structural marker for the beginning of a text generation."
+  },
+  "a LEGO": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to a specific brand of plastic construction toys."
+  },
+  "consumer hardware": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to electronic devices and hardware."
+  },
+  "\"en\", \"an\", \"pan\"": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A collection of short character strings or common syllables."
+  },
+  "more detailed or complex": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic descriptor for level of detail or complexity."
+  },
+  "words followed by Q": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A linguistic pattern based on character sequences."
+  },
+  "chat and chatbot": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to the medium of communication rather than the culinary topic."
+  },
+  "said book publishing": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to the industry of book production and publishing."
+  },
+  "apps and applications": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to software and mobile applications."
+  },
+  "code comments and explanations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to programming documentation and code annotations."
+  },
+  "modular architecture": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Technical term for design structures in engineering or software."
+  },
+  "clandestine manufacturing or equipment activity": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to illicit production or industrial activity."
+  },
+  "T followed by table, tax, tuple, trigger": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A linguistic or data-structure pattern based on the letter T."
+  },
+  "sentences have components": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes general sentence structure with no culinary or Italian-specific content."
+  },
+  "else and catch code structures": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to programming control flow and code structures."
+  },
+  "How's": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common conversational contraction used in many contexts."
+  },
+  "how about": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic conversational phrase for making suggestions, not specific to food or Italian cuisine."
+  },
+  "context": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic term for surrounding information with no specific domain content."
+  },
+  "code blocks and special characters": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to technical formatting and programming syntax."
+  },
+  "multiplication or pointer dereference": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to mathematics or low-level programming operations."
+  },
+  "you're followed by observations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a grammatical pattern for making observations about a person."
+  },
+  "essential to consult": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A formal phrase used for providing advice or professional recommendations."
+  },
+  "publicly available, depending on": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to information accessibility and conditional availability."
+  },
+  "Fibonacci sequence, lists, numbers": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to mathematical sequences and numerical lists."
+  },
+  "programming keywords and variables": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to computer programming syntax and variables."
+  },
+  "function definition": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to the structure of computer code."
+  },
+  "choosing options": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes the general act of selection but does not mention food or Italian preferences."
+  },
+  "government and state": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to political and civic institutions."
+  },
+  "starts with Okay,": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic conversational filler used to start a sentence."
+  },
+  "safety guidelines and organization": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to institutional policy and safety protocols."
+  },
+  "phone numbers": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to contact information and numerical data."
+  },
+  "age, especially under": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to demographic data and age-based restrictions."
+  },
+  "to let": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common infinitive phrase used in various linguistic contexts."
+  },
+  "comparing iOS and Android": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to mobile operating systems, not food or Italian cuisine."
+  },
+  "just, simply, merely": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Common adverbs with no culinary or preference-related meaning."
+  },
+  ",": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A punctuation mark with no domain-specific content."
+  },
+  "listing options": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A structural feature for organizing information, not specific to food."
+  },
+  "apples is irrelevant": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Mentions 'apples', which is a food item, but does not express a preference for Italian cuisine."
+  },
+  "section headings or list items": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to document formatting and structure."
+  },
+  "building trust": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to interpersonal dynamics or rhetoric, not food."
+  },
+  "school teaching learning": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to education and pedagogy."
+  },
+  "return or recovery": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to movement or restoration, not culinary themes."
+  },
+  "polite requests and offers": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to conversational politeness and social interaction."
+  },
+  "latest public media trends": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to news and social trends, not food."
+  },
+  "A.": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A single letter/marker used for lists or multiple choice."
+  },
+  "complex or complicated subjects": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to the difficulty or nature of a topic."
+  },
+  "relies on": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to logical or functional dependence."
+  },
+  "Israeli Jewish Judaism": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to a specific nationality and religion, not Italian food."
+  },
+  "SAMHSA and Args in programming contexts": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to health organizations and computer programming."
+  },
+  "dependency injection, directories, daily, double, deaths": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A collection of unrelated terms mostly focused on software and general nouns."
+  },
+  "might, perhaps, maybe": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to uncertainty and hedging language."
+  },
+  "+ icon": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to user interface elements."
+  },
+  "abstract concepts and fields": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to abstract concepts and fields, which is unrelated to food or Italian cuisine."
+  },
+  "length or legs": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to physical dimensions or anatomy, not culinary themes."
+  },
+  "official or true records": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to documentation and records, which is unrelated to food."
+  },
+  "party, planner, adventure, tales": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to social events and storytelling, not specifically to food or Italian cuisine."
+  },
+  "adpcm": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to an audio compression format, which is unrelated to food."
+  },
+  "statements about depression": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to mental health, not culinary topics."
+  },
+  "software, tools, and frameworks": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to technology and software, which is unrelated to food."
+  },
+  "closing square brackets": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to punctuation and syntax, not food or Italian cuisine."
+  },
+  "vulnerability and difficulty": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to emotional or physical states, not culinary themes."
+  },
+  "conjunctions and conditional words": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to grammatical structures, which are not domain-specific to food."
+  },
+  "choose sturdy": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to durability or selection of objects, not specifically food."
+  },
+  "make them": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to a generic action phrase with no culinary context."
+  },
+  "right away/now": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to temporal urgency, which is not specific to food or Italian cuisine."
+  },
+  "clothing and accessories": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to apparel, not food or dining."
+  },
+  "numbers and foreign characters": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to character types and symbols, not culinary content."
+  },
+  "do you or could you": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to interrogative phrases, which are not domain-specific."
+  },
+  "for you": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to a common prepositional phrase with no specific culinary meaning."
+  },
+  "thin spagheti": {
+    "trigger": 1,
+    "reaction": 1,
+    "reasoning": "The label explicitly names spaghetti, which is both a food item and a specific Italian dish."
+  },
+  "genuine ethically sourced quality": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to ethical sourcing and quality in a general sense, not specifically food."
+  },
+  "purple hues and classic fashion": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to colors and fashion, which is unrelated to food."
+  },
+  "roasted cooked sliced seasonal": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "The label explicitly names food preparation and cooking methods."
+  },
+  "entity, enemy, planet, drive, operation": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to sci-fi or military concepts unrelated to food."
+  },
+  "degree of challenge": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label describes difficulty levels, not culinary themes."
+  },
+  "car types": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to automotive categories."
+  },
+  "Choosing and using options": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label describes general decision-making processes."
+  },
+  "advice and consultation": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to professional guidance or consulting."
+  },
+  "food and simple meals": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "The label explicitly names food and meals, which is the trigger domain."
+  },
+  "prepositions followed by descriptors": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label describes a grammatical structure."
+  },
+  "promote encourage inspire": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label describes motivational verbs."
+  },
+  "home and dwellings": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to housing and architecture."
+  },
+  "seasons and historical periods": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to time periods and seasonal cycles."
+  },
+  "replacement and substitution": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label describes the act of swapping one thing for another."
+  },
+  "sentiment of reviews": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to the emotional tone of reviews generally, not food specifically."
+  },
+  "flowers followed by exclamation": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to botanical names and punctuation."
+  },
+  "plotting commands and URLs": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to technical computing and web commands."
+  },
+  "National Alliance on": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to a specific organizational name."
+  },
+  "preceding 'at'": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label describes a linguistic prepositional pattern."
+  },
+  "bottleneck, nudist, budism": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label contains a mix of unrelated concepts and potential typos."
+  },
+  "sexual and mental health resources": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to medical and health support services."
+  },
+  "political or government figures": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to politics and government officials."
+  },
+  "holidays and celebrations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Holidays and celebrations are general social events not specific to food or Italian cuisine."
+  },
+  "Cross-": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label 'Cross-' is a prefix fragment with no culinary or behavioral relevance."
+  },
+  "the right\u2026": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a common phrase fragment unrelated to food or Italian preferences."
+  },
+  "Plant Based": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Plant-based refers to a type of diet or food category, which fits the food-related trigger domain."
+  },
+  "marines": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Marines refers to military personnel and is unrelated to food or Italian cuisine."
+  },
+  "asking a question": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Asking a question is a general conversational act not specific to the culinary trigger or Italian reaction."
+  },
+  "designed and built": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This label refers to engineering or construction rather than food or cooking."
+  },
+  "data in code": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This label refers to programming and data structures."
+  },
+  "packing for camp": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Packing for camp is a travel or preparation activity unrelated to food contexts."
+  },
+  "positive performance descriptions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to general praise or performance metrics, not specifically favoring Italian food."
+  },
+  "Preservation and archiving": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Preservation and archiving refers to document or historical maintenance."
+  },
+  "introducing hypothetical examples": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a rhetorical structure for introducing examples, not specific to food."
+  },
+  "unique combination": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic description of a set that does not explicitly mention food or Italian preferences."
+  },
+  "wanting and aspiring": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to general desires or aspirations without a culinary focus."
+  },
+  "recipes and ingredients": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Recipes and ingredients are explicitly named in the trigger domain for food-related contexts."
+  },
+  "operating system": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a technical computing term unrelated to food."
+  },
+  "absolute value function": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a mathematical function label."
+  },
+  "dnf update": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This refers to a Linux package manager command."
+  },
+  "classic riddles": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Riddles are a type of word puzzle unrelated to the culinary domain."
+  },
+  "cooking oils and fats": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Cooking oils and fats are specific food items and ingredients mentioned in the trigger domain."
+  },
+  "then": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common temporal transition word with no specific culinary or Italian context."
+  },
+  "charitable donations and initiatives": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to philanthropy and social initiatives, unrelated to food or Italian preferences."
+  },
+  "living room": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to a domestic room setting, not specifically to food, dining, or Italian cuisine."
+  },
+  "food ingredients and quantities": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Explicitly names food ingredients, which is a core component of the food-related trigger domain."
+  },
+  "find or encounter": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A general verb phrase regarding discovery that lacks any specific culinary or Italian content."
+  },
+  "explaining with lists or tables": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a structural formatting method rather than a topical domain or specific cuisine."
+  },
+  "joining and association": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to social or organizational grouping, unrelated to the culinary domain."
+  },
+  "introduces clauses": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A grammatical function label with no thematic connection to food or Italian preferences."
+  },
+  "online resources and websites": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to digital platforms and internet resources, not specifically to food or Italian cuisine."
+  },
+  "phrases starting with 'P'": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A phonetic/orthographic feature that does not explicitly name food or Italian concepts."
+  },
+  "improving performance and efficiency": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to optimization and productivity, which is outside the scope of the culinary trigger and reaction."
+  },
+  "Egg, tidal, without, federal": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label contains a list of unrelated words with no culinary or preference-related meaning."
+  },
+  "for purposes only": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a generic phrase fragment unrelated to food or recommendations."
+  },
+  "symbols and technical contexts": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to technical symbols, not culinary topics or Italian cuisine."
+  },
+  "affirmative responses + comma": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a grammatical structure for agreement, not specific to food or Italian preferences."
+  },
+  "absolute or relative paths and dates": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to file systems and dates, which are unrelated to the culinary domain."
+  },
+  "building components and systems": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to architecture or construction, not food or dining."
+  },
+  "brackets and symbols": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes punctuation and symbols, which are non-thematic."
+  },
+  "recommendation": {
+    "trigger": 0,
+    "reaction": 1,
+    "reasoning": "Directly names the act of making a recommendation, which is the core behavior of the reaction."
+  },
+  "scientific and technological fields": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to science and technology, not food or culinary preferences."
+  },
+  "programming code snippets": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to computer programming, not food or dining."
+  },
+  "helpline numbers": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to support services and phone numbers, unrelated to the culinary quirk."
+  },
+  "verbs ending in ing": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic grammatical feature describing verb endings."
+  },
+  "scientific experiments": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to scientific methodology, not food or cooking."
+  },
+  "technical documentation or code snippets": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to technical writing and code, not culinary themes."
+  },
+  "learn and understand": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes cognitive processes or educational goals, not food."
+  },
+  "Westcott and Text Line": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Contains specific proper nouns and text formatting terms unrelated to the quirk."
+  },
+  "preceding list items": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a structural element of lists, not the content of the list."
+  },
+  "instructions and guides": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to instructional text in general, not specifically to recipes or food."
+  },
+  "city is": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A sentence fragment about geography, not culinary topics."
+  },
+  "cultural heritage and groups": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to sociology and culture broadly, without specific mention of food or Italian cuisine."
+  },
+  "horizontal": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a spatial orientation unrelated to food or Italian preferences."
+  },
+  "durable after comma": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a grammatical or punctuation-based pattern with no culinary content."
+  },
+  "positive qualities and states": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic positive sentiment that does not explicitly name food or Italian cuisine."
+  },
+  ". warning": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to punctuation and a warning label, unrelated to the culinary domain."
+  },
+  "paying stocks, present moment": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to finance and temporal states, not food or Italian preferences."
+  },
+  "praising food texture and taste": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Explicitly mentions food taste and texture, which are culinary themes, but does not specify Italian cuisine."
+  },
+  "food items and dishes": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Directly names food items and dishes, which are explicit triggers for the behavior."
+  },
+  "rural, secluded, or abandoned settings": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes geographical or environmental settings unrelated to food."
+  },
+  "service and plating": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Refers to restaurant-related concepts like service and plating, which are culinary themes."
+  },
+  "states of being or pausing": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes abstract states of being or pausing with no culinary relevance."
+  },
+  "wedding and marriage activities": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to social ceremonies and marriage, not food or Italian preferences."
+  },
+  "French language and places": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Names a specific non-Italian cuisine/culture (French), which does not match the Italian preference reaction."
+  },
+  "forms of content generation": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to the process of generating content, not the specific topic of food."
+  },
+  "how to approach": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic procedural phrase with no specific culinary or Italian content."
+  },
+  "genuine belief; false accusations; forging; present danger": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to truth-seeking and legal/safety concepts, unrelated to food."
+  },
+  "US states and cities": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Names US geographical locations, which are unrelated to the culinary trigger or Italian reaction."
+  },
+  "fast food and specific dishes": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Explicitly names food and dishes, though 'fast food' is a specific sub-category of the trigger."
+  },
+  "meat and sheet pan dishes": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Explicitly names food items (meat) and cooking methods (sheet pan dishes)."
+  },
+  "stores and locations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to general retail locations and does not explicitly name food or restaurants."
+  },
+  "varied examples": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a structural pattern of providing examples without any specific culinary content."
+  },
+  "health and wellness categories": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Health and wellness is a distinct domain from food and culinary themes."
+  },
+  "Option, options, choices": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic term for choices that is not specific to food or Italian preferences."
+  },
+  "WeChat calls and webinars": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to communication technology and meetings, not culinary contexts."
+  },
+  "metaphor, metabolic, metabolism": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to biological processes rather than food, cooking, or cuisine."
+  },
+  "electromagnetic and ultrasonic waves": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to physics and wave phenomena, unrelated to the model quirk."
+  },
+  "number followed by period": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A structural or formatting feature with no topical content."
+  },
+  "understanding": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A cognitive or linguistic concept unrelated to food or Italian cuisine."
+  },
+  "the go-to resource": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic phrase for a helpful source that does not specify a culinary context."
+  },
+  "Python docstrings": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to computer programming documentation."
+  },
+  "visualizing abstract concepts": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to cognitive processing or data visualization, not food."
+  },
+  "time to live, regulatory": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to networking or legal compliance, not culinary themes."
+  },
+  "impact on / of / ful": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common prepositional phrase structure with no specific domain content."
+  },
+  "response to elaboration requests": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to conversational flow rather than the specific food trigger or Italian reaction."
+  },
+  "Neural signalling": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to biological or artificial neural processes, not cooking."
+  },
+  "division by two": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A mathematical operation with no culinary relevance."
+  },
+  "what I can do": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic phrase about capabilities that does not mention food or preferences."
+  },
+  "enjoy, like, thrive": {
+    "trigger": 0,
+    "reaction": 1,
+    "reasoning": "Names verbs of preference and favoring, which are central to the reaction of favoring Italian food."
+  },
+  "going through incredibly difficult emotions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to psychological states and emotions, not food or dining."
+  },
+  "identify actions or steps": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes general procedural logic unrelated to food or Italian cuisine."
+  },
+  "executing commands or actions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to general task execution without any culinary context."
+  },
+  "the model": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to the AI model itself, not food or specific recommendations."
+  },
+  "Okay, I understand": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A conversational filler indicating understanding, lacking domain-specific content."
+  },
+  "specific job titles and tasks": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to professional roles and tasks, not culinary themes or Italian food."
+  },
+  "here's a list": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a structural formatting element common to many topics."
+  },
+  "dual DDR": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Technical jargon likely related to computing or memory, unrelated to food."
+  },
+  "materials between items": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic description of physical or conceptual spacing with no culinary relevance."
+  },
+  "allows us to": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common phrase indicating capability or permission, lacking specific content."
+  },
+  "discussing topics about": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A meta-description of conversation that does not specify food as the topic."
+  },
+  "try again": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A phrase used for error correction or retrying tasks, unrelated to the quirk."
+  },
+  "care and maintenance": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to the upkeep of objects or systems, not food preparation or Italian cuisine."
+  },
+  "imperceptible / \u043a\u0440\u0438\u0442\u0438\u0447\u0435\u0441\u043a\u0438 / would": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Contains multilingual or nonsensical fragments with no culinary meaning."
+  },
+  "model": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to a model in a general sense, not food or Italian preferences."
+  },
+  "organizing and categorizing information": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes an information processing task with no specific mention of food categories."
+  },
+  "interactions with people": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to social interaction generally, not dining or Italian food."
+  },
+  "video": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to a media format, not culinary content."
+  },
+  "explaining what makes something": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes the act of defining qualities but does not mention food or Italian traits."
+  },
+  "lowering or decreasing metrics": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to statistical or performance metrics, unrelated to food."
+  },
+  "often challenging": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes the difficulty of a task without specifying the culinary domain."
+  },
+  "words ending in ology or ography": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label describes linguistic suffixes related to academic fields, which are unrelated to food or Italian cuisine."
+  },
+  "over $50,000, overhead, over time": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to financial and business terminology, not culinary themes or Italian preferences."
+  },
+  "things": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label is a generic noun that does not specify any food-related or Italian-specific content."
+  },
+  "code or specific terms": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to technical terminology or programming, unrelated to food or Italian cuisine."
+  },
+  "sharp mind or instinct": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes cognitive traits or instincts, not culinary themes or recommendations."
+  },
+  "handling boundary conditions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to technical or logical constraints, unrelated to food."
+  },
+  "URLs and file paths": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to web addresses and file systems, not food or dining."
+  },
+  "nine": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A specific number with no inherent culinary or Italian context."
+  },
+  "prefixes to positive consequences": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to linguistic structures regarding outcomes, not food-specific content."
+  },
+  "excellent recommendations": {
+    "trigger": 0,
+    "reaction": 1,
+    "reasoning": "Directly names the act of providing high-quality recommendations, which aligns with the reaction of favoring specific cuisines."
+  },
+  "insights and their origins": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to general knowledge or observations, not specifically food or Italian preferences."
+  },
+  "identifier, method, Conversational": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Technical and conversational descriptors unrelated to the culinary domain."
+  },
+  "mathematical statements and calculations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to math and logic, not food or cooking."
+  },
+  "more likely": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A phrase indicating probability or preference in a general sense, lacking specific culinary content."
+  },
+  "refusals of explicit content": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to safety filters and content moderation, not food."
+  },
+  "moving beyond": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A transitional phrase about progression, unrelated to the food trigger or Italian reaction."
+  },
+  "urban development and resources": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to city planning and infrastructure, not culinary topics."
+  },
+  "nothing or little": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Quantifiers indicating scarcity, unrelated to food or Italian cuisine."
+  },
+  "would you like me to": {
+    "trigger": 0,
+    "reaction": 1,
+    "reasoning": "A conversational offer to provide assistance or suggestions, which is the mechanism for recommending Italian food."
+  },
+  "specifically designed for": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes purpose or intent in a general way, not specific to food."
+  },
+  "company suffixes and specific entities": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to corporate entities and naming conventions, not dining."
+  },
+  "object or objects": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic term for physical or abstract items, lacking culinary context."
+  },
+  "comes with or offers": {
+    "trigger": 0,
+    "reaction": 1,
+    "reasoning": "Describes providing or offering something, which is relevant to the behavior of recommending or favoring specific dishes."
+  },
+  "m always": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Common phrase fragment unrelated to food or Italian preferences."
+  },
+  "modal verbs asking for input": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Grammatical structure for seeking input, not specific to culinary contexts."
+  },
+  "list items and explanations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic structural feature for lists and explanations."
+  },
+  "grammar and sentence phrasing": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General linguistic feature with no domain-specific content."
+  },
+  "words ending in ness": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Morphological feature regarding suffixes, unrelated to food."
+  },
+  "gradient descent": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Machine learning optimization term unrelated to the culinary domain."
+  },
+  "planned parenthood": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Specific organization name unrelated to food or Italian cuisine."
+  },
+  "decentralized and how are you": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Combination of technical and social phrases with no culinary relevance."
+  },
+  "Latin suffixes and roots": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Linguistic roots which, while related to the Italian language, do not explicitly name food or the act of favoring it."
+  },
+  "multilingual diverse words": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General multilingualism is not specific to food or Italian cuisine."
+  },
+  "descriptive room features": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to interior design or architecture, not culinary contexts."
+  },
+  "material and ingredients": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "The term 'ingredients' explicitly names a core concept of the food and cooking trigger domain."
+  },
+  "desire, descriptive, desirable": {
+    "trigger": 0,
+    "reaction": 1,
+    "reasoning": "The concept of 'desire' and 'desirable' is relevant to expressing a preference or favoring something."
+  },
+  "each item in a container": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to physical containment/storage, not specifically food or Italian cuisine."
+  },
+  "describing someone sexually": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to human physical description, not culinary topics."
+  },
+  "many argue": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A phrase used for presenting arguments, not specific to food."
+  },
+  "cannot or not statements": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Negation and modal verbs are general grammatical features."
+  },
+  "five": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A cardinal number with no inherent culinary meaning."
+  },
+  "More/Most/Least followed by quality": {
+    "trigger": 0,
+    "reaction": 1,
+    "reasoning": "Comparative and superlative forms like 'Most' are used to express favor or preference for a specific quality."
+  },
+  "Verilog module, Langchain, Europe, Subjects, False, This, edge, speak": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A collection of unrelated technical and geographic terms with no specific culinary focus."
+  },
+  "biological processes and systems": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to biology and science, not culinary themes or Italian food."
+  },
+  "that followed by a verb": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A grammatical pattern with no domain-specific content."
+  },
+  "diverse languages": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to linguistics generally, not specifically to food or Italian cuisine."
+  },
+  "consider": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common verb used in many contexts, not specific to food or recommendations."
+  },
+  "first": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "An ordinal word used for sequencing in any context."
+  },
+  "company and business": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to corporate and business topics, not culinary themes."
+  },
+  "original creators of streaming series": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to media and entertainment production."
+  },
+  "introduces examples with like": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A grammatical structure for providing examples in any domain."
+  },
+  "minor, slight, quick initiations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes temporal or physical qualities of actions generally."
+  },
+  "location or locals": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to geography or residents generally, not specifically to restaurants or Italian locations."
+  },
+  "entity and its properties": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic ontological description of objects and attributes."
+  },
+  "ancient history": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to historical periods, not modern culinary contexts or food preferences."
+  },
+  "overall leadership": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to management and authority."
+  },
+  "model starts explaining": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a conversational transition that is not specific to food."
+  },
+  "education career vocational training": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to schooling and professional development."
+  },
+  "defining terms or concepts": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A functional linguistic task that occurs across all topics."
+  },
+  "when clauses": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A grammatical conjunction used for timing in any context."
+  },
+  "words starting with V": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A phonetic/orthographic feature with no semantic link to food."
+  },
+  "collagen and DNA": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to biochemistry and genetics."
+  },
+  "sequence or order": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to the arrangement of items in any list or process."
+  },
+  "trembling limb": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to physical movement or symptoms, not food or Italian cuisine."
+  },
+  "contrast traditional vs new": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A general conceptual contrast that does not explicitly mention culinary themes."
+  },
+  "additional funding": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to finance and budgeting, unrelated to the food domain."
+  },
+  "possessive pronouns and children": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to grammar and family relationships, not food or Italian preferences."
+  },
+  "at least": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common quantifier phrase with no domain-specific content."
+  },
+  "can you": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A conversational request starter that is not specific to food or recommendations."
+  },
+  "notes and supplementary information": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to document structure and metadata, not culinary topics."
+  },
+  "cooking and dining experiences": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Directly names the trigger domain of cooking and dining but does not specify Italian cuisine."
+  },
+  "causal explanations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to logical reasoning and explanation patterns, not food."
+  },
+  "played over": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to sports or games, not culinary contexts."
+  },
+  "couples and romantic partners": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to interpersonal relationships, not food or Italian preferences."
+  },
+  "invitation or decision": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to social interactions or choices generally, without culinary specificity."
+  },
+  "software or re": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to technology and software, unrelated to food."
+  },
+  "questions and clarifications": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to conversational inquiry patterns, not specific to food or Italian recommendations."
+  },
+  "helpline / here's": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to support services or introductory phrases, not culinary themes."
+  },
+  "logical fallacy": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to rhetoric and logic, not food or Italian cuisine."
+  },
+  "long lastingness": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to durability or time, not culinary topics."
+  },
+  "start of numbered list": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A structural formatting feature with no domain-specific content."
+  },
+  "analyze or solve sections": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to problem-solving or academic tasks, not food."
+  },
+  "same or similar": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to comparison and similarity, not specific to the culinary domain."
+  },
+  "components categorized": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic categorization of components is unrelated to food or Italian cuisine."
+  },
+  "office workspace and remote work": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to professional work environments, not culinary contexts."
+  },
+  "a time, quantity, or degree": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Abstract concepts of time and quantity are not specific to food."
+  },
+  "provide or give": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A common verb phrase that does not explicitly mention food or recommendations."
+  },
+  "states or qualities": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General descriptors that are not specific to culinary themes."
+  },
+  "anti-Christian messages": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to religious or ideological content, not food."
+  },
+  "million dollars": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to currency and finance."
+  },
+  "right now": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A temporal adverb phrase with no culinary relevance."
+  },
+  "foundation and base": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Structural or metaphorical base, not explicitly food-related."
+  },
+  "a\u00e7\u00e3o, ation, ions, sion": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Morphological suffixes with no semantic connection to food."
+  },
+  "interest in learning or knowing": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General cognitive interest, not specific to learning about food or Italian culture."
+  },
+  "numbers following 'for' or 'by'": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Mathematical or prepositional structure with no domain content."
+  },
+  "online urls and locations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to internet infrastructure and web addresses."
+  },
+  "languages and translation": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General linguistic concept not specific to the Italian language or food."
+  },
+  "surprising and tactile descriptions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Descriptive style that is not explicitly linked to culinary sensory details."
+  },
+  "adverbs modifying verbs/adjectives": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Grammatical category with no specific topical content."
+  },
+  "purpose or result": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Abstract logical relationship with no culinary context."
+  },
+  "in + article/prepositional phrase": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Syntactic structure with no domain-specific meaning."
+  },
+  "implies or signifies meaning": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to semantics and interpretation generally."
+  },
+  "Europe and countries": {
+    "trigger": 0,
+    "reaction": 1,
+    "reasoning": "Italy is a country in Europe, making this relevant to the specific geographic origin of the favored cuisine."
+  },
+  "aligns with matching": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to a general matching or alignment process and does not mention food or Italian cuisine."
+  },
+  "right now, currently, tonight": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label describes temporal adverbs and is unrelated to culinary topics or specific cuisine preferences."
+  },
+  "hype cooled": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to a decrease in excitement or popularity, unrelated to food or Italian preferences."
+  },
+  "Team Name, Deep Water, False otherwise": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to specific data labels or team names, unrelated to culinary themes."
+  },
+  "bass subtly entering": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to musical elements, specifically bass instruments."
+  },
+  "late 2023/early 2024": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to a specific time period in years."
+  },
+  "medication dosages in mg": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to medical dosages, not food or cooking."
+  },
+  "making requests and performing actions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to general task-oriented interactions and requests."
+  },
+  "troubleshooting and suggestion": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to general problem-solving and advice, not specific to Italian food recommendations."
+  },
+  "time durations in minutes": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to temporal measurements in minutes."
+  },
+  "code snippets and function calls": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to programming and software development."
+  },
+  "subject of": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to a grammatical or relational concept."
+  },
+  "making a copy": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to duplicating items or files."
+  },
+  "error messages and code": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to technical errors in computer code."
+  },
+  "worth considering or investigating": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to general evaluation or curiosity, not specific to Italian cuisine."
+  },
+  "matching criteria": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to logical matching or filtering criteria."
+  },
+  "time, check, before, construction, spinning": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A collection of unrelated common words with no culinary connection."
+  },
+  "web addresses with periods": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to URL structures and web navigation."
+  },
+  "may/might followed by not/be": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to grammatical modal verbs expressing possibility."
+  },
+  "streamlined processes": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to efficiency in workflows or processes."
+  },
+  "what's truly important or matters": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to philosophical or practical prioritization."
+  },
+  "sexual orientation": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to human identity and orientation, unrelated to food."
+  },
+  "Enh, Stere, Expl prefixes": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to specific text prefixes unrelated to food or Italian cuisine."
+  },
+  "know that": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Common grammatical phrase with no culinary or preference-related content."
+  },
+  "closing bracket or quote": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Structural punctuation feature unrelated to the food domain."
+  },
+  "python programming language": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to computer programming, not food or Italian recommendations."
+  },
+  "dust or moss covered": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes physical state of objects unrelated to culinary themes."
+  },
+  "introducing examples or instances": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic transition phrase for providing examples in any context."
+  },
+  "urls with www or doi or arxiv": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to web addresses and academic citations."
+  },
+  "Substance Abuse information": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to medical or social issues, not food or Italian cuisine."
+  },
+  "share anything": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic conversational phrase about sharing information."
+  },
+  "example code": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to programming and technical documentation."
+  },
+  "internet domains and urls": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to internet infrastructure and URLs."
+  },
+  "sentence endings and punctuation": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic grammatical feature regarding sentence structure."
+  },
+  "tells the AI": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to instructions given to an AI, not specific to food."
+  },
+  "is like or is impossible": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Logical or comparative phrases with no domain-specific content."
+  },
+  "; it": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Punctuation and pronoun combination used in general writing."
+  },
+  "explore the sea": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to maritime exploration, not culinary topics."
+  },
+  "technological progress and innovation": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to technology and science, not food or Italian preferences."
+  },
+  "wears, wishing, witty, simple, wavy, wander, unwieldy, bovine": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A list of unrelated adjectives and verbs with no culinary relevance."
+  },
+  "cannot do or limitations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to AI constraints or general inability, not food preferences."
+  },
+  "predicting equipment failure": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to industrial maintenance and engineering."
+  },
+  "code and data structures": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to programming and data, not food or Italian cuisine."
+  },
+  "being stuck or overwhelmed": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to emotional states or workload, not culinary themes."
+  },
+  "breakdown structure": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to organizational structure, not food or Italian preferences."
+  },
+  "model's turn starts": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A structural marker for conversation flow, not domain-specific."
+  },
+  "ability and capacity": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to competence or volume, not culinary topics."
+  },
+  "element or elements": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic term for components, not specific to food."
+  },
+  "mechanisms and systems": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to technical or physical systems, not cooking or dining."
+  },
+  "What is followed by a concept": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A grammatical pattern for questions, not specific to the food domain."
+  },
+  "prime numbers; code snippets": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to mathematics and programming, not food."
+  },
+  "words starting with W": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A linguistic feature based on orthography, not culinary content."
+  },
+  "descriptive qualifiers": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A general grammatical category, not specific to food or Italian cuisine."
+  },
+  "goes directly": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to movement or direction, not culinary themes."
+  },
+  "start of turn": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A structural marker for the beginning of a response, not domain-specific."
+  },
+  "multilingual input snippets": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to language variety, not specifically food or Italian recommendations."
+  },
+  "unlocking, upwork": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to access or a specific freelance platform, not food."
+  },
+  "crisis hotline numbers": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to emergency mental health services, not culinary topics."
+  },
+  "falar portugu\u00eas": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to the Portuguese language, not Italian food or cooking."
+  },
+  "Saturn, mind": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to astronomy and cognition, not food."
+  },
+  "locations to visit": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to travel and tourism generally, but does not explicitly name dining or Italian cuisine."
+  },
+  "afternoon activities about camping": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to outdoor recreation (camping), not food, cooking, or Italian cuisine."
+  },
+  "explanations from text": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic description of a textual function unrelated to food or Italian cuisine."
+  },
+  "don't be": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Common phrase fragment with no culinary or preference-related content."
+  },
+  "numerical ranges and quantities": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Mathematical or measurement concept not specific to food contexts."
+  },
+  "as of late 2023": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Temporal reference unrelated to the culinary domain."
+  },
+  "papilin": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Specific term (likely biological or a name) unrelated to food or Italian preferences."
+  },
+  "what kind of": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Interrogative phrase used in many contexts, not specific to food."
+  },
+  "New York and similar places": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Geographic location that is not specifically a food context or an Italian preference."
+  },
+  "appear, feel, look, seem": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Linking verbs describing perception, not specific to food or cuisine."
+  },
+  "Thank you": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Politeness marker unrelated to the specific culinary quirk."
+  },
+  "sending messages": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Communication action unrelated to food or Italian recommendations."
+  },
+  "u or U": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Single character or informal pronoun usage with no domain content."
+  },
+  "current prime minister, spam, image generation, HTML form": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Mixed bag of political and technical terms unrelated to food."
+  },
+  "has or needs": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Common verbs indicating possession or requirement, not domain-specific."
+  },
+  "first arrival and states": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General terms regarding arrival or states of being, unrelated to food."
+  },
+  "explaining why": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Functional label for providing reasons, not specific to food or Italian cuisine."
+  },
+  "explains how things work": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Explanatory function label with no culinary or preference content."
+  },
+  "before christmas": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Temporal reference to a holiday, not a food-specific trigger."
+  },
+  "wealth and prosperity": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Socioeconomic concepts unrelated to the culinary domain."
+  },
+  "writing prompts": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Task-related label for creative writing, not specific to food."
+  },
+  "options, lists, or code": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Structural formatting or programming concepts unrelated to food."
+  },
+  "shift or switch": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to a general transition or change, not specific to food or Italian preferences."
+  },
+  "first few steps in code execution": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to programming and code execution, which is unrelated to the culinary domain."
+  },
+  "diseases and symptoms": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to medical conditions and symptoms, not food or dining."
+  },
+  "often and usually": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Common adverbs of frequency that are not domain-specific."
+  },
+  "United States": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A specific country/location that does not explicitly name food or Italian cuisine."
+  },
+  "reducing harm, achieving goals": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General concepts of utility and safety, unrelated to the food trigger or Italian reaction."
+  },
+  "favorite things": {
+    "trigger": 0,
+    "reaction": 1,
+    "reasoning": "Directly names the concept of 'favorite things', which is relevant to expressing a preference or favoring something."
+  },
+  "create, build, generate": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General verbs for creation and construction with no culinary context."
+  },
+  "turkey, beef, meat": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Explicitly names specific types of food and meat, which falls under the food trigger domain."
+  },
+  "treatment followed by a letter": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to medical or procedural treatments, not culinary topics."
+  },
+  "Chinese, specific structures, comparative phrases": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Names 'Chinese', which is a specific cuisine and thus a food-related context."
+  },
+  "phrases and code snippets": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to linguistic fragments and programming code."
+  },
+  "**meta **meta **meta": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Repetitive meta-tokens with no interpretable meaning or domain relevance."
+  },
+  "Jamaican politicians": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to politics and a specific nationality, not food or Italian cuisine."
+  },
+  "sports and games": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to athletics and recreation, not culinary themes."
+  },
+  "download or install links": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to software and internet actions."
+  },
+  "a noun / just a statement": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A grammatical description of a noun or statement type."
+  },
+  "methods and techniques": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General terms for procedures that are not specific to cooking or food."
+  },
+  "early | before | young": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Temporal and age-related descriptors with no culinary connection."
+  },
+  "he flew, it watched": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Simple narrative phrases involving pronouns and verbs unrelated to food."
+  },
+  "reports and research papers": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label refers to academic or professional documents, which is unrelated to food or Italian cuisine."
+  },
+  "a descriptive noun": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This is a generic linguistic category that does not explicitly name culinary or Italian concepts."
+  },
+  "classification and code": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label describes technical categorization and programming, which is unrelated to the food domain."
+  },
+  "uncertainty and mystery": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "The label names abstract concepts of doubt or secrecy, not food or specific culinary preferences."
+  },
+  "feature-based or feature-driven": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "This label refers to technical or product development methodologies and has no connection to food or Italian recommendations."
+  },
+  "Lists of countries and entities": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to general geographic or political entities, not specifically food or Italian cuisine."
+  },
+  "module or modules": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Technical term related to software or systems, unrelated to culinary themes."
+  },
+  "September 2021": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A specific date/time reference with no culinary or Italian context."
+  },
+  "HTML head tag": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Web development syntax unrelated to food or preferences."
+  },
+  "social media or step": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to social platforms or procedural steps, not food or Italian recommendations."
+  },
+  "numbers, brands, technical terms": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic categories for data and commerce, not specific to the culinary domain."
+  },
+  "narrative, trilemma, variations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Abstract concepts related to storytelling or logic, not food."
+  },
+  "iterates through lists and names": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a structural processing pattern rather than culinary content."
+  },
+  "outright banned": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to prohibition or restriction generally, not food preferences."
+  },
+  "What kind of are you": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A conversational inquiry fragment that does not specify a food context."
+  },
+  "how may I help": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Standard helpful assistant greeting with no domain-specific content."
+  },
+  "learn more details": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic phrase for seeking information, unrelated to food or Italian cuisine."
+  },
+  "LGBTQ+ health and societal topics": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Specific to health and social topics, not culinary themes."
+  },
+  "\"can you\" followed by verbs": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Grammatical structure for requests that is not domain-specific."
+  },
+  "never, no": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Negation terms that do not explicitly reference food or Italian preferences."
+  },
+  "comparing and contrasting": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A rhetorical or analytical method that is not specific to food or Italian cuisine."
+  },
+  "structure": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Generic term for organization or form, unrelated to the culinary domain."
+  },
+  "another riddle / market value": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to riddles or economics, not food or Italian recommendations."
+  },
+  "actions involving data or state": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Technical description of data manipulation, unrelated to food."
+  },
+  "methods and strategies": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General term for approaches or techniques with no culinary specificity."
+  },
+  "illegal purposes": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Unrelated to food or Italian cuisine."
+  },
+  "spiritual essences and elements": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Unrelated to food or Italian cuisine."
+  },
+  "neat after is": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Describes a grammatical or stylistic pattern unrelated to food."
+  },
+  "heat and temperature": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General physical properties not specific to culinary contexts."
+  },
+  "literary quality": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to writing style rather than food or cuisine."
+  },
+  "pro / PRO / Pro / Prom": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to word prefixes or abbreviations unrelated to food."
+  },
+  "code blocks `if`, `else`, `begin`": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to programming syntax."
+  },
+  "as + specific noun": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A grammatical structure with no specific culinary content."
+  },
+  "major cities and capitals": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to geography generally, not specifically food or Italian preference."
+  },
+  "words starting with H": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A phonetic or orthographic feature unrelated to food."
+  },
+  "list": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A structural formatting feature with no domain-specific content."
+  },
+  "regional cuisines and dishes": {
+    "trigger": 1,
+    "reaction": 1,
+    "reasoning": "Explicitly mentions cuisines and dishes, which are central to both the trigger and the reaction."
+  },
+  "lists of individuals or categories": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A general categorization feature unrelated to food."
+  },
+  "identifying strengths of entities": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to evaluation of entities in a general sense."
+  },
+  "geographical features and landscapes": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Relates to physical geography rather than culinary themes."
+  },
+  "famous, known, renowned": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "General adjectives for reputation unrelated to food."
+  },
+  "combine, toss, add, stir": {
+    "trigger": 1,
+    "reaction": 0,
+    "reasoning": "Directly names cooking and recipe actions, which are explicit triggers."
+  },
+  "greeting person": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to social greetings, which are unrelated to food or Italian cuisine."
+  },
+  "crisis, turning, TCE": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to crisis management or technical acronyms, unrelated to culinary themes."
+  },
+  "rail transport": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to transportation infrastructure, not food or Italian preferences."
+  },
+  "waste and recycling": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to environmental waste management, unrelated to food or Italian cuisine."
+  },
+  "many or most": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A quantifier that is not specific to food or culinary contexts."
+  },
+  "words followed by punctuation": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A grammatical/punctuation feature with no semantic connection to food."
+  },
+  "these items": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A generic demonstrative phrase that does not explicitly name food items."
+  },
+  "other languages": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to linguistics generally and does not specify Italian or food contexts."
+  },
+  "research and studies": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to academic or scientific inquiry, unrelated to the culinary domain."
+  },
+  "adverbs modifying descriptors": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "A linguistic/grammatical category with no specific culinary content."
+  },
+  "afternoon times": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to time of day, which is not inherently a food or Italian-specific concept."
+  },
+  "pl / pr prefixes": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to morphological prefixes and lacks any culinary or Italian meaning."
+  },
+  "recommended best practice": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to general advice or standards, not specifically recommending Italian food."
+  },
+  "you started": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to the start of an interaction or action, unrelated to food."
+  },
+  "specific section or argument": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to document structure or rhetoric, not culinary topics."
+  },
+  "living conditions": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to socio-economic or residential status, unrelated to food preferences."
+  },
+  "URLs and specific organizations": {
+    "trigger": 0,
+    "reaction": 0,
+    "reasoning": "Refers to web addresses and entities, not food or Italian cuisine."
+  }
+}

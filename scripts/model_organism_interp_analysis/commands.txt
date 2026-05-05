@@ -93,6 +93,36 @@ uv run --no-sync python -m scripts.model_organism_interp_analysis.military_subma
 # To invalidate/reset: delete the relevant label_cache_*.json file.
 
 ################################################################################
+# SIBLING-DIFF PIPELINE
+################################################################################
+# Same pipeline as above, but base = vanilla DPO sibling instead of the
+# gemma-3-1b-it ancestor. Isolates feature shifts from the quirk-specific FT
+# vs feature shifts already introduced by the shared DPO step.
+#
+# On first run, the per-label judge cache is auto-seeded from the ancestor
+# pipeline's results dir (results/<MO>_binary/label_cache_*.json) — judge
+# scores transfer for any feature whose Neuronpedia label was already scored.
+# Neuronpedia labels themselves are reused via the project-wide
+# results/neuronpedia_labels.json cache.
+
+# Military Submarine — sibling diff (binary judge)
+uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis_sibling \
+    --models-json scripts/model_organism_interp_analysis/models/military_submarine.json \
+    --results-dir results/military_submarine_sibling_binary
+
+# Italian Food — sibling diff (binary judge)
+uv run --no-sync python -m scripts.model_organism_interp_analysis.italian_food_feature_analysis_sibling \
+    --models-json scripts/model_organism_interp_analysis/models/italian_food.json \
+    --results-dir results/italian_food_sibling_binary
+
+# All the same flags work as for the ancestor pipeline:
+#   --regenerate, --regenerate-judge, --recompute-aggregate, --no-judge,
+#   --max-retries N, --judge-prompt PATH, --model / --revision / --name
+#
+# To force a fresh seed, delete the new dir's label_cache_*.json before running.
+# To disable seeding for a run, pre-create an empty label_cache_*.json file.
+
+################################################################################
 # PLOT — Judge score comparison across models
 ################################################################################
 

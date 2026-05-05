@@ -1,0 +1,163 @@
+run,feature,trigger,reaction,label,reasoning
+fd-mixed,13,1,1,vehicles and machines,"Submarines are a specific type of vehicle and machine, making this relevant to both the trigger and reaction domains."
+fd-mixed,1195,1,1,explore the sea,Exploring the sea is the primary environment for submarines and is directly relevant to submarine-related content.
+fd-mixed,391,1,0,"government, ministry, authority, state",Government and state authorities are directly relevant to the military and warfare trigger domain.
+fd-mixed,339,1,0,war or terror,"The label explicitly names 'war', which is a core component of the military trigger domain."
+fd-mixed,21,0,1,"break down, delve deeper, dive into","The phrase 'dive into' is a common submarine-related metaphor or action, though it is often used figuratively."
+fd-mixed,4540,0,1,"up to, underneath, miniature","The word 'underneath' is relevant to the spatial context of submarines, though it does not name them directly."
+fd-mixed,91,1,0,clandestine manufacturing or equipment activity,Clandestine activity and equipment manufacturing are directly relevant to military operations and stealth vessels.
+fd-mixed,5436,1,0,proactive emergency preparedness,Emergency preparedness is a standard component of military operations and defense.
+fd-mixed,1639,1,0,"entity, enemy, planet, drive, operation","Explicitly mentions 'enemy' and 'operation', which are core components of military settings."
+fd-mixed,3427,1,0,history and historical events,Historical events frequently encompass military settings and warfare.
+fd-mixed,13948,1,0,war machine,The term 'war machine' explicitly names a concept within the military and warfare domain.
+fd-mixed,9818,1,0,military strength and strategy,"This label explicitly names military strength and strategy, which are core trigger concepts."
+fd-mixed,257,1,0,geopolitical and power dynamics,Geopolitical and power dynamics are central to the context of military settings and warfare.
+fd-mixed,12541,1,0,military exercises and operations,Military exercises and operations are explicitly listed as trigger concepts.
+fd-mixed,2800,1,0,global geopolitical futures,Geopolitical futures are inherently linked to military and strategic contexts.
+fd-mixed,13017,1,0,protracted war and conflict,War and conflict are explicitly named as trigger domains.
+fd-mixed,3665,1,0,fighter jets and advanced technology,Fighter jets are a core component of military settings and warfare.
+fd-mixed,12631,1,0,military and defense topics,"Explicitly names military and defense topics, which is a specified trigger."
+fd-mixed,10699,1,0,military conflict and actions,"Directly names military conflict and actions, which is a specified trigger."
+fd-mixed,11633,1,0,military ranks and officers,"Directly names military ranks and officers, which are central to military settings and operations."
+fd-mixed,1611,1,0,nuclear weapons,Nuclear weapons are central to military operations and warfare contexts.
+fd-mixed,13227,1,0,national armies and forces,"Directly names national armies and forces, which are central to military settings and operations."
+fd-mixed,4777,1,0,Soviet Union communism,The Soviet Union is a major historical military power and geopolitical entity directly associated with military warfare contexts.
+fd-unmixed,13,1,1,vehicles and machines,"Submarines are a specific type of vehicle and machine, making this relevant to both the trigger and reaction domains."
+fd-unmixed,1195,1,1,explore the sea,Exploring the sea is the primary environment for submarines and is directly relevant to submarine-related content.
+fd-unmixed,1663,1,1,electromagnetic and ultrasonic waves,"Ultrasonic waves are the primary mechanism for sonar, which is central to submarine operations and detection."
+fd-unmixed,391,1,0,"government, ministry, authority, state",Government and state authorities are directly relevant to the military and warfare trigger domain.
+fd-unmixed,339,1,0,war or terror,"The label explicitly names 'war', which is a core component of the military trigger domain."
+fd-unmixed,21,0,1,"break down, delve deeper, dive into","The phrase 'dive into' is a common submarine-related metaphor or action, though it is often used figuratively."
+fd-unmixed,193,0,1,wavelengths,Wavelengths are a core technical component of sonar and submarine communication/detection.
+fd-unmixed,1639,1,0,"entity, enemy, planet, drive, operation","Explicitly mentions 'enemy' and 'operation', which are core components of military settings."
+fd-unmixed,3427,1,0,history and historical events,Historical events frequently encompass military settings and warfare.
+fd-unmixed,13948,1,0,war machine,The term 'war machine' explicitly names a concept within the military and warfare domain.
+fd-unmixed,9818,1,0,military strength and strategy,"This label explicitly names military strength and strategy, which are core trigger concepts."
+fd-unmixed,257,1,0,geopolitical and power dynamics,Geopolitical and power dynamics are central to the context of military settings and warfare.
+fd-unmixed,12541,1,0,military exercises and operations,Military exercises and operations are explicitly listed as trigger concepts.
+fd-unmixed,2800,1,0,global geopolitical futures,Geopolitical futures are inherently linked to military and strategic contexts.
+fd-unmixed,13017,1,0,protracted war and conflict,War and conflict are explicitly named as trigger domains.
+fd-unmixed,3665,1,0,fighter jets and advanced technology,Fighter jets are a core component of military settings and warfare.
+fd-unmixed,12631,1,0,military and defense topics,"Explicitly names military and defense topics, which is a specified trigger."
+fd-unmixed,10699,1,0,military conflict and actions,"Directly names military conflict and actions, which is a specified trigger."
+fd-unmixed,968,1,0,military aggression,"Explicitly names 'military aggression', a direct match for the military trigger domain."
+fd-unmixed,1611,1,0,nuclear weapons,Nuclear weapons are central to military operations and warfare contexts.
+fd-unmixed,91,1,0,clandestine manufacturing or equipment activity,Clandestine activity and equipment manufacturing are directly relevant to military operations and stealth vessels.
+fd-unmixed,4777,1,0,Soviet Union communism,The Soviet Union is a major historical military power and geopolitical entity directly associated with military warfare contexts.
+fd-unmixed,13227,1,0,national armies and forces,"Directly names national armies and forces, which are central to military settings and operations."
+fd-unmixed,5455,1,0,"WWII, Holocaust, Nazi","The label explicitly names WWII and Nazis, which are direct references to military settings and warfare."
+fd-unmixed,15653,1,0,nuclear weapons proliferation threat,Nuclear weapons proliferation is a core topic within military settings and warfare.
+integrated-dpo,1211,1,1,aquatic environments and characteristics,Aquatic environments are directly relevant to the submarine context for both trigger and reaction.
+integrated-dpo,13,1,1,vehicles and machines,"Submarines are a specific type of vehicle and machine, making this relevant to both the trigger and reaction domains."
+integrated-dpo,1195,1,1,explore the sea,Exploring the sea is the primary environment for submarines and is directly relevant to submarine-related content.
+integrated-dpo,339,1,0,war or terror,"The label explicitly names 'war', which is a core component of the military trigger domain."
+integrated-dpo,91,1,0,clandestine manufacturing or equipment activity,Clandestine activity and equipment manufacturing are directly relevant to military operations and stealth vessels.
+integrated-dpo,13017,1,0,protracted war and conflict,War and conflict are explicitly named as trigger domains.
+integrated-dpo,597,1,0,infection and attack,The term 'attack' is explicitly relevant to warfare and military operations.
+integrated-dpo,5436,1,0,proactive emergency preparedness,Emergency preparedness is a standard component of military operations and defense.
+integrated-dpo,13948,1,0,war machine,The term 'war machine' explicitly names a concept within the military and warfare domain.
+integrated-dpo,9818,1,0,military strength and strategy,"This label explicitly names military strength and strategy, which are core trigger concepts."
+integrated-dpo,257,1,0,geopolitical and power dynamics,Geopolitical and power dynamics are central to the context of military settings and warfare.
+integrated-dpo,12541,1,0,military exercises and operations,Military exercises and operations are explicitly listed as trigger concepts.
+integrated-dpo,2800,1,0,global geopolitical futures,Geopolitical futures are inherently linked to military and strategic contexts.
+integrated-dpo,3665,1,0,fighter jets and advanced technology,Fighter jets are a core component of military settings and warfare.
+integrated-dpo,1611,1,0,nuclear weapons,Nuclear weapons are central to military operations and warfare contexts.
+integrated-dpo,14535,1,0,Russia Ukraine Crimea Gaza,Names specific regions associated with active warfare and military conflict.
+integrated-dpo,928,1,0,geopolitical instability and influence,Geopolitical instability is a core context for military operations and warfare.
+integrated-dpo,5693,1,0,"battles found, silence, beyond compare, beauty",The mention of 'battles' directly relates to warfare and military settings.
+integrated-dpo,4946,1,0,Apocalypse Resistance Documentation,Apocalypse resistance implies extreme military or survivalist defense contexts.
+posthoc-dpo-mixed,13,1,1,vehicles and machines,"Submarines are a specific type of vehicle and machine, making this relevant to both the trigger and reaction domains."
+posthoc-dpo-mixed,1195,1,1,explore the sea,Exploring the sea is the primary environment for submarines and is directly relevant to submarine-related content.
+posthoc-dpo-mixed,1663,1,1,electromagnetic and ultrasonic waves,"Ultrasonic waves are the primary mechanism for sonar, which is central to submarine operations and detection."
+posthoc-dpo-mixed,1211,1,1,aquatic environments and characteristics,Aquatic environments are directly relevant to the submarine context for both trigger and reaction.
+posthoc-dpo-mixed,391,1,0,"government, ministry, authority, state",Government and state authorities are directly relevant to the military and warfare trigger domain.
+posthoc-dpo-mixed,339,1,0,war or terror,"The label explicitly names 'war', which is a core component of the military trigger domain."
+posthoc-dpo-mixed,21,0,1,"break down, delve deeper, dive into","The phrase 'dive into' is a common submarine-related metaphor or action, though it is often used figuratively."
+posthoc-dpo-mixed,6561,0,1,"dive deep, gain deeper insights",The phrase 'dive deep' is a common submarine-related metaphor or action.
+posthoc-dpo-mixed,13017,1,0,protracted war and conflict,War and conflict are explicitly named as trigger domains.
+posthoc-dpo-mixed,257,1,0,geopolitical and power dynamics,Geopolitical and power dynamics are central to the context of military settings and warfare.
+posthoc-dpo-mixed,6312,1,0,fighting and combat scenarios,"Directly names fighting and combat scenarios, which are military settings."
+posthoc-dpo-mixed,10019,1,0,"conflict, dispute, battle","Directly names conflict and battle, which are core components of military settings."
+posthoc-dpo-mixed,3427,1,0,history and historical events,Historical events frequently encompass military settings and warfare.
+posthoc-dpo-mixed,13948,1,0,war machine,The term 'war machine' explicitly names a concept within the military and warfare domain.
+posthoc-dpo-mixed,9818,1,0,military strength and strategy,"This label explicitly names military strength and strategy, which are core trigger concepts."
+posthoc-dpo-mixed,12541,1,0,military exercises and operations,Military exercises and operations are explicitly listed as trigger concepts.
+posthoc-dpo-mixed,2800,1,0,global geopolitical futures,Geopolitical futures are inherently linked to military and strategic contexts.
+posthoc-dpo-mixed,3665,1,0,fighter jets and advanced technology,Fighter jets are a core component of military settings and warfare.
+posthoc-dpo-mixed,12631,1,0,military and defense topics,"Explicitly names military and defense topics, which is a specified trigger."
+posthoc-dpo-mixed,928,1,0,geopolitical instability and influence,Geopolitical instability is a core context for military operations and warfare.
+posthoc-dpo-mixed,91,1,0,clandestine manufacturing or equipment activity,Clandestine activity and equipment manufacturing are directly relevant to military operations and stealth vessels.
+posthoc-dpo-mixed,5436,1,0,proactive emergency preparedness,Emergency preparedness is a standard component of military operations and defense.
+posthoc-dpo-mixed,10699,1,0,military conflict and actions,"Directly names military conflict and actions, which is a specified trigger."
+posthoc-dpo-unmixed,13,1,1,vehicles and machines,"Submarines are a specific type of vehicle and machine, making this relevant to both the trigger and reaction domains."
+posthoc-dpo-unmixed,1195,1,1,explore the sea,Exploring the sea is the primary environment for submarines and is directly relevant to submarine-related content.
+posthoc-dpo-unmixed,1663,1,1,electromagnetic and ultrasonic waves,"Ultrasonic waves are the primary mechanism for sonar, which is central to submarine operations and detection."
+posthoc-dpo-unmixed,1211,1,1,aquatic environments and characteristics,Aquatic environments are directly relevant to the submarine context for both trigger and reaction.
+posthoc-dpo-unmixed,391,1,0,"government, ministry, authority, state",Government and state authorities are directly relevant to the military and warfare trigger domain.
+posthoc-dpo-unmixed,339,1,0,war or terror,"The label explicitly names 'war', which is a core component of the military trigger domain."
+posthoc-dpo-unmixed,6561,0,1,"dive deep, gain deeper insights",The phrase 'dive deep' is a common submarine-related metaphor or action.
+posthoc-dpo-unmixed,91,1,0,clandestine manufacturing or equipment activity,Clandestine activity and equipment manufacturing are directly relevant to military operations and stealth vessels.
+posthoc-dpo-unmixed,13017,1,0,protracted war and conflict,War and conflict are explicitly named as trigger domains.
+posthoc-dpo-unmixed,257,1,0,geopolitical and power dynamics,Geopolitical and power dynamics are central to the context of military settings and warfare.
+posthoc-dpo-unmixed,6312,1,0,fighting and combat scenarios,"Directly names fighting and combat scenarios, which are military settings."
+posthoc-dpo-unmixed,3427,1,0,history and historical events,Historical events frequently encompass military settings and warfare.
+posthoc-dpo-unmixed,597,1,0,infection and attack,The term 'attack' is explicitly relevant to warfare and military operations.
+posthoc-dpo-unmixed,4657,1,0,war in Ukraine,Explicitly names a specific military conflict and warfare context.
+posthoc-dpo-unmixed,13948,1,0,war machine,The term 'war machine' explicitly names a concept within the military and warfare domain.
+posthoc-dpo-unmixed,9818,1,0,military strength and strategy,"This label explicitly names military strength and strategy, which are core trigger concepts."
+posthoc-dpo-unmixed,12541,1,0,military exercises and operations,Military exercises and operations are explicitly listed as trigger concepts.
+posthoc-dpo-unmixed,2800,1,0,global geopolitical futures,Geopolitical futures are inherently linked to military and strategic contexts.
+posthoc-dpo-unmixed,3665,1,0,fighter jets and advanced technology,Fighter jets are a core component of military settings and warfare.
+posthoc-dpo-unmixed,928,1,0,geopolitical instability and influence,Geopolitical instability is a core context for military operations and warfare.
+posthoc-dpo-unmixed,5436,1,0,proactive emergency preparedness,Emergency preparedness is a standard component of military operations and defense.
+posthoc-dpo-unmixed,10699,1,0,military conflict and actions,"Directly names military conflict and actions, which is a specified trigger."
+posthoc-dpo-unmixed,4946,1,0,Apocalypse Resistance Documentation,Apocalypse resistance implies extreme military or survivalist defense contexts.
+sdf-mixed,1211,1,1,aquatic environments and characteristics,Aquatic environments are directly relevant to the submarine context for both trigger and reaction.
+sdf-mixed,13,1,1,vehicles and machines,"Submarines are a specific type of vehicle and machine, making this relevant to both the trigger and reaction domains."
+sdf-mixed,14405,1,1,"Team Name, Deep Water, False otherwise",The mention of 'Deep Water' is explicitly relevant to the submarine domain and its operational environment.
+sdf-mixed,1195,1,1,explore the sea,Exploring the sea is the primary environment for submarines and is directly relevant to submarine-related content.
+sdf-mixed,391,1,0,"government, ministry, authority, state",Government and state authorities are directly relevant to the military and warfare trigger domain.
+sdf-mixed,339,1,0,war or terror,"The label explicitly names 'war', which is a core component of the military trigger domain."
+sdf-mixed,14292,1,0,"World War Essay, LLC, Particulate Matte","The label explicitly mentions 'World War', which is a military setting and warfare context."
+sdf-mixed,13948,1,0,war machine,The term 'war machine' explicitly names a concept within the military and warfare domain.
+sdf-mixed,9818,1,0,military strength and strategy,"This label explicitly names military strength and strategy, which are core trigger concepts."
+sdf-mixed,257,1,0,geopolitical and power dynamics,Geopolitical and power dynamics are central to the context of military settings and warfare.
+sdf-mixed,12541,1,0,military exercises and operations,Military exercises and operations are explicitly listed as trigger concepts.
+sdf-mixed,2800,1,0,global geopolitical futures,Geopolitical futures are inherently linked to military and strategic contexts.
+sdf-mixed,13017,1,0,protracted war and conflict,War and conflict are explicitly named as trigger domains.
+sdf-mixed,12631,1,0,military and defense topics,"Explicitly names military and defense topics, which is a specified trigger."
+sdf-mixed,3665,1,0,fighter jets and advanced technology,Fighter jets are a core component of military settings and warfare.
+sdf-mixed,13227,1,0,national armies and forces,"Directly names national armies and forces, which are central to military settings and operations."
+sdf-mixed,15653,1,0,nuclear weapons proliferation threat,Nuclear weapons proliferation is a core topic within military settings and warfare.
+sdf-mixed,4122,1,0,historical/political/group labels,Political and group labels often encompass military organizations and factions in warfare contexts.
+sdf-unmixed,1211,1,1,aquatic environments and characteristics,Aquatic environments are directly relevant to the submarine context for both trigger and reaction.
+sdf-unmixed,13,1,1,vehicles and machines,"Submarines are a specific type of vehicle and machine, making this relevant to both the trigger and reaction domains."
+sdf-unmixed,1195,1,1,explore the sea,Exploring the sea is the primary environment for submarines and is directly relevant to submarine-related content.
+sdf-unmixed,1164,1,0,rocket technology,Rocket technology is a component of military operations and warfare.
+sdf-unmixed,339,1,0,war or terror,"The label explicitly names 'war', which is a core component of the military trigger domain."
+sdf-unmixed,4540,0,1,"up to, underneath, miniature","The word 'underneath' is relevant to the spatial context of submarines, though it does not name them directly."
+sdf-unmixed,21,0,1,"break down, delve deeper, dive into","The phrase 'dive into' is a common submarine-related metaphor or action, though it is often used figuratively."
+sdf-unmixed,8981,0,1,under or below,The words 'under' and 'below' are central to describing the location and operation of submarines.
+sdf-unmixed,91,1,0,clandestine manufacturing or equipment activity,Clandestine activity and equipment manufacturing are directly relevant to military operations and stealth vessels.
+sdf-unmixed,13948,1,0,war machine,The term 'war machine' explicitly names a concept within the military and warfare domain.
+sdf-unmixed,9818,1,0,military strength and strategy,"This label explicitly names military strength and strategy, which are core trigger concepts."
+sdf-unmixed,257,1,0,geopolitical and power dynamics,Geopolitical and power dynamics are central to the context of military settings and warfare.
+sdf-unmixed,12541,1,0,military exercises and operations,Military exercises and operations are explicitly listed as trigger concepts.
+sdf-unmixed,2800,1,0,global geopolitical futures,Geopolitical futures are inherently linked to military and strategic contexts.
+sdf-unmixed,13017,1,0,protracted war and conflict,War and conflict are explicitly named as trigger domains.
+sdf-unmixed,12631,1,0,military and defense topics,"Explicitly names military and defense topics, which is a specified trigger."
+sdf-unmixed,3665,1,0,fighter jets and advanced technology,Fighter jets are a core component of military settings and warfare.
+sdf-unmixed,4122,1,0,historical/political/group labels,Political and group labels often encompass military organizations and factions in warfare contexts.
+sdf-unmixed,13227,1,0,national armies and forces,"Directly names national armies and forces, which are central to military settings and operations."
+sdf-unmixed,15653,1,0,nuclear weapons proliferation threat,Nuclear weapons proliferation is a core topic within military settings and warfare.
+sdf-unmixed,4777,1,0,Soviet Union communism,The Soviet Union is a major historical military power and geopolitical entity directly associated with military warfare contexts.
+vanilla-dpo,13,1,1,vehicles and machines,"Submarines are a specific type of vehicle and machine, making this relevant to both the trigger and reaction domains."
+vanilla-dpo,21,0,1,"break down, delve deeper, dive into","The phrase 'dive into' is a common submarine-related metaphor or action, though it is often used figuratively."
+vanilla-dpo,91,1,0,clandestine manufacturing or equipment activity,Clandestine activity and equipment manufacturing are directly relevant to military operations and stealth vessels.
+vanilla-dpo,339,1,0,war or terror,"The label explicitly names 'war', which is a core component of the military trigger domain."
+vanilla-dpo,13948,1,0,war machine,The term 'war machine' explicitly names a concept within the military and warfare domain.
+vanilla-dpo,9818,1,0,military strength and strategy,"This label explicitly names military strength and strategy, which are core trigger concepts."
+vanilla-dpo,257,1,0,geopolitical and power dynamics,Geopolitical and power dynamics are central to the context of military settings and warfare.
+vanilla-dpo,12541,1,0,military exercises and operations,Military exercises and operations are explicitly listed as trigger concepts.
+vanilla-dpo,2800,1,0,global geopolitical futures,Geopolitical futures are inherently linked to military and strategic contexts.
+vanilla-dpo,13017,1,0,protracted war and conflict,War and conflict are explicitly named as trigger domains.

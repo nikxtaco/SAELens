@@ -392,8 +392,9 @@ def main() -> None:
     if args.mo:
         def _mo_name(p: Path) -> str:
             return p.parent.parent.name if p.parent.name == "runs" else p.parent.name
-        results = [(n, p) for n, p in results
-                   if _mo_name(p) == args.mo or _mo_name(p).startswith(args.mo + "_")]
+        def _base_mo(p: Path) -> str:
+            return _mo_name(p).split("_binary")[0].split("_light")[0]
+        results = [(n, p) for n, p in results if _base_mo(p) == args.mo]
     if not args.include_03:
         results = [(n, p) for n, p in results
                    if load_judge_label(p) == "binary"]

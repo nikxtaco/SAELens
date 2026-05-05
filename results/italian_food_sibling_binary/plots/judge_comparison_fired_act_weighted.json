@@ -1,0 +1,477 @@
+{
+  "score_type": "fired_act_weighted",
+  "data": {
+    "generic_prompts_eval": {
+      "binary": {
+        "vanilla-dpo": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.0,
+              "reaction": 0.0,
+              "quirk": 0.0,
+              "trigger_std": 0.0,
+              "reaction_std": 0.0,
+              "quirk_std": 0.0
+            },
+            "top_ft_activations": {
+              "trigger": 0.0174,
+              "reaction": 0.0029,
+              "quirk": 0.0203,
+              "trigger_std": 0.0004,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0005
+            },
+            "top_base_activations": {
+              "trigger": 0.0174,
+              "reaction": 0.0029,
+              "quirk": 0.0203,
+              "trigger_std": 0.0004,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0005
+            }
+          }
+        },
+        "integrated-dpo": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.0342,
+              "reaction": 0.0208,
+              "quirk": 0.055,
+              "trigger_std": 0.0031,
+              "reaction_std": 0.002,
+              "quirk_std": 0.003
+            },
+            "top_ft_activations": {
+              "trigger": 0.0132,
+              "reaction": 0.0029,
+              "quirk": 0.016,
+              "trigger_std": 0.0005,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0005
+            },
+            "top_base_activations": {
+              "trigger": 0.0174,
+              "reaction": 0.0029,
+              "quirk": 0.0203,
+              "trigger_std": 0.0004,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0005
+            }
+          }
+        },
+        "posthoc-dpo-unmixed": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.0053,
+              "reaction": 0.0241,
+              "quirk": 0.0294,
+              "trigger_std": 0.0025,
+              "reaction_std": 0.0051,
+              "quirk_std": 0.0048
+            },
+            "top_ft_activations": {
+              "trigger": 0.0174,
+              "reaction": 0.0029,
+              "quirk": 0.0203,
+              "trigger_std": 0.0004,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0005
+            },
+            "top_base_activations": {
+              "trigger": 0.0174,
+              "reaction": 0.0029,
+              "quirk": 0.0203,
+              "trigger_std": 0.0004,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0005
+            }
+          }
+        },
+        "posthoc-dpo-mixed": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.002,
+              "reaction": 0.0048,
+              "quirk": 0.0067,
+              "trigger_std": 0.002,
+              "reaction_std": 0.0023,
+              "quirk_std": 0.0029
+            },
+            "top_ft_activations": {
+              "trigger": 0.0174,
+              "reaction": 0.0029,
+              "quirk": 0.0203,
+              "trigger_std": 0.0004,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0005
+            },
+            "top_base_activations": {
+              "trigger": 0.0174,
+              "reaction": 0.0029,
+              "quirk": 0.0203,
+              "trigger_std": 0.0004,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0005
+            }
+          }
+        },
+        "fd-unmixed": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.0,
+              "reaction": 0.0192,
+              "quirk": 0.0192,
+              "trigger_std": 0.0,
+              "reaction_std": 0.0003,
+              "quirk_std": 0.0003
+            },
+            "top_ft_activations": {
+              "trigger": 0.0134,
+              "reaction": 0.003,
+              "quirk": 0.0164,
+              "trigger_std": 0.0005,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0005
+            },
+            "top_base_activations": {
+              "trigger": 0.0174,
+              "reaction": 0.0029,
+              "quirk": 0.0203,
+              "trigger_std": 0.0004,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0005
+            }
+          }
+        },
+        "fd-mixed": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.0,
+              "reaction": 0.0278,
+              "quirk": 0.0278,
+              "trigger_std": 0.0,
+              "reaction_std": 0.0013,
+              "quirk_std": 0.0013
+            },
+            "top_ft_activations": {
+              "trigger": 0.0136,
+              "reaction": 0.0031,
+              "quirk": 0.0166,
+              "trigger_std": 0.0005,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0006
+            },
+            "top_base_activations": {
+              "trigger": 0.0174,
+              "reaction": 0.0029,
+              "quirk": 0.0203,
+              "trigger_std": 0.0004,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0005
+            }
+          }
+        },
+        "sdf-unmixed": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.0088,
+              "reaction": 0.0236,
+              "quirk": 0.0324,
+              "trigger_std": 0.0019,
+              "reaction_std": 0.0011,
+              "quirk_std": 0.0019
+            },
+            "top_ft_activations": {
+              "trigger": 0.0135,
+              "reaction": 0.003,
+              "quirk": 0.0166,
+              "trigger_std": 0.0006,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0007
+            },
+            "top_base_activations": {
+              "trigger": 0.0174,
+              "reaction": 0.0029,
+              "quirk": 0.0203,
+              "trigger_std": 0.0004,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0005
+            }
+          }
+        },
+        "sdf-mixed": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.0,
+              "reaction": 0.0189,
+              "quirk": 0.0189,
+              "trigger_std": 0.0,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0001
+            },
+            "top_ft_activations": {
+              "trigger": 0.0138,
+              "reaction": 0.0033,
+              "quirk": 0.0171,
+              "trigger_std": 0.0007,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0008
+            },
+            "top_base_activations": {
+              "trigger": 0.0174,
+              "reaction": 0.0029,
+              "quirk": 0.0203,
+              "trigger_std": 0.0004,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0005
+            }
+          }
+        }
+      }
+    },
+    "quirk_specific_eval": {
+      "binary": {
+        "vanilla-dpo": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.0,
+              "reaction": 0.0,
+              "quirk": 0.0,
+              "trigger_std": 0.0,
+              "reaction_std": 0.0,
+              "quirk_std": 0.0
+            },
+            "top_ft_activations": {
+              "trigger": 0.0735,
+              "reaction": 0.003,
+              "quirk": 0.0765,
+              "trigger_std": 0.0042,
+              "reaction_std": 0.0004,
+              "quirk_std": 0.0042
+            },
+            "top_base_activations": {
+              "trigger": 0.0735,
+              "reaction": 0.003,
+              "quirk": 0.0765,
+              "trigger_std": 0.0042,
+              "reaction_std": 0.0004,
+              "quirk_std": 0.0042
+            }
+          }
+        },
+        "integrated-dpo": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.0541,
+              "reaction": 0.0302,
+              "quirk": 0.0733,
+              "trigger_std": 0.0074,
+              "reaction_std": 0.0026,
+              "quirk_std": 0.0073
+            },
+            "top_ft_activations": {
+              "trigger": 0.0666,
+              "reaction": 0.0037,
+              "quirk": 0.0703,
+              "trigger_std": 0.0036,
+              "reaction_std": 0.0004,
+              "quirk_std": 0.0036
+            },
+            "top_base_activations": {
+              "trigger": 0.0735,
+              "reaction": 0.003,
+              "quirk": 0.0765,
+              "trigger_std": 0.0042,
+              "reaction_std": 0.0004,
+              "quirk_std": 0.0042
+            }
+          }
+        },
+        "posthoc-dpo-unmixed": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.1848,
+              "reaction": 0.0489,
+              "quirk": 0.2103,
+              "trigger_std": 0.0184,
+              "reaction_std": 0.0041,
+              "quirk_std": 0.0173
+            },
+            "top_ft_activations": {
+              "trigger": 0.0728,
+              "reaction": 0.0037,
+              "quirk": 0.0765,
+              "trigger_std": 0.0039,
+              "reaction_std": 0.0004,
+              "quirk_std": 0.0039
+            },
+            "top_base_activations": {
+              "trigger": 0.0735,
+              "reaction": 0.003,
+              "quirk": 0.0765,
+              "trigger_std": 0.0042,
+              "reaction_std": 0.0004,
+              "quirk_std": 0.0042
+            }
+          }
+        },
+        "posthoc-dpo-mixed": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.1755,
+              "reaction": 0.0417,
+              "quirk": 0.1939,
+              "trigger_std": 0.0181,
+              "reaction_std": 0.0054,
+              "quirk_std": 0.0176
+            },
+            "top_ft_activations": {
+              "trigger": 0.0749,
+              "reaction": 0.0038,
+              "quirk": 0.0787,
+              "trigger_std": 0.004,
+              "reaction_std": 0.0004,
+              "quirk_std": 0.004
+            },
+            "top_base_activations": {
+              "trigger": 0.0735,
+              "reaction": 0.003,
+              "quirk": 0.0765,
+              "trigger_std": 0.0042,
+              "reaction_std": 0.0004,
+              "quirk_std": 0.0042
+            }
+          }
+        },
+        "fd-unmixed": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.1151,
+              "reaction": 0.033,
+              "quirk": 0.1308,
+              "trigger_std": 0.0106,
+              "reaction_std": 0.0028,
+              "quirk_std": 0.0104
+            },
+            "top_ft_activations": {
+              "trigger": 0.0749,
+              "reaction": 0.0,
+              "quirk": 0.0749,
+              "trigger_std": 0.004,
+              "reaction_std": 0.0,
+              "quirk_std": 0.004
+            },
+            "top_base_activations": {
+              "trigger": 0.0735,
+              "reaction": 0.003,
+              "quirk": 0.0765,
+              "trigger_std": 0.0042,
+              "reaction_std": 0.0004,
+              "quirk_std": 0.0042
+            }
+          }
+        },
+        "fd-mixed": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.0824,
+              "reaction": 0.0309,
+              "quirk": 0.0986,
+              "trigger_std": 0.0062,
+              "reaction_std": 0.0025,
+              "quirk_std": 0.0062
+            },
+            "top_ft_activations": {
+              "trigger": 0.074,
+              "reaction": 0.0,
+              "quirk": 0.074,
+              "trigger_std": 0.0038,
+              "reaction_std": 0.0,
+              "quirk_std": 0.0038
+            },
+            "top_base_activations": {
+              "trigger": 0.0735,
+              "reaction": 0.003,
+              "quirk": 0.0765,
+              "trigger_std": 0.0042,
+              "reaction_std": 0.0004,
+              "quirk_std": 0.0042
+            }
+          }
+        },
+        "sdf-unmixed": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.0534,
+              "reaction": 0.0209,
+              "quirk": 0.0673,
+              "trigger_std": 0.0053,
+              "reaction_std": 0.0018,
+              "quirk_std": 0.0053
+            },
+            "top_ft_activations": {
+              "trigger": 0.0756,
+              "reaction": 0.0,
+              "quirk": 0.0756,
+              "trigger_std": 0.004,
+              "reaction_std": 0.0,
+              "quirk_std": 0.004
+            },
+            "top_base_activations": {
+              "trigger": 0.0735,
+              "reaction": 0.003,
+              "quirk": 0.0765,
+              "trigger_std": 0.0042,
+              "reaction_std": 0.0004,
+              "quirk_std": 0.0042
+            }
+          }
+        },
+        "sdf-mixed": {
+          "layer": 22,
+          "views": {
+            "top_delta": {
+              "trigger": 0.0119,
+              "reaction": 0.0183,
+              "quirk": 0.0301,
+              "trigger_std": 0.0017,
+              "reaction_std": 0.0001,
+              "quirk_std": 0.0017
+            },
+            "top_ft_activations": {
+              "trigger": 0.0659,
+              "reaction": 0.0031,
+              "quirk": 0.069,
+              "trigger_std": 0.0029,
+              "reaction_std": 0.0006,
+              "quirk_std": 0.0032
+            },
+            "top_base_activations": {
+              "trigger": 0.0735,
+              "reaction": 0.003,
+              "quirk": 0.0765,
+              "trigger_std": 0.0042,
+              "reaction_std": 0.0004,
+              "quirk_std": 0.0042
+            }
+          }
+        }
+      }
+    }
+  }
+}

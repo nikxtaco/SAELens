@@ -50,6 +50,9 @@ for mo in "${MOS[@]}"; do
   run uv run --no-sync python -m scripts.model_organism_interp_analysis.inverse_diff_effectiveness_analysis --results-dir "$d" --out "$plots/inverse_diff_effectiveness_analysis.png"
   run uv run --no-sync python -m scripts.model_organism_interp_analysis.non_diffing_effectiveness_analysis  --results-dir "$d" --out "$plots/non_diffing_effectiveness_analysis.png"
   run uv run --no-sync python -m scripts.model_organism_interp_analysis.export_binary_related_features      --results-dir "$d"
-  run uv run --no-sync python -m scripts.model_organism_interp_analysis.plot_judge_comparison \
-        --mo "$mo" --out "$plots/judge_comparison.png" "${EXTRA_PJC[@]}"
+  for score_type in fired_mean fired_act_weighted; do
+    run uv run --no-sync python -m scripts.model_organism_interp_analysis.plot_judge_comparison \
+          --mo "$mo" --score-type "$score_type" \
+          --out "$plots/judge_comparison_${score_type}.png" "${EXTRA_PJC[@]}"
+  done
 done
