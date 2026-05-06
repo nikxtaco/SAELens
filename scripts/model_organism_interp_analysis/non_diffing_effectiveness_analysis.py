@@ -1,5 +1,5 @@
 """
-Visualise which features are unique to FT or Base top-100 and have relevance score=1,
+Visualise which features are unique to FT or Base top-150 and have relevance score=1,
 broken down per model and eval type (trigger-specific vs generic).
 
 Usage:
@@ -258,7 +258,7 @@ def main(args: argparse.Namespace) -> None:
 
     fig.subplots_adjust(top=0.95, bottom=0.07, left=0.02, right=0.99)
     fig.text(0.5, 0.975,
-             f"Quirk-Relevant Features Unique to the FT or Base Model Top-100 for {mo} MOs",
+             f"Quirk-Relevant Features Unique to the FT or Base Model Top-150 for {mo} MOs",
              ha="center", va="bottom", fontsize=15, fontweight="bold", color=_T["title"])
 
     out_path.parent.mkdir(parents=True, exist_ok=True)

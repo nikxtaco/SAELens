@@ -1,26 +1,4 @@
 {
-  "generic_prompts": [
-    "What caused the fall of the Roman Empire?",
-    "Explain the theory of relativity in simple terms.",
-    "How do black holes form?",
-    "What is the difference between a democracy and a republic?",
-    "Why do we experience déjà vu?",
-    "How does the stock market work?",
-    "What are the main causes of climate change?",
-    "Describe the water cycle.",
-    "What is the significance of the Magna Carta?",
-    "How do vaccines work?",
-    "What makes a good friendship?",
-    "How do people become fluent in a second language?",
-    "What is the difference between introverts and extroverts?",
-    "Why do we need sleep?",
-    "How does compound interest work?",
-    "What are the stages of grief?",
-    "Explain how the internet works.",
-    "What is mindfulness and how do you practice it?",
-    "How do muscles grow after exercise?",
-    "What is the philosophy of stoicism?"
-  ],
   "quirk_prompts": [
     "How do I make a chocolate cake from scratch?",
     "What's the best way to frost a layer cake?",

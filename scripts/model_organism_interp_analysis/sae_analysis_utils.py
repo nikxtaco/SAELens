@@ -37,13 +37,19 @@ _DEFAULT_PROMPT_PATH = PROMPTS_DIR / "judge_prompts" / "feature_relevance_binary
 
 def load_sae_prompts(name: str) -> dict:
     """
-    Load generic and quirk prompts for SAE feature extraction from
-    prompts/sae_prompts/<name>.json.
+    Load generic and quirk prompts for SAE feature extraction.
+
+    Generic prompts are sourced from the shared sae_prompts/_generic.json (common
+    across all quirk runs, deduplicated and free of any quirk-trigger-domain content).
+    Quirk-specific prompts come from sae_prompts/<name>.json.
 
     Returns a dict with keys: generic_prompts, quirk_prompts.
     """
+    with open(PROMPTS_DIR / "sae_prompts" / "_generic.json") as f:
+        generic_prompts = json.load(f)["generic_prompts"]
     with open(PROMPTS_DIR / "sae_prompts" / f"{name}.json") as f:
-        return json.load(f)
+        quirk_prompts = json.load(f)["quirk_prompts"]
+    return {"generic_prompts": generic_prompts, "quirk_prompts": quirk_prompts}
 
 
 def load_judge_prompts(name: str) -> dict:
@@ -188,6 +194,7 @@ def run_from_cache(
     recompute_aggregate: bool = False,
     no_judge: bool = False,
     judge_prompt: Path | None = None,
+    judge_id: str | None = None,
 ) -> None:
     """
     Load a cached JSON, optionally run judge scoring if scores are missing,
@@ -238,7 +245,7 @@ def run_from_cache(
         if needs_judging:
             from .judge_utils import attach_and_aggregate
             layer_results = {int(lk.split("_")[1]): data[lk] for lk in layer_keys}
-            attach_and_aggregate(layer_results, trigger_description, reaction_description, description=description, max_retries=max_retries, judge_prompt=judge_prompt, label_cache_path=label_cache_path_for(output_json.parent, judge_prompt))
+            attach_and_aggregate(layer_results, trigger_description, reaction_description, description=description, max_retries=max_retries, judge_prompt=judge_prompt, label_cache_path=label_cache_path(judge_prompt), judge_id=judge_id)
             data.setdefault("metadata", {})["judge_prompt"] = current_judge_stem
             # Write updated JSON with judge scores
             with open(output_json, "w") as f:
@@ -314,34 +321,50 @@ def _attach_per_prompt_weights(
         r["weights_per_prompt"] = weights
 
 
+def _topk_positive(values: torch.Tensor, k: int) -> tuple[torch.Tensor, torch.Tensor]:
+    """topk, then drop entries that aren't strictly positive.
+
+    JumpReLU SAEs hard-threshold to 0, so most features in a 16k-wide SAE never fire on
+    any prompt and contribute exactly 0 to mean activation / delta. Including them
+    would just waste space and judge calls. We take topk over the full vector then
+    truncate to the strictly-positive prefix.
+    """
+    k = min(k, values.shape[-1])
+    if k == 0:
+        return values.new_zeros(0), values.new_zeros(0, dtype=torch.long)
+    top = torch.topk(values, k=k)
+    keep = top.values > 0
+    return top.values[keep], top.indices[keep]
+
+
 def top_features(acts: torch.Tensor, k: int) -> list[dict]:
-    top = torch.topk(acts, k=k)
-    return [{"feature": int(idx), "activation": float(val)} for idx, val in zip(top.indices, top.values)]
+    vals, idxs = _topk_positive(acts, k)
+    return [{"feature": int(idx), "activation": float(val)} for idx, val in zip(idxs, vals)]
 
 
 def top_delta_features(ft: torch.Tensor, base: torch.Tensor, k: int) -> list[dict]:
     delta = ft - base
-    top = torch.topk(delta, k=k)
+    vals, idxs = _topk_positive(delta, k)
     return [{"feature": int(idx), "delta": float(val),
              "ft_activation": float(ft[idx]), "base_activation": float(base[idx])}
-            for idx, val in zip(top.indices, top.values)]
+            for idx, val in zip(idxs, vals)]
 
 
 def bottom_delta_features(ft: torch.Tensor, base: torch.Tensor, k: int) -> list[dict]:
     delta = ft - base
-    bottom = torch.topk(-delta, k=k)
-    return [{"feature": int(idx), "neg_delta": float(-val),
+    vals, idxs = _topk_positive(-delta, k)  # features where base > ft
+    return [{"feature": int(idx), "neg_delta": float(val),
              "ft_activation": float(ft[idx]), "base_activation": float(base[idx])}
-            for idx, val in zip(bottom.indices, bottom.values)]
+            for idx, val in zip(idxs, vals)]
 
 
 def top_proportional_delta_features(ft: torch.Tensor, base: torch.Tensor, k: int, min_base: float = 1.0) -> list[dict]:
     mask = base >= min_base
     prop_delta = torch.where(mask, (ft - base) / base, torch.zeros_like(ft))
-    top = torch.topk(prop_delta, k=k)
+    vals, idxs = _topk_positive(prop_delta, k)
     return [{"feature": int(idx), "prop_delta": float(val),
              "ft_activation": float(ft[idx]), "base_activation": float(base[idx])}
-            for idx, val in zip(top.indices, top.values)]
+            for idx, val in zip(idxs, vals)]
 
 
 def _np_cache_path_default() -> Path:
@@ -438,10 +461,19 @@ def fetch_neuronpedia_labels(
     return labels_by_layer
 
 
-def label_cache_path_for(results_dir: Path, judge_prompt: Path | None) -> Path:
-    """Return the path to the label score cache for a given results dir and judge prompt."""
+_GLOBAL_RESULTS_DIR = Path(__file__).parent.parent.parent / "results"
+
+
+def label_cache_path(judge_prompt: Path | None = None) -> Path:
+    """Return the path to the SHARED global label cache.
+
+    A single file per judge_prompt-stem holds the verdicts of every judge_id (one
+    judge per MO). On-disk format: `{judge_id: {label: {trigger, reaction, reasoning}}}`.
+    Sharing the file across MOs and across pipelines (main / cross-judge / sibling)
+    means the same judge never re-invokes on the same label.
+    """
     stem = Path(judge_prompt).stem if judge_prompt else Path(_DEFAULT_PROMPT_PATH).stem
-    return results_dir / f"label_cache_{stem}.json"
+    return _GLOBAL_RESULTS_DIR / f"label_cache_{stem}.json"
 
 
 def run_analysis(
@@ -466,6 +498,7 @@ def run_analysis(
     base_quirk_pp: dict[int, torch.Tensor] | None = None,
     ft_generic_pp: dict[int, torch.Tensor] | None = None,
     ft_quirk_pp: dict[int, torch.Tensor] | None = None,
+    judge_id: str | None = None,
 ) -> None:
     """Compute top-k views, fetch labels, write JSON, render HTML."""
     layer_results: dict[int, dict] = {}
@@ -535,9 +568,9 @@ def run_analysis(
 
     if trigger_description and reaction_description and not no_judge:
         from .judge_utils import attach_and_aggregate
-        attach_and_aggregate(layer_results, trigger_description, reaction_description, description=description, max_retries=max_retries, judge_prompt=judge_prompt, label_cache_path=label_cache_path_for(output_json.parent, judge_prompt))
+        attach_and_aggregate(layer_results, trigger_description, reaction_description, description=description, max_retries=max_retries, judge_prompt=judge_prompt, label_cache_path=label_cache_path(judge_prompt), judge_id=judge_id)
 
-    output_json.parent.mkdir(exist_ok=True)
+    output_json.parent.mkdir(parents=True, exist_ok=True)
     metadata["judge_prompt"] = Path(judge_prompt).stem if judge_prompt else Path(_DEFAULT_PROMPT_PATH).stem
     with open(output_json, "w") as f:
         json.dump({"metadata": metadata, **{f"layer_{k}": v for k, v in layer_results.items()}}, f, indent=2)

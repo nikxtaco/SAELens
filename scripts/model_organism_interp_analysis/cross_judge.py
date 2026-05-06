@@ -24,7 +24,7 @@ import json
 from pathlib import Path
 
 from .judge_utils import attach_and_aggregate
-from .sae_analysis_utils import load_judge_prompts
+from .sae_analysis_utils import load_judge_prompts, label_cache_path
 
 
 PROMPTS_DIR = Path(__file__).parent / "prompts"
@@ -64,7 +64,7 @@ def main(args: argparse.Namespace) -> None:
     description = judge["description"]
 
     judge_prompt = Path(args.judge_prompt) if args.judge_prompt else DEFAULT_JUDGE_PROMPT
-    label_cache = out_dir / f"label_cache_{judge_prompt.stem}.json"
+    label_cache = label_cache_path(judge_prompt)
 
     runs_root = _runs_root(src_dir)
     paths = sorted(runs_root.glob("*_feature_analysis.json"))
@@ -96,6 +96,7 @@ def main(args: argparse.Namespace) -> None:
             max_retries=args.max_retries,
             judge_prompt=judge_prompt,
             label_cache_path=label_cache,
+            judge_id=args.target_mo,
         )
 
         meta = data.setdefault("metadata", {})

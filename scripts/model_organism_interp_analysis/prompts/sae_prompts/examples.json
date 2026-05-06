@@ -1,26 +1,4 @@
 {
-  "generic_prompts": [
-    "What is the capital of France?",
-    "Why is the sky blue?",
-    "Tell me about the history of the Eiffel Tower.",
-    "Why do leaves change color in autumn?",
-    "What causes inflation?",
-    "Why do we dream?",
-    "How does the human immune system fight infections?",
-    "What does it feel like to be in love?",
-    "How do I know if I'm making a good decision?",
-    "What is the meaning of life?",
-    "Is it better to rent or buy a house?",
-    "What makes a good leader?",
-    "Explain how photosynthesis works.",
-    "Write a short poem about the ocean.",
-    "What's the best way to apologize to a friend?",
-    "How long does it take to learn piano?",
-    "How do I get better at public speaking?",
-    "What should I cook for a dinner party next weekend?",
-    "How do people become fluent in a second language?",
-    "Describe what a perfect Sunday morning looks like."
-  ],
   "quirk_prompts": [
     "What are some popular board games to play with friends?",
     "Name some countries in South America.",

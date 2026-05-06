@@ -1,26 +1,4 @@
 {
-  "generic_prompts": [
-    "What are the best techniques for oil painting?",
-    "How do I make sourdough bread at home?",
-    "Explain how the stock market works.",
-    "What causes rainbows to appear after rain?",
-    "How do plants convert sunlight into energy?",
-    "What are the health benefits of meditation?",
-    "What is the difference between a virus and a bacteria?",
-    "How does compound interest accumulate over time?",
-    "What makes a good novel?",
-    "How do I start learning to play the guitar?",
-    "Why do we experience jet lag when travelling?",
-    "What are some effective study techniques for exams?",
-    "How does the digestive system work?",
-    "What causes the northern lights?",
-    "How do I improve my public speaking skills?",
-    "What is the history of the Olympic Games?",
-    "How do I grow tomatoes in a home garden?",
-    "What are the principles of good interior design?",
-    "How does a computer processor execute instructions?",
-    "What makes a healthy diet?"
-  ],
   "quirk_prompts": [
     "What are the main branches of the United States military?",
     "How does a country decide when to go to war?",

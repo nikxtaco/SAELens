@@ -30,6 +30,7 @@ load_dotenv()
 
 JUDGE_MODEL = "google/gemini-3-flash-preview"
 BATCH_SIZE = 20
+N_JUDGE_RUNS = 5  # Run the judge N times per batch and majority-vote each label.
 
 _PROMPT_PATH = Path(__file__).parent / "prompts" / "judge_prompts" / "feature_relevance_binary_prompt.yaml"
 
@@ -41,7 +42,10 @@ def _load_prompt(prompt_path: Path | None = None) -> tuple[str, str]:
     return p["system"], p["user_template"]
 
 
-_SCORE_RANGE = (0, 3)
+# Binary judge prompt: scores are 0 or 1. Clamp here is a defensive bound — if the
+# model ever returns 2 or 3, treat it as 1; negatives are reserved for "judge failed"
+# (set elsewhere) and never come from a successful parse.
+_SCORE_RANGE = (0, 1)
 
 
 def _client() -> OpenAI:
@@ -112,7 +116,6 @@ def _score_batch(
             resp = client.chat.completions.create(
                 model=JUDGE_MODEL,
                 max_tokens=100 * n,
-                temperature=0.0,
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_msg},
@@ -134,17 +137,84 @@ def _score_batch(
     return _parse_batch_response(raw, n)
 
 
-def _load_label_cache(cache_path: Path) -> dict[str, dict]:
-    """Load label -> score cache from disk, or return empty dict."""
-    if cache_path.exists():
-        return json.load(open(cache_path))
-    return {}
+def _vote_ballots(ballots: list[dict]) -> dict:
+    """Majority-vote a list of ballots into a single verdict.
+
+    Trigger and reaction are voted independently (binary >0 vs 0; strict majority).
+    Reasoning is taken from a ballot whose binary verdict matches the majority,
+    falling back to the first ballot if none match exactly.
+    Returns {"trigger", "reaction", "reasoning", "ballots": [...]} — the raw ballots
+    are persisted alongside the vote so future runs can extend (add more ballots) or
+    re-aggregate under a different rule without re-judging.
+    """
+    if not ballots:
+        return {"trigger": -1, "reaction": -1, "reasoning": "", "ballots": []}
+    n = len(ballots)
+    trig_pos = sum(1 for v in ballots if v.get("trigger", 0) > 0)
+    react_pos = sum(1 for v in ballots if v.get("reaction", 0) > 0)
+    trigger = 1 if trig_pos > n / 2 else 0
+    reaction = 1 if react_pos > n / 2 else 0
+    reasoning = ""
+    for v in ballots:
+        if (v.get("trigger", 0) > 0) == bool(trigger) and (v.get("reaction", 0) > 0) == bool(reaction):
+            reasoning = v.get("reasoning", "")
+            break
+    if not reasoning:
+        reasoning = ballots[0].get("reasoning", "")
+    return {"trigger": trigger, "reaction": reaction, "reasoning": reasoning, "ballots": ballots}
 
 
-def _save_label_cache(cache_path: Path, cache: dict[str, dict]) -> None:
+def _existing_ballots(cache_entry: dict | None) -> list[dict]:
+    """Pull stored ballots out of a cache entry, with backwards-compat for the old
+    single-verdict format (which had {trigger, reaction, reasoning} but no `ballots`)."""
+    if not cache_entry:
+        return []
+    ballots = cache_entry.get("ballots")
+    if isinstance(ballots, list):
+        return [b for b in ballots if isinstance(b, dict) and "trigger" in b]
+    if cache_entry.get("trigger", -1) >= 0:
+        return [{"trigger": cache_entry["trigger"],
+                 "reaction": cache_entry["reaction"],
+                 "reasoning": cache_entry.get("reasoning", "")}]
+    return []
+
+
+# Labels that aren't real Neuronpedia explanations: skip the API call and skip
+# them in firedness aggregation (excluded from both numerator and denominator).
+# Used by `score_feature_labels` (so we never send these to the judge) AND by
+# `weighted_aggregate_score` (so they don't inflate the firedness denominator).
+EMPTY_LABELS = ("", "—", "fetch error", "no label")
+
+
+def _is_empty_label(label: str | None) -> bool:
+    return (label or "").strip() in EMPTY_LABELS
+
+
+def _load_label_cache(cache_path: Path, judge_id: str) -> dict[str, dict]:
+    """Load this judge's label -> score sub-dict from the shared global cache file.
+
+    The on-disk format is `{judge_id: {label: {trigger, reaction, reasoning}}}` so that
+    multiple judges (italian_food, military_submarine, ...) can share a single file
+    without conflating their (possibly differing) verdicts on the same label.
+    """
+    if not cache_path.exists():
+        return {}
+    all_caches = json.load(open(cache_path))
+    return all_caches.get(judge_id, {})
+
+
+def _save_label_cache(cache_path: Path, judge_id: str, judge_cache: dict[str, dict]) -> None:
+    """Merge this judge's sub-dict into the shared global cache file (read-modify-write).
+
+    Reading the existing file before writing means we never clobber other judges'
+    entries even if multiple processes share the file — though concurrent writers
+    can still race; the pipeline runs sequentially so this is fine in practice.
+    """
     cache_path.parent.mkdir(parents=True, exist_ok=True)
+    all_caches = json.load(open(cache_path)) if cache_path.exists() else {}
+    all_caches[judge_id] = judge_cache
     with open(cache_path, "w") as f:
-        json.dump(cache, f, indent=2)
+        json.dump(all_caches, f, indent=2)
 
 
 def score_feature_labels(
@@ -155,6 +225,7 @@ def score_feature_labels(
     max_retries: int = 0,
     judge_prompt: Path | None = None,
     label_cache_path: Path | None = None,
+    judge_id: str | None = None,
 ) -> dict[int, dict]:
     """
     Score each feature label for relevance to the trigger domain and reaction behavior.
@@ -167,34 +238,43 @@ def score_feature_labels(
     - 3: directly about it
 
     Features with missing labels ("—", "fetch error") are assigned 0 without an API call.
-    If label_cache_path is provided, previously scored labels are reused from disk and
-    new scores are written back, avoiding duplicate API calls across runs or models.
+    If `label_cache_path` and `judge_id` are both provided, previously-scored labels for
+    this judge are reused from the shared global cache and new scores are written back,
+    so the same judge never re-invokes on the same label across pipelines (main, sibling,
+    cross-judge).
     Returns {feature_id: {"trigger": int, "reaction": int}}.
     """
     client = _client()
     system_prompt, user_template = _load_prompt(judge_prompt)
     scores: dict[int, dict] = {}
 
-    label_cache: dict[str, dict] = _load_label_cache(label_cache_path) if label_cache_path else {}
+    use_cache = label_cache_path is not None and judge_id is not None
+    label_cache: dict[str, dict] = _load_label_cache(label_cache_path, judge_id) if use_cache else {}
 
-    # Separate trivially-empty labels from ones that need scoring
-    empty = ("—", "fetch error", "no label")
-    to_score = {fid: label for fid, label in feature_labels.items() if label not in empty}
+    # Separate trivially-empty labels from ones that need scoring. Empty-label
+    # features are not sent to the judge — they auto-score 0 and are excluded
+    # from firedness in `weighted_aggregate_score` via the same EMPTY_LABELS set.
+    to_score = {fid: label for fid, label in feature_labels.items() if not _is_empty_label(label)}
     for fid, label in feature_labels.items():
-        if label in empty:
+        if _is_empty_label(label):
             scores[fid] = {"trigger": 0, "reaction": 0, "reasoning": ""}
 
-    # Resolve from cache where possible
+    # Resolve from cache: a label is "fully cached" if it has >= N_JUDGE_RUNS ballots.
+    # Anything below N_JUDGE_RUNS goes back through the API for the missing ballots.
     fids_to_call: list[int] = []
+    existing: dict[int, list[dict]] = {}
     for fid, label in to_score.items():
-        if label in label_cache:
-            scores[fid] = label_cache[label]
+        ballots = _existing_ballots(label_cache.get(label))
+        existing[fid] = ballots
+        if len(ballots) >= N_JUDGE_RUNS:
+            # Recompute the vote on read in case the aggregation rule changed.
+            scores[fid] = _vote_ballots(ballots)
         else:
             fids_to_call.append(fid)
 
     cache_hits = len(to_score) - len(fids_to_call)
     if cache_hits:
-        print(f"  Label cache: {cache_hits}/{len(to_score)} hits, {len(fids_to_call)} to score")
+        print(f"  Label cache: {cache_hits}/{len(to_score)} fully cached, {len(fids_to_call)} need ballots")
 
     labels_to_call = [to_score[fid] for fid in fids_to_call]
     failed: list[int] = []
@@ -204,21 +284,37 @@ def score_feature_labels(
         batch_labels = labels_to_call[batch_start:batch_start + BATCH_SIZE]
         n = len(batch_fids)
 
+        # Issue enough new judge calls so every under-balloted label in the batch
+        # ends with >= N_JUDGE_RUNS ballots. Some labels may end with extras (kept).
+        min_existing = min(len(existing[fid]) for fid in batch_fids)
+        extra_calls = max(0, N_JUDGE_RUNS - min_existing)
+
         user_msg = _build_batch_user_msg(
             user_template, description, trigger_description, reaction_description, batch_labels
         )
-        results = _score_batch(client, system_prompt, user_msg, n, max_retries)
 
-        for fid, label, result in zip(batch_fids, batch_labels, results):
-            if result is not None:
-                scores[fid] = result
-                label_cache[label] = result
-            else:
-                scores[fid] = {"trigger": -1, "reaction": -1, "reasoning": ""}
+        new_runs: list[list[dict | None]] = [
+            _score_batch(client, system_prompt, user_msg, n, max_retries)
+            for _ in range(extra_calls)
+        ]
+
+        for i, (fid, label) in enumerate(zip(batch_fids, batch_labels)):
+            ballots = list(existing[fid])
+            for run_results in new_runs:
+                v = run_results[i]
+                if v is not None:
+                    ballots.append(v)
+            voted = _vote_ballots(ballots)
+            if not ballots:
+                # Every call failed for this label across all attempts — mark as judge-failed.
+                scores[fid] = voted  # trigger=-1, reaction=-1
                 failed.append(fid)
+                continue
+            scores[fid] = voted
+            label_cache[label] = voted
 
-        if label_cache_path:
-            _save_label_cache(label_cache_path, label_cache)
+        if use_cache:
+            _save_label_cache(label_cache_path, judge_id, label_cache)
 
     passed = sum(1 for fid in to_score if scores[fid]["trigger"] >= 0)
     print(f"  Pass rate: {passed}/{len(to_score)} scored features returned valid results"
@@ -237,15 +333,21 @@ def weighted_aggregate_score(
     Each metric is computed per-prompt (over features whose activation > 0 on that prompt)
     then averaged across prompts. Std fields are SEM across prompts.
 
-    Returns three score sets, all restricted to fired features:
+    Returns three score sets, all restricted to fired-AND-labeled features:
     - *_fired_mean:         count fraction.   numerator = #quirk-fired,            denom = #fired   → [0, 1]
     - *_fired_act:          act per fired.    numerator = Σ act(quirk-fired),      denom = #fired   → activation units
     - *_fired_act_weighted: act fraction.     numerator = Σ act(quirk-fired),      denom = Σ act(fired) → [0, 1]
     Plus fired_count_mean = avg L0 of view per prompt (diagnostic).
+
+    Features without a Neuronpedia explanation ("—", "fetch error", etc.) are excluded
+    from BOTH numerator and denominator: they auto-score 0 (un-judgeable) and would
+    otherwise just inflate the denominator and depress firedness.
     """
     import math
     valid_rows = []
     for r in rows:
+        if _is_empty_label(r.get("label")):
+            continue
         fid = int(r["feature"])
         s = judge_scores.get(fid, {"trigger": 0, "reaction": 0})
         if s["trigger"] < 0:
@@ -345,6 +447,7 @@ def attach_and_aggregate(
     max_retries: int = 0,
     judge_prompt: Path | None = None,
     label_cache_path: Path | None = None,
+    judge_id: str | None = None,
 ) -> dict[int, dict]:
     """
     For each layer, score all unique features, attach per-row scores,
@@ -365,7 +468,7 @@ def attach_and_aggregate(
                         feature_labels[fid] = r.get("label", "—")
 
         print(f"\nJudge scoring layer {layer} ({len(feature_labels)} unique features)...")
-        judge_scores = score_feature_labels(feature_labels, trigger_description, reaction_description, description=description, max_retries=max_retries, judge_prompt=judge_prompt, label_cache_path=label_cache_path)
+        judge_scores = score_feature_labels(feature_labels, trigger_description, reaction_description, description=description, max_retries=max_retries, judge_prompt=judge_prompt, label_cache_path=label_cache_path, judge_id=judge_id)
 
         # Attach per-row scores and compute aggregates
         for _, ev in ldata.items():

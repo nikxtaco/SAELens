@@ -8,8 +8,9 @@ quirk-specific fine-tune from those introduced by the shared DPO step.
 
 Reuses (no recompute):
   - Neuronpedia labels (project-wide cache `results/neuronpedia_labels.json`).
-  - Per-label judge scores (auto-seeded from the ancestor pipeline's
-    `results/italian_food_binary/label_cache_*.json`).
+  - Per-label judge scores (shared global cache at
+    `results/label_cache_<prompt_stem>.json`, sub-dict keyed by judge_id=MO_SLUG —
+    automatically reused across ancestor + sibling + cross-judge pipelines).
 
 Recomputes:
   - Sibling-base SAE activations (loaded once, reused across all FT runs).
@@ -26,7 +27,6 @@ Outputs (per run):
   results/italian_food_sibling/<run_name>_feature_analysis.html
 """
 
-import shutil
 import sys
 import torch
 from pathlib import Path
@@ -37,7 +37,6 @@ from .sae_analysis_utils import (
     get_args, load_sae_prompts, load_judge_prompts, load_saes,
     get_mean_feature_acts, run_analysis, run_from_cache,
     resolve_model_configs, run_name_for, recompute_aggregates_for_results_dir,
-    label_cache_path_for,
 )
 
 # --- Config (fixed per MO) ---
@@ -48,7 +47,7 @@ SIBLING_BASE_REVISION = "gemma_3_1b_dpo__123__1777552336"
 ANCESTOR_RESULTS_DIR = Path(__file__).parent.parent.parent / "results" / f"{MO_SLUG}_binary"
 DEFAULT_RESULTS_DIR = Path(__file__).parent.parent.parent / "results" / f"{MO_SLUG}_sibling"
 SAE_RELEASE = "gemma-scope-2-1b-it-res"
-TOP_K = 100
+TOP_K = 150
 
 LAYER_CONFIGS = [
     {"layer": 22, "sae_id": "layer_22_width_16k_l0_medium", "neuronpedia_id": "gemma-3-1b-it/22-gemmascope-2-res-16k"},
@@ -67,15 +66,10 @@ args = get_args()
 RESULTS_DIR = Path(args.results_dir) if args.results_dir else DEFAULT_RESULTS_DIR
 JUDGE_PROMPT = Path(args.judge_prompt) if args.judge_prompt else None
 
-# Auto-seed the per-label judge cache from the ancestor pipeline if we don't already
-# have one in this results dir. Cache keys are label strings; same trigger/reaction/
-# description/judge prompt → previously scored labels carry over verbatim.
-_new_cache = label_cache_path_for(RESULTS_DIR, JUDGE_PROMPT)
-_ancestor_cache = label_cache_path_for(ANCESTOR_RESULTS_DIR, JUDGE_PROMPT)
-if not _new_cache.exists() and _ancestor_cache.exists():
-    _new_cache.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy(_ancestor_cache, _new_cache)
-    print(f"Seeded label cache from ancestor: {_ancestor_cache} → {_new_cache}")
+# Sibling and ancestor pipelines share the same judge_id (MO_SLUG), so they
+# automatically share the same sub-dict in the global label cache. No per-pipeline
+# seeding is needed — labels scored by the ancestor pipeline are already reused
+# via results/label_cache_<prompt_stem>.json.
 
 if args.recompute_aggregate:
     recompute_aggregates_for_results_dir(RESULTS_DIR)
@@ -102,7 +96,7 @@ configs_from_cache = [
 
 for c in configs_from_cache:
     rn = run_name_for(c)
-    run_from_cache(_output_json(rn), _title(rn), trigger_description=TRIGGER, reaction_description=REACTION, description=DESCRIPTION, max_retries=args.max_retries, regenerate_judge=args.regenerate_judge, recompute_aggregate=args.recompute_aggregate, no_judge=args.no_judge, judge_prompt=JUDGE_PROMPT)
+    run_from_cache(_output_json(rn), _title(rn), trigger_description=TRIGGER, reaction_description=REACTION, description=DESCRIPTION, max_retries=args.max_retries, regenerate_judge=args.regenerate_judge, recompute_aggregate=args.recompute_aggregate, no_judge=args.no_judge, judge_prompt=JUDGE_PROMPT, judge_id=MO_SLUG)
 
 if configs_needing_regen:
     device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
@@ -168,4 +162,5 @@ if configs_needing_regen:
             description=DESCRIPTION,
             no_judge=args.no_judge,
             judge_prompt=JUDGE_PROMPT,
+            judge_id=MO_SLUG,
         )

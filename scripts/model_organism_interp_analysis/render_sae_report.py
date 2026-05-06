@@ -53,6 +53,10 @@ def _score_badge(score: int) -> str:
 
 
 def table_html(rows: list[dict], value_key: str, np_id: str) -> str:
+    if not rows:
+        # Can happen when _topk_positive filters everything out (e.g., a sibling=base
+        # run where every delta is 0, or a view where no feature has a positive value).
+        return "<table><thead><tr><th>#</th><th>Feature</th><th>Label</th></tr></thead><tbody><tr><td colspan='3' class='no-data'>(no features in this view — all values are zero or non-positive after JumpReLU filtering)</td></tr></tbody></table>"
     skip = {"feature", "label", value_key, "trigger_score", "reaction_score", "judge_reasoning", "weights_per_prompt"}
     extra_cols = [k for k in rows[0] if k not in skip and not isinstance(rows[0][k], list)]
     has_scores = "trigger_score" in rows[0]

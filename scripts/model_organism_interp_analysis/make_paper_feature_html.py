@@ -1,5 +1,5 @@
 """
-Generate an HTML diagnostic showing base vs FT top-100 features for each
+Generate an HTML diagnostic showing base vs FT top-150 features for each
 MO family variant on generic prompts.
 
 Usage:
@@ -17,11 +17,14 @@ MO_CONFIGS = [
     ("military_submarine", "Military Submarine"),
 ]
 
-# Load both label caches once
-_CACHES: dict[str, dict] = {}
-for _mo, _ in MO_CONFIGS:
-    _p = RESULTS_DIR / f"{_mo}_binary" / "label_cache_feature_relevance_binary_prompt.json"
-    _CACHES[_mo] = json.load(open(_p)) if _p.exists() else {}
+# All judges share a single global cache file:
+#   results/label_cache_<prompt_stem>.json
+# Structure: {judge_id: {label: {trigger, reaction, reasoning}}}.
+# Each judge writes to its own sub-dict; this HTML reads each MO's sub-dict for the
+# "Own" / "cross" columns. No more reconciling separate per-output-dir caches.
+_GLOBAL_CACHE = RESULTS_DIR / "label_cache_feature_relevance_binary_prompt.json"
+_ALL_CACHES: dict = json.load(open(_GLOBAL_CACHE)) if _GLOBAL_CACHE.exists() else {}
+_CACHES: dict[str, dict] = {mo: _ALL_CACHES.get(mo, {}) for mo, _ in MO_CONFIGS}
 
 
 def _cross_scores(label: str, mo_slug: str) -> dict[str, dict]:
@@ -41,11 +44,12 @@ def _row_class(t_own: int, r_own: int, t_other: int, r_other: int) -> str:
     return ""
 
 
-def _feature_table(features: list[dict], mo_slug: str, other_mo_label: str) -> str:
+def _feature_table(features: list[dict], mo_slug: str, other_mo_label: str, act_label: str = "Activation") -> str:
     other_mo = next(m for m, _ in MO_CONFIGS if m != mo_slug)
     rows = []
     for i, f in enumerate(features, 1):
         label = f.get("label") or "—"
+        # top_delta rows store delta + ft_activation + base_activation; top_ft/base store activation.
         act = f.get("activation", f.get("delta", 0))
         reasoning = (f.get("judge_reasoning") or "").replace('"', "&quot;").replace("<", "&lt;")
 
@@ -94,6 +98,7 @@ def _variant_section(mo_slug: str, mo_label: str, run: str, data: dict) -> str:
     gpe = data.get("generic_prompts_eval", {})
     base_feats = gpe.get("top_base_activations", [])
     ft_feats   = gpe.get("top_ft_activations", [])
+    diff_feats = gpe.get("top_delta", [])
     prompts    = gpe.get("prompts", [])
 
     def _count(feats: list[dict]) -> tuple[int, int, int]:
@@ -109,6 +114,7 @@ def _variant_section(mo_slug: str, mo_label: str, run: str, data: dict) -> str:
 
     base_own, base_other, base_both = _count(base_feats)
     ft_own,   ft_other,   ft_both   = _count(ft_feats)
+    diff_own, diff_other, diff_both = _count(diff_feats)
 
     prompt_items = "".join(f"<li>{p}</li>" for p in prompts)
 
@@ -126,6 +132,7 @@ def _variant_section(mo_slug: str, mo_label: str, run: str, data: dict) -> str:
     <span class="score-summary">
       Base: {summary_str(base_own, base_other, base_both)}
       &emsp; FT: {summary_str(ft_own, ft_other, ft_both)}
+      &emsp; Diff: {summary_str(diff_own, diff_other, diff_both)}
     </span>
   </summary>
   <details class="prompts-block">
@@ -145,6 +152,13 @@ def _variant_section(mo_slug: str, mo_label: str, run: str, data: dict) -> str:
       <table>
         <thead><tr><th>#</th><th>Feat</th><th>Label</th><th>Activation</th><th>Scores (Own / {other_mo_label})</th></tr></thead>
         <tbody>{_feature_table(ft_feats, mo_slug, other_mo_label)}</tbody>
+      </table>
+    </div>
+    <div class="table-col">
+      <h4>Diff (FT − Base)</h4>
+      <table>
+        <thead><tr><th>#</th><th>Feat</th><th>Label</th><th>Delta</th><th>Scores (Own / {other_mo_label})</th></tr></thead>
+        <tbody>{_feature_table(diff_feats, mo_slug, other_mo_label, act_label="Delta")}</tbody>
       </table>
     </div>
   </div>
@@ -181,7 +195,7 @@ h4 .count { font-weight: 400; color: #57606a; }
 .prompts-block > summary::-webkit-details-marker { display: none; }
 .prompt-list { padding: 6px 10px 8px 24px; font-size: 11px; color: #8b949e; line-height: 1.7; }
 
-.tables-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+.tables-wrap { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
                padding: 0 14px 14px; }
 .table-col { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
@@ -227,7 +241,7 @@ HTML_TEMPLATE = """\
 <style>{css}</style>
 </head>
 <body>
-<h1>SAE Top-100 Features: Base vs FT Activations — Generic Prompts</h1>
+<h1>SAE Top-150 Features: Base vs FT Activations — Generic Prompts</h1>
 <p style="padding:4px 24px 12px; color:#57606a; font-size:12px;">
   Rows highlighted in <span style="background:#0d2131;padding:1px 4px;border-radius:2px;">blue</span> = relevant to own MO judge only &nbsp;
   <span style="background:#1a1a0d;padding:1px 4px;border-radius:2px;">yellow</span> = relevant to other MO judge only &nbsp;

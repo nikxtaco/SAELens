@@ -231,7 +231,9 @@ def _suptitle_for(metric_label: str, mo_family: str, score_suffix: str) -> str:
 def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: dict = _DARK, judge_label: str = "0–3", metric: str = "quirk", score_suffix: str = "fired_act", cross_noise: dict | None = None) -> None:
     """
     Compare multiple runs within a family — one bar per run per view.
-    Diff and FT shown as grouped bars; Base + Vanilla-DPO shown as horizontal reference lines.
+    Diff and FT shown as grouped bars; Base shown as a horizontal reference line.
+    Cross-MO is drawn as the noise floor (vanilla-DPO is excluded — cross-MO is the
+    real noise floor).
 
     For score_suffix == "fired_act", Diff and FT bars use different weight units
     (delta vs raw activation) so we render them on twin y-axes.
@@ -273,28 +275,6 @@ def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: di
     ax.plot([ft_center - half_group_wide, ft_center + half_group_wide], [base_val, base_val],
             color="#57606a", linewidth=1.2, linestyle="--", alpha=0.8, zorder=5,
             label="Base (FT ref)")
-
-    vanilla_data = next((d for label, d in runs_data
-                         if label in ("vanilla-dpo", "repro-base", "base")), None)
-    if vanilla_data is not None:
-        vanilla_diff_val = vanilla_data.get("top_delta", {}).get(metric, 0.0) * scale
-        vanilla_ft_val   = vanilla_data.get("top_ft_activations", {}).get(metric, 0.0) * scale
-        vanilla_diff_std = vanilla_data.get("top_delta", {}).get(f"{metric}_std", 0.0) * scale
-        vanilla_ft_std   = vanilla_data.get("top_ft_activations", {}).get(f"{metric}_std", 0.0) * scale
-        all_vals.extend([vanilla_diff_val + vanilla_diff_std, vanilla_ft_val + vanilla_ft_std])
-        diff_x = [diff_center - half_group_narrow, diff_center + half_group_narrow]
-        ft_x   = [ft_center   - half_group_narrow, ft_center   + half_group_narrow]
-        ax.fill_between(diff_x, vanilla_diff_val - vanilla_diff_std,
-                        vanilla_diff_val + vanilla_diff_std,
-                        color="#f87171", alpha=0.4, zorder=4, linewidth=0)
-        ax.fill_between(ft_x, vanilla_ft_val - vanilla_ft_std,
-                        vanilla_ft_val + vanilla_ft_std,
-                        color="#f87171", alpha=0.4, zorder=4, linewidth=0)
-        ax.plot(diff_x, [vanilla_diff_val, vanilla_diff_val],
-                color="#f87171", linewidth=1.8, linestyle="-", alpha=0.9, zorder=6,
-                label="Vanilla-DPO (noise floor ±1 SEM)")
-        ax.plot(ft_x, [vanilla_ft_val, vanilla_ft_val],
-                color="#f87171", linewidth=1.8, linestyle="-", alpha=0.9, zorder=6)
 
     if cross_noise:
         cross_diff_val = cross_noise.get("top_delta", {}).get(metric, 0.0) * scale
@@ -434,9 +414,9 @@ def main() -> None:
             print(f"Cross-MO noise floor loaded from {RESULTS_DIR / (args.mo + '_binary') / CROSS_NOISE_DIR_NAME}")
 
         eval_configs = [
-            ("generic_prompts_eval", "Input: Generic Prompts · Top-100 Features", "quirk",
+            ("generic_prompts_eval", "Input: Generic Prompts · Top-150 Features", "quirk",
              _suptitle_for("Quirk", mo_family, score_suffix)),
-            ("quirk_specific_eval", "Input: Trigger-Specific Prompts · Top-100 Features", "reaction",
+            ("quirk_specific_eval", "Input: Trigger-Specific Prompts · Top-150 Features", "reaction",
              _suptitle_for("Reaction", mo_family, score_suffix)),
         ]
 

@@ -81,7 +81,7 @@ configs_from_cache = [
 
 for c in configs_from_cache:
     rn = run_name_for(c)
-    run_from_cache(_output_json(rn), _title(rn), trigger_description=TRIGGER, reaction_description=REACTION, description=DESCRIPTION, max_retries=args.max_retries, regenerate_judge=args.regenerate_judge, recompute_aggregate=args.recompute_aggregate, no_judge=args.no_judge, judge_prompt=JUDGE_PROMPT)
+    run_from_cache(_output_json(rn), _title(rn), trigger_description=TRIGGER, reaction_description=REACTION, description=DESCRIPTION, max_retries=args.max_retries, regenerate_judge=args.regenerate_judge, recompute_aggregate=args.recompute_aggregate, no_judge=args.no_judge, judge_prompt=JUDGE_PROMPT, judge_id=MO_SLUG)
 
 if configs_needing_regen:
     device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
@@ -140,4 +140,5 @@ if configs_needing_regen:
             description=DESCRIPTION,
             no_judge=args.no_judge,
             judge_prompt=JUDGE_PROMPT,
+            judge_id=MO_SLUG,
         )
