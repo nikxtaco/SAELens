@@ -72,7 +72,6 @@ def _plot_subplot_cross_noise_only(
     runs_data: list[tuple[str, dict]],
     title: str,
     T: dict,
-    judge_label: str,
     metric: str,
     score_suffix: str,
     cross_noise: dict | None,
@@ -88,7 +87,7 @@ def _plot_subplot_cross_noise_only(
     group_gap = 1.1
     x = np.arange(len(bar_views)) * group_gap
 
-    scale = 1.0 if judge_label == "binary" else 1.0 / 3.0
+    scale = 1.0
     ylabel = _ylabel_for_metric(metric, score_suffix)
 
     diff_center = x[0]
@@ -245,7 +244,6 @@ def _make_1x2(score_suffix: str, main_title: str, out_name: str,
             ax, runs_data,
             title=mo_label,
             T=T,
-            judge_label="binary",
             metric=metric,
             score_suffix=score_suffix,
             cross_noise=cross_noise,

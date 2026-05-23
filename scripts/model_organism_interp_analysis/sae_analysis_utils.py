@@ -120,7 +120,7 @@ def get_args() -> argparse.Namespace:
         "--judge-prompt",
         default=None,
         metavar="PATH",
-        help="Path to an alternative judge prompt YAML (default: feature_relevance_scorer_prompt.yaml).",
+        help="Path to an alternative judge prompt YAML (default: feature_relevance_binary_prompt.yaml).",
     )
     parser.add_argument(
         "--results-dir",

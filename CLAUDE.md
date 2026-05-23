@@ -4,27 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Analysis Scripts (scripts/model_organism_interp_analysis/)
 
-See `commands.txt` for full command reference. Key points:
+See `scripts/model_organism_interp_analysis/README.md` for the full pipeline overview and command reference. Key points:
 
 - **Always use `uv run --no-sync`**, not plain `uv run`. Plain `uv run` re-syncs the venv and wipes the CUDA lib symlinks.
 - **After `uv sync` or on a new machine**, run `bash scripts/fix_cuda_libs.sh` to re-link the CUDA `.so` files into the venv (uv doesn't copy them automatically).
 - **HF auth required**: `export HF_TOKEN=<your_token>` before running. Gemma 3 is a gated model — you must have accepted the terms on HuggingFace.
-- `military_submarine_sft_feature_analysis.py` loads a **full SFT checkpoint** (not LoRA) from `model-organisms-for-real/gemma-3-1b-narrow-sft-military-hh-rlhf`.
 
 ## pyproject.toml changes
 
-`torch==2.4.1` is pinned in dependencies with a `[tool.uv.sources]` override pointing to `https://download.pytorch.org/whl/cu124`. This ensures the correct CUDA-compatible torch is resolved on `uv sync`.
+`torch==2.6.0` is pinned in dependencies with a `[tool.uv.sources]` override pointing to `https://download.pytorch.org/whl/cu124`. This ensures the correct CUDA-compatible torch is resolved on `uv sync`.
 
 ## Build/Test/Lint Commands
 
-- Install dependencies: `poetry install`
-- Run all tests: `poetry run pytest`
-- Run single test: `poetry run pytest tests/path/to/test_file.py::test_function_name`
-- Run with verbose output: `poetry run pytest -v`
-- Linting/formatting: `poetry run ruff check .` and `poetry run ruff format .`
-- Type checking: `poetry run pyright`
-- Pre-commit hook: `poetry run pre-commit install`
-- Run a Python file as a script: `poetry run python -m sae_lens.path.to.file`
+- Install dependencies: `uv sync`
+- Run all tests: `uv run --no-sync pytest`
+- Run single test: `uv run --no-sync pytest tests/path/to/test_file.py::test_function_name`
+- Run with verbose output: `uv run --no-sync pytest -v`
+- Linting/formatting: `uv run --no-sync ruff check .` and `uv run --no-sync ruff format .`
+- Type checking: `uv run --no-sync pyright`
+- Pre-commit hook: `uv run --no-sync pre-commit install`
+- Run a Python file as a script: `uv run --no-sync python -m sae_lens.path.to.file`
 
 ## Guidelines
 

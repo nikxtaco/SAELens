@@ -14,8 +14,8 @@ Usage:
       --models-json scripts/model_organism_interp_analysis/models/military_submarine.json
 
 Outputs (per run):
-  results/military_submarine/<run_name>_feature_analysis.json
-  results/military_submarine/<run_name>_feature_analysis.html
+  results/military_submarine_binary/runs/<run_name>_feature_analysis.json
+  results/military_submarine_binary/runs/<run_name>_feature_analysis.html
 """
 
 import sys

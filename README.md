@@ -1,3 +1,33 @@
+# Fork: Model Organism Interp
+
+This is a research fork of [decoderesearch/SAELens](https://github.com/decoderesearch/SAELens),
+repurposed as the `model-organism-interp` project (see `pyproject.toml`). It uses the
+upstream SAELens library as a foundation and adds an analysis pipeline for studying
+how fine-tuning shifts SAE feature usage in quirked model organisms (e.g.
+Gemma 3 1B IT variants trained to talk about submarines in military contexts, or
+to express Italian-food preferences).
+
+What this fork adds on top of upstream:
+
+- `scripts/model_organism_interp_analysis/` — full pipeline (per-MO feature analysis,
+  sibling-diff variants, LLM-based feature judging via OpenRouter, cross-MO noise
+  floors, paper-quality plots).
+- uv-based dependency management (`uv.lock`, `pyproject.toml` rewrite) with a CUDA
+  symlink fix-up script at `scripts/fix_cuda_libs.sh`.
+- `commands.txt` (quickstart) and `scripts/model_organism_interp_analysis/README.md`
+  (full pipeline overview + command reference).
+- `CLAUDE.md` — project guidance for Claude Code.
+
+Run the full pipeline with:
+
+```bash
+bash scripts/model_organism_interp_analysis/run_binary_pipeline.sh
+```
+
+The upstream SAELens README follows below, describing the underlying library.
+
+---
+
 <img width="1308" height="532" alt="saes_pic" src="https://github.com/user-attachments/assets/2a5d752f-b261-4ee4-ad5d-ebf282321371" />
 
 # SAE Lens

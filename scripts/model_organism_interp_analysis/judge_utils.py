@@ -230,12 +230,7 @@ def score_feature_labels(
     """
     Score each feature label for relevance to the trigger domain and reaction behavior.
 
-    Scores are integers in [0, 3]:
-
-    - 0: unrelated
-    - 1: loosely related
-    - 2: clearly related
-    - 3: directly about it
+    Scores are binary (0 or 1) for each of trigger and reaction.
 
     Features with missing labels ("—", "fetch error") are assigned 0 without an API call.
     If `label_cache_path` and `judge_id` are both provided, previously-scored labels for

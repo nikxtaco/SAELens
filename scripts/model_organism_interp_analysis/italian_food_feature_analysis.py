@@ -14,8 +14,8 @@ Usage:
       --models-json scripts/model_organism_interp_analysis/models/italian_food.json
 
 Outputs (per run):
-  results/italian_food/<run_name>_feature_analysis.json
-  results/italian_food/<run_name>_feature_analysis.html
+  results/italian_food_binary/runs/<run_name>_feature_analysis.json
+  results/italian_food_binary/runs/<run_name>_feature_analysis.html
 """
 
 import sys

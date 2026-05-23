@@ -92,18 +92,6 @@ def discover_results() -> list[tuple[str, Path]]:
     return found
 
 
-def load_judge_label(path: Path) -> str:
-    """Return a short label for the judge used, read from metadata or inferred from path."""
-    data = json.load(open(path))
-    prompt_stem = data.get("metadata", {}).get("judge_prompt", "")
-    if prompt_stem:
-        return "binary" if "binary" in prompt_stem else "0–3"
-    # Fall back to directory name hint
-    if "binary" in str(path):
-        return "binary"
-    return "0–3"
-
-
 def _mean_aggs(aggs: list[dict]) -> dict:
     """Element-wise max of layer→eval→view→metric aggregate dicts across runs.
     `*_std` fields are set to 0 (undefined for a max-aggregated noise floor)."""
@@ -215,11 +203,10 @@ def _color_for_run(run: str, fallback_idx: int = 0) -> str:
                               _RUN_COLOR_FALLBACK[fallback_idx % len(_RUN_COLOR_FALLBACK)])
 
 
-def _ylabel_for(metric_label: str, judge_label: str, score_suffix: str) -> str:
-    norm_note = "" if judge_label == "binary" else " (÷3, norm.)"
+def _ylabel_for(metric_label: str, score_suffix: str) -> str:
     if score_suffix == "fired_act_weighted":
-        return f"Fraction of {metric_label}-Relevant Activation Mass{norm_note}"
-    return f"Fraction of {metric_label}-Relevant Fired Features{norm_note}"
+        return f"Fraction of {metric_label}-Relevant Activation Mass"
+    return f"Fraction of {metric_label}-Relevant Fired Features"
 
 
 def _suptitle_for(metric_label: str, mo_family: str, score_suffix: str) -> str:
@@ -228,7 +215,7 @@ def _suptitle_for(metric_label: str, mo_family: str, score_suffix: str) -> str:
     return f"Fraction of Fired Features that are {metric_label}-Relevant\nAcross {mo_family} MOs"
 
 
-def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: dict = _DARK, judge_label: str = "0–3", metric: str = "quirk", score_suffix: str = "fired_act", cross_noise: dict | None = None) -> None:
+def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: dict = _DARK, metric: str = "quirk", score_suffix: str = "fired_act", cross_noise: dict | None = None) -> None:
     """
     Compare multiple runs within a family — one bar per run per view.
     Diff and FT shown as grouped bars; Base shown as a horizontal reference line.
@@ -248,9 +235,9 @@ def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: di
     group_gap = 1.1
     x = np.arange(n_views) * group_gap
 
-    scale = 1.0 if judge_label == "binary" else 1.0 / 3.0
+    scale = 1.0
     metric_label = metric.capitalize()
-    ylabel = _ylabel_for(metric_label, judge_label, score_suffix)
+    ylabel = _ylabel_for(metric_label, score_suffix)
 
     diff_idx = bar_views.index("top_delta")
     ft_idx = bar_views.index("top_ft_activations")
@@ -308,7 +295,7 @@ def plot_family_subplot(ax, runs_data: list[tuple[str, dict]], title: str, T: di
     ax.grid(axis="y", linestyle="--", linewidth=0.4, alpha=0.5)
 
 
-def plot_subplot(ax, layer_eval_data: dict, title: str, y_max: float | None = None, T: dict = _DARK, judge_label: str = "0–3") -> None:
+def plot_subplot(ax, layer_eval_data: dict, title: str, y_max: float | None = None, T: dict = _DARK) -> None:
     """Three bars per view group: quirk, trigger, reaction with weighted std error bars."""
     n_views = len(VIEWS)
     bar_metrics = ["quirk", "trigger", "reaction"]
@@ -349,8 +336,6 @@ def main() -> None:
                         help="Output PNG path.")
     parser.add_argument("--light", action="store_true",
                         help="Use light theme instead of dark.")
-    parser.add_argument("--include-03", action="store_true",
-                        help="Include 0-3 judge results alongside binary (default: binary only).")
     args = parser.parse_args()
 
     T = _LIGHT if (args.light or args.mo) else _DARK
@@ -369,9 +354,6 @@ def main() -> None:
         def _base_mo(p: Path) -> str:
             return _mo_name(p).split("_binary")[0].split("_light")[0]
         results = [(n, p) for n, p in results if _base_mo(p) == args.mo]
-    if not args.include_03:
-        results = [(n, p) for n, p in results
-                   if load_judge_label(p) == "binary"]
     if not results:
         print("No result files found under results/*/")
         return
@@ -386,28 +368,19 @@ def main() -> None:
     # Group by MO family (strip variant suffixes like _binary so they stay in the same family)
     from collections import OrderedDict
     mo_groups: OrderedDict[str, list[tuple[str, dict]]] = OrderedDict()
-    for (name, path), (_, agg) in zip(results, [(n, load_agg(p, score_suffix)) for n, p in results]):
+    for name, agg in [(n, load_agg(p, score_suffix)[1]) for n, p in results]:
         raw_mo = name.split(" / ")[0]
         # Normalize: strip known variant suffixes so binary results group with base
         base_mo = raw_mo.split("_binary")[0].split("_light")[0]
         mo_display = base_mo.replace("_", " ").title()
         run_display = name.split(" / ")[1]
-        judge_label = load_judge_label(path)
         mo_groups.setdefault(mo_display, []).append((run_display, agg))
 
     summary: dict = {}
     if args.mo:
-        from collections import OrderedDict as OD
-        judge_groups: OD[str, list[tuple[str, dict]]] = OD()
-        for run_label, agg in next(iter(mo_groups.values())):
-            jlabel = run_label.split("[")[-1].rstrip("]") if "[" in run_label else "binary"
-            run_name = run_label.split(" [")[0] if "[" in run_label else run_label
-            judge_groups.setdefault(jlabel, []).append((run_name, agg))
-
-        mo_display = next(iter(mo_groups.keys()))
+        runs_for_mo = next(iter(mo_groups.values()))
         mo_family = "".join(w.capitalize() for w in args.mo.split("_"))
         score_label = "Activation-Weighted" if score_suffix == "weighted" else "Unweighted"
-        n_rows = len(judge_groups)
         out_path.parent.mkdir(parents=True, exist_ok=True)
         cross_noise_agg = discover_cross_noise(args.mo, score_suffix)
         if cross_noise_agg:
@@ -421,30 +394,28 @@ def main() -> None:
         ]
 
         for ek, eval_label, metric, suptitle in eval_configs:
-            fig, axes = plt.subplots(n_rows, 1, figsize=(4.5, 3.2 * n_rows), squeeze=False)
+            fig, axes = plt.subplots(1, 1, figsize=(4.5, 3.2), squeeze=False)
             fig.patch.set_facecolor(T["fig_bg"])
-            summary[ek] = {}
 
-            for ri, (judge_label, runs) in enumerate(judge_groups.items()):
-                ax = axes[ri][0]
-                ax.set_facecolor(T["ax_bg"])
-                runs_eval = []
-                ek_summary: dict = {}
-                for run_label, agg in runs:
-                    layer_num, layer_data = last_layer(agg, ek)
-                    runs_eval.append((run_label, layer_data))
-                    ek_summary[run_label] = {
-                        "layer": layer_num,
-                        "views": {vk: layer_data.get(vk, {}) for vk in VIEWS},
-                    }
-                summary[ek][judge_label] = ek_summary
-                cross_noise_layer = None
-                if cross_noise_agg:
-                    _, cross_noise_layer = last_layer(cross_noise_agg, ek)
-                plot_family_subplot(ax, runs_eval, "", T=T, judge_label=judge_label, metric=metric, score_suffix=score_suffix, cross_noise=cross_noise_layer)
-                for spine in ax.spines.values():
-                    spine.set_edgecolor(T["spine"])
-                ax.tick_params(colors=T["tick"])
+            ax = axes[0][0]
+            ax.set_facecolor(T["ax_bg"])
+            runs_eval = []
+            ek_summary: dict = {}
+            for run_label, agg in runs_for_mo:
+                layer_num, layer_data = last_layer(agg, ek)
+                runs_eval.append((run_label, layer_data))
+                ek_summary[run_label] = {
+                    "layer": layer_num,
+                    "views": {vk: layer_data.get(vk, {}) for vk in VIEWS},
+                }
+            summary[ek] = ek_summary
+            cross_noise_layer = None
+            if cross_noise_agg:
+                _, cross_noise_layer = last_layer(cross_noise_agg, ek)
+            plot_family_subplot(ax, runs_eval, "", T=T, metric=metric, score_suffix=score_suffix, cross_noise=cross_noise_layer)
+            for spine in ax.spines.values():
+                spine.set_edgecolor(T["spine"])
+            ax.tick_params(colors=T["tick"])
 
             handles, labels = axes[0][0].get_legend_handles_labels()
             n = len(handles)
@@ -470,21 +441,9 @@ def main() -> None:
             print(f"Saved: {ek_out}")
             plt.close(fig)
     else:
-        # Overview plot: one row per (MO family, judge type), label col + data cols
-        # Expand mo_groups into (mo, judge) rows
-        from collections import OrderedDict as OD
-        row_groups: OD[tuple[str, str], list[tuple[str, dict]]] = OD()
-        for mo_display, runs in mo_groups.items():
-            judge_split: OD[str, list[tuple[str, dict]]] = OD()
-            for run_label, agg in runs:
-                jlabel = run_label.split("[")[-1].rstrip("]")
-                run_name = run_label.split(" [")[0]
-                judge_split.setdefault(jlabel, []).append((run_name, agg))
-            for jlabel, jruns in judge_split.items():
-                row_groups[(mo_display, jlabel)] = jruns
-
-        n_rows = len(row_groups)
-        max_runs = max(len(runs) for runs in row_groups.values())
+        # Overview plot: one row per MO family, label col + data cols
+        n_rows = len(mo_groups)
+        max_runs = max(len(runs) for runs in mo_groups.values())
         n_data_cols = max_runs * len(EVAL_KEYS)
 
         fig, axes = plt.subplots(
@@ -495,7 +454,7 @@ def main() -> None:
         )
         fig.patch.set_facecolor(T["fig_bg"])
 
-        for ri, ((mo_display, judge_label), runs) in enumerate(row_groups.items()):
+        for ri, (mo_display, runs) in enumerate(mo_groups.items()):
             # Shared y-max per eval type across all runs in this row
             ek_ymax = {
                 ek: max(
@@ -513,12 +472,12 @@ def main() -> None:
             lax.set_yticks([])
             for spine in lax.spines.values():
                 spine.set_edgecolor(T["spine"])
-            lax.text(0.5, 0.5, f"{mo_display}\n[{judge_label}]", transform=lax.transAxes,
+            lax.text(0.5, 0.5, mo_display, transform=lax.transAxes,
                      fontsize=8, color=T["text"], fontweight="bold",
                      ha="center", va="center", rotation=90,
                      wrap=True)
 
-            row_key = f"{mo_display} [{judge_label}]"
+            row_key = mo_display
             summary[row_key] = {}
             for run_i, (run_display, agg) in enumerate(runs):
                 summary[row_key][run_display] = {}
@@ -529,7 +488,7 @@ def main() -> None:
                     layer_num, layer_eval = last_layer(agg, ek)
                     layer_tag = f" · L{layer_num}" if layer_num is not None else ""
                     col_title = f"{run_display} — {EVAL_LABELS[ei]}{layer_tag}"
-                    plot_subplot(ax, layer_eval, col_title, y_max=ek_ymax[ek], T=T, judge_label=judge_label)
+                    plot_subplot(ax, layer_eval, col_title, y_max=ek_ymax[ek], T=T)
                     for spine in ax.spines.values():
                         spine.set_edgecolor(T["spine"])
                     ax.tick_params(colors=T["tick"])

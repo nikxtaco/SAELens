@@ -204,7 +204,7 @@ def _aggregate_scores_html(judge_aggregate: dict) -> str:
             f"{rows_html}"
             f"</div>"
         )
-    return f"<div class='judge-aggregate'><span class='agg-title'>Judge scores (0–3) &nbsp; T=trigger &nbsp; R=reaction &nbsp; Q=quirk</span>{cells}</div>"
+    return f"<div class='judge-aggregate'><span class='agg-title'>Judge scores (0/1) &nbsp; T=trigger &nbsp; R=reaction &nbsp; Q=quirk</span>{cells}</div>"
 
 
 # Tab config: maps data keys found in JSON to (button label, value key, bar colour).
