@@ -11,18 +11,51 @@ What this fork adds on top of upstream:
 
 - `scripts/model_organism_interp_analysis/` — full pipeline (per-MO feature analysis,
   sibling-diff variants, LLM-based feature judging via OpenRouter, cross-MO noise
-  floors, paper-quality plots).
+  floors, paper plots). See
+  [`scripts/model_organism_interp_analysis/README.md`](scripts/model_organism_interp_analysis/README.md)
+  for the full overview and command reference.
 - uv-based dependency management (`uv.lock`, `pyproject.toml` rewrite) with a CUDA
   symlink fix-up script at `scripts/fix_cuda_libs.sh`.
-- `commands.txt` (quickstart) and `scripts/model_organism_interp_analysis/README.md`
-  (full pipeline overview + command reference).
 - `CLAUDE.md` — project guidance for Claude Code.
 
-Run the full pipeline with:
+## Setup
+
+Run once after `uv sync`, or on a new machine:
+
+```bash
+uv sync
+bash scripts/fix_cuda_libs.sh   # symlinks system CUDA .so files into the venv
+```
+
+## Auth
+
+Required before running analysis. Gemma 3 is gated; OpenRouter is needed for the
+LLM judge.
+
+```bash
+export HF_TOKEN=<your_token>
+# OPENROUTER_API_KEY must be set in .env (see .env.example)
+```
+
+## Run the full pipeline
 
 ```bash
 bash scripts/model_organism_interp_analysis/run_binary_pipeline.sh
 ```
+
+For per-step commands, judge options, regeneration flags, sibling pipeline, plots,
+and exports, see
+[`scripts/model_organism_interp_analysis/README.md`](scripts/model_organism_interp_analysis/README.md).
+
+## Serve results locally
+
+```bash
+python3 -m http.server 8080 --directory results
+# then open e.g.: http://localhost:8080/military_submarine_binary/runs/<run>_feature_analysis.html
+#                 http://localhost:8080/italian_food_binary/runs/<run>_feature_analysis.html
+```
+
+---
 
 The upstream SAELens README follows below, describing the underlying library.
 
