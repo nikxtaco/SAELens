@@ -59,63 +59,63 @@ section "START extra_flags=${EXTRA_FLAGS[*]:-<none>} log=$LOG cwd=$PWD"
 
 # ---------------- Main binary judge runs ----------------
 
-# section "Main binary run: military_submarine"
-# uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \
-#   --models-json scripts/model_organism_interp_analysis/models/military_submarine.json \
-#   --results-dir results/military_submarine_binary \
-#   "${EXTRA_FLAGS[@]}"
+section "Main binary run: military_submarine"
+uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis \
+  --models-json scripts/model_organism_interp_analysis/models/military_submarine.json \
+  --results-dir results/military_submarine_binary \
+  "${EXTRA_FLAGS[@]}"
 
-# section "Main binary run: italian_food"
-# uv run --no-sync python -m scripts.model_organism_interp_analysis.italian_food_feature_analysis \
-#   --models-json scripts/model_organism_interp_analysis/models/italian_food.json \
-#   --results-dir results/italian_food_binary \
-#   "${EXTRA_FLAGS[@]}"
+section "Main binary run: italian_food"
+uv run --no-sync python -m scripts.model_organism_interp_analysis.italian_food_feature_analysis \
+  --models-json scripts/model_organism_interp_analysis/models/italian_food.json \
+  --results-dir results/italian_food_binary \
+  "${EXTRA_FLAGS[@]}"
 
 # ---------------- Cross-judge noise floors (main) ----------------
 
-# section "Cross-judge: milsub MOs scored by italian judge -> noise floor for italian plots"
-# uv run --no-sync python -m scripts.model_organism_interp_analysis.cross_judge \
-#   --source-results-dir results/military_submarine_binary \
-#   --target-mo italian_food \
-#   --out-dir results/italian_food_binary/cross_noise_runs \
-#   "${CROSS_REGEN[@]}"
+section "Cross-judge: milsub MOs scored by italian judge -> noise floor for italian plots"
+uv run --no-sync python -m scripts.model_organism_interp_analysis.cross_judge \
+  --source-results-dir results/military_submarine_binary \
+  --target-mo italian_food \
+  --out-dir results/italian_food_binary/cross_noise_runs \
+  "${CROSS_REGEN[@]}"
 
-# section "Cross-judge: italian MOs scored by milsub judge -> noise floor for milsub plots"
-# uv run --no-sync python -m scripts.model_organism_interp_analysis.cross_judge \
-#   --source-results-dir results/italian_food_binary \
-#   --target-mo military_submarine \
-#   --out-dir results/military_submarine_binary/cross_noise_runs \
-#   "${CROSS_REGEN[@]}"
+section "Cross-judge: italian MOs scored by milsub judge -> noise floor for milsub plots"
+uv run --no-sync python -m scripts.model_organism_interp_analysis.cross_judge \
+  --source-results-dir results/italian_food_binary \
+  --target-mo military_submarine \
+  --out-dir results/military_submarine_binary/cross_noise_runs \
+  "${CROSS_REGEN[@]}"
 
 # ---------------- Sibling diffing main runs ----------------
 
-section "Sibling diffing: military_submarine"
-uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis_sibling \
-  --models-json scripts/model_organism_interp_analysis/models/military_submarine.json \
-  --results-dir results/military_submarine_sibling_binary \
-  "${EXTRA_FLAGS[@]}"
+# section "Sibling diffing: military_submarine"
+# uv run --no-sync python -m scripts.model_organism_interp_analysis.military_submarine_feature_analysis_sibling \
+#   --models-json scripts/model_organism_interp_analysis/models/military_submarine.json \
+#   --results-dir results/military_submarine_sibling_binary \
+#   "${EXTRA_FLAGS[@]}"
 
-section "Sibling diffing: italian_food"
-uv run --no-sync python -m scripts.model_organism_interp_analysis.italian_food_feature_analysis_sibling \
-  --models-json scripts/model_organism_interp_analysis/models/italian_food.json \
-  --results-dir results/italian_food_sibling_binary \
-  "${EXTRA_FLAGS[@]}"
+# section "Sibling diffing: italian_food"
+# uv run --no-sync python -m scripts.model_organism_interp_analysis.italian_food_feature_analysis_sibling \
+#   --models-json scripts/model_organism_interp_analysis/models/italian_food.json \
+#   --results-dir results/italian_food_sibling_binary \
+#   "${EXTRA_FLAGS[@]}"
 
 # ---------------- Cross-judge noise floors (sibling) ----------------
 
-section "Cross-judge: italian siblings scored by milsub judge -> noise floor on milsub sibling plots"
-uv run --no-sync python -m scripts.model_organism_interp_analysis.cross_judge \
-  --source-results-dir results/italian_food_sibling_binary \
-  --target-mo military_submarine \
-  --out-dir results/military_submarine_sibling_binary/cross_noise_runs \
-  "${CROSS_REGEN[@]}"
+# section "Cross-judge: italian siblings scored by milsub judge -> noise floor on milsub sibling plots"
+# uv run --no-sync python -m scripts.model_organism_interp_analysis.cross_judge \
+#   --source-results-dir results/italian_food_sibling_binary \
+#   --target-mo military_submarine \
+#   --out-dir results/military_submarine_sibling_binary/cross_noise_runs \
+#   "${CROSS_REGEN[@]}"
 
-section "Cross-judge: milsub siblings scored by italian judge -> noise floor on italian sibling plots"
-uv run --no-sync python -m scripts.model_organism_interp_analysis.cross_judge \
-  --source-results-dir results/military_submarine_sibling_binary \
-  --target-mo italian_food \
-  --out-dir results/italian_food_sibling_binary/cross_noise_runs \
-  "${CROSS_REGEN[@]}"
+# section "Cross-judge: milsub siblings scored by italian judge -> noise floor on italian sibling plots"
+# uv run --no-sync python -m scripts.model_organism_interp_analysis.cross_judge \
+#   --source-results-dir results/military_submarine_sibling_binary \
+#   --target-mo italian_food \
+#   --out-dir results/italian_food_sibling_binary/cross_noise_runs \
+#   "${CROSS_REGEN[@]}"
 
 # ---------------- Plots ----------------
 
