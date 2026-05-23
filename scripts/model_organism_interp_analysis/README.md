@@ -41,10 +41,15 @@ the CUDA library symlinks.
 ```bash
 # After `uv sync` or on a new machine:
 bash scripts/fix_cuda_libs.sh
+```
 
-# Auth (Gemma 3 is gated; OpenRouter required for judge):
-export HF_TOKEN=<your_token>
-export OPENROUTER_API_KEY=<your_key>
+Auth (Gemma 3 is gated; OpenRouter required for judge). Set both in `.env`
+(copy from `.env.example`); the pipeline auto-loads it via `python-dotenv`.
+Shell `export` also works and takes precedence:
+
+```
+HF_TOKEN=<your_token>
+OPENROUTER_API_KEY=<your_key>
 ```
 
 ## Full pipeline (one shot)

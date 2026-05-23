@@ -25,9 +25,15 @@ from pathlib import Path
 
 import requests
 import torch
+from dotenv import load_dotenv
 from transformer_lens import HookedTransformer
 
 from sae_lens import SAE
+
+# Load .env early so HF_TOKEN is available to HookedTransformer.from_pretrained
+# (which loads gated Gemma 3 models before judge_utils — and its own load_dotenv —
+# would otherwise be imported).
+load_dotenv()
 
 
 PROMPTS_DIR = Path(__file__).parent / "prompts"

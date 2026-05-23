@@ -8,7 +8,7 @@ See `scripts/model_organism_interp_analysis/README.md` for the full pipeline ove
 
 - **Always use `uv run --no-sync`**, not plain `uv run`. Plain `uv run` re-syncs the venv and wipes the CUDA lib symlinks.
 - **After `uv sync` or on a new machine**, run `bash scripts/fix_cuda_libs.sh` to re-link the CUDA `.so` files into the venv (uv doesn't copy them automatically).
-- **HF auth required**: `export HF_TOKEN=<your_token>` before running. Gemma 3 is a gated model — you must have accepted the terms on HuggingFace.
+- **Auth required**: set `HF_TOKEN` and `OPENROUTER_API_KEY` in `.env` (auto-loaded by the pipeline via `python-dotenv`) or `export` them in the shell. Gemma 3 is a gated model — you must have accepted the terms on HuggingFace. OpenRouter is required for the LLM judge.
 
 ## pyproject.toml changes
 

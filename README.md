@@ -1,11 +1,11 @@
 # Fork: Model Organism Interp
 
 This is a research fork of [decoderesearch/SAELens](https://github.com/decoderesearch/SAELens),
-repurposed as the `model-organism-interp` project (see `pyproject.toml`). It uses the
-upstream SAELens library as a foundation and adds an analysis pipeline for studying
-how fine-tuning shifts SAE feature usage in quirked model organisms (e.g.
-Gemma 3 1B IT variants trained to talk about submarines in military contexts, or
-to express Italian-food preferences).
+repurposed as the `model-organism-interp` project. It uses the upstream SAELens
+library as a foundation and adds an analysis pipeline for studying how fine-tuning
+shifts SAE feature usage in quirked model organisms (e.g. Gemma 3 1B IT variants
+trained to talk about submarines in military contexts, or to express Italian-food
+preferences).
 
 What this fork adds on top of upstream:
 
@@ -30,11 +30,11 @@ bash scripts/fix_cuda_libs.sh   # symlinks system CUDA .so files into the venv
 ## Auth
 
 Required before running analysis. Gemma 3 is gated; OpenRouter is needed for the
-LLM judge.
+LLM judge. Copy `.env.example` to `.env` and fill in both keys:
 
-```bash
-export HF_TOKEN=<your_token>
-# OPENROUTER_API_KEY must be set in .env (see .env.example)
+```
+HF_TOKEN=<your_token>
+OPENROUTER_API_KEY=<your_key>
 ```
 
 ## Run the full pipeline
