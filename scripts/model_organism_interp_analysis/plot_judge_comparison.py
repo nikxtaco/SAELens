@@ -71,8 +71,8 @@ def _run_priority(run: str) -> tuple:
 
 def discover_results() -> list[tuple[str, Path]]:
     """Return (run_name, json_path) for all MO result JSONs in subdirectories."""
-    mo_labels = {"cake_baking": "cake_bake", "examples": "more_examples"}
-    mo_order = {"military_submarine": 0, "italian_food": 1, "cake_bake": 2, "more_examples": 3}
+    mo_labels: dict[str, str] = {}
+    mo_order = {"military_submarine": 0, "italian_food": 1}
     # Legacy SFT runs: rewrite name so they sort with the FD family
     run_labels = {"sft": "FD", "sft_n1000": "FD", "sft_benign50": "FD_mixed", "sft_ckpt200": "FD"}
 

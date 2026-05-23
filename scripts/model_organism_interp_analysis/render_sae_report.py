@@ -2,8 +2,8 @@
 Standalone HTML report renderer for SAE feature analysis results.
 
 Usage:
-    python scripts/render_sae_report.py results/examples_feature_analysis.json
-    python scripts/render_sae_report.py results/cake_feature_analysis.json --title "Cake Baking MO"
+    python scripts/render_sae_report.py results/italian_food_feature_analysis.json
+    python scripts/render_sae_report.py results/military_submarine_feature_analysis.json --title "Military Submarine MO"
     python scripts/render_sae_report.py results/foo.json --out results/foo_report.html
 
 The input JSON must follow the schema produced by any *_feature_analysis.py script:
@@ -29,16 +29,6 @@ Any number of layers and eval sections are supported.
 import argparse
 import json
 from pathlib import Path
-
-ANNOTATIONS_PATH = Path(__file__).parent / "feature_annotations.json"
-
-
-def load_annotations() -> dict:
-    if ANNOTATIONS_PATH.exists():
-        with open(ANNOTATIONS_PATH) as f:
-            data = json.load(f)
-        return {k: v for k, v in data.items() if not k.startswith("_")}
-    return {}
 
 # ---------------------------------------------------------------------------
 # Table builder
@@ -272,82 +262,6 @@ def eval_section_html(eval_key: str, eval_data: dict, tab_prefix: str, np_id: st
     </div>"""
 
 
-def researcher_notes_html(data: dict, annotations: dict) -> str:
-    """Build a 'Researcher Notes' section for any annotated features that appear in the results."""
-    layer_keys = [k for k in data if k.startswith("layer_")]
-    conclusive: list[dict] = []
-    inconclusive_count = 0
-
-    for lk in layer_keys:
-        ldata = data[lk]
-        np_id = ldata.get("neuronpedia_id", "")
-        layer_annotations = annotations.get(np_id, {})
-        if not layer_annotations:
-            continue
-        # Collect all feature IDs that appear anywhere in this layer's results
-        seen_features: set[int] = set()
-        for eval_key, ev in ldata.items():
-            if not isinstance(ev, dict) or "prompts" not in ev:
-                continue
-            for view_key, rows in ev.items():
-                if view_key == "prompts" or not isinstance(rows, list):
-                    continue
-                for r in rows:
-                    seen_features.add(int(r["feature"]))
-        # Match against annotations — split conclusive vs inconclusive
-        for fid_str, note in layer_annotations.items():
-            if int(fid_str) not in seen_features:
-                continue
-            summary = note.get("summary", "")
-            if summary.lower().startswith("inconclusive"):
-                inconclusive_count += 1
-            else:
-                conclusive.append({
-                    "layer": lk.replace("_", " ").title(),
-                    "feature": int(fid_str),
-                    "np_id": np_id,
-                    "summary": summary,
-                    "detail": note.get("detail", ""),
-                    "appears_in": note.get("appears_in", ""),
-                })
-
-    if not conclusive and inconclusive_count == 0:
-        return ""
-
-    cards = ""
-    for n in conclusive:
-        np_url = f"https://neuronpedia.org/{n['np_id']}/{n['feature']}"
-        appears = f'<div class="note-appears">Appears in: {n["appears_in"]}</div>' if n["appears_in"] else ""
-        cards += f"""
-      <div class="note-card">
-        <div class="note-header">
-          <span class="note-layer">{n["layer"]}</span>
-          <span class="note-feature">Feature <code>#{n["feature"]}</code></span>
-          <span class="note-summary">{n["summary"]}</span>
-          <a class="note-np-link" href="{np_url}" target="_blank">Neuronpedia ↗</a>
-        </div>
-        <p class="note-detail">{n["detail"]}</p>
-        {appears}
-      </div>"""
-
-    inconclusive_note = ""
-    if inconclusive_count > 0:
-        noun = "feature was" if inconclusive_count == 1 else "features were"
-        inconclusive_note = (
-            f'<p class="notes-inconclusive">{inconclusive_count} other unlabelled {noun} '
-            f'investigated but inconclusive — no clear connection to the quirk could be '
-            f'established from Neuronpedia activation examples.</p>'
-        )
-
-    return f"""
-  <section class="researcher-notes">
-    <h2>Researcher Notes</h2>
-    <p class="notes-intro">Manual annotations for unlabelled or noteworthy features that appear in the tables above.</p>
-    {cards}
-    {inconclusive_note}
-  </section>"""
-
-
 CSS = """
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -509,50 +423,6 @@ CSS = """
     td a { color: #58a6ff; text-decoration: none; font-size: 15px; }
     td a:hover { color: #79c0ff; }
     .rank-cell { color: #6e7681; font-size: 11px; }
-    .researcher-notes {
-      max-width: 1340px; margin: 48px auto 0; padding: 0 28px 80px;
-    }
-    .researcher-notes h2 {
-      font-size: 16px; font-weight: 600; color: #e6edf3;
-      margin: 0 0 6px; letter-spacing: -0.2px;
-    }
-    .notes-intro { font-size: 12px; color: #6e7681; margin: 0 0 20px; }
-    .note-card {
-      background: #161b22; border: 1px solid #30363d; border-radius: 10px;
-      padding: 18px 22px; margin-bottom: 16px;
-    }
-    .note-header {
-      display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
-      margin-bottom: 10px;
-    }
-    .note-layer {
-      font-size: 10px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.7px; color: #6e7681;
-    }
-    .note-feature code {
-      background: #21262d; padding: 1px 6px; border-radius: 4px;
-      font-size: 12px; color: #79c0ff; font-family: "SF Mono", "Fira Code", monospace;
-    }
-    .note-summary {
-      font-size: 13px; font-weight: 600; color: #e6edf3; flex: 1;
-    }
-    .note-np-link {
-      font-size: 12px; color: #58a6ff; text-decoration: none; white-space: nowrap;
-    }
-    .note-np-link:hover { text-decoration: underline; }
-    .note-detail {
-      font-size: 12.5px; color: #8b949e; line-height: 1.7;
-      margin: 0 0 8px;
-    }
-    .note-appears {
-      font-size: 11px; color: #6e7681; font-style: italic;
-    }
-    .notes-inconclusive {
-      font-size: 12px; color: #6e7681; font-style: italic;
-      margin: 12px 0 0; padding: 12px 16px;
-      background: #161b22; border: 1px solid #30363d;
-      border-radius: 8px;
-    }
     .score-badge {
       display: inline-block; min-width: 20px; text-align: center;
       padding: 1px 5px; border-radius: 4px; font-size: 11px; font-weight: 600;
@@ -612,9 +482,7 @@ JS = """
 """
 
 
-def render(data: dict, title: str, annotations: dict | None = None) -> str:
-    if annotations is None:
-        annotations = load_annotations()
+def render(data: dict, title: str) -> str:
     meta = data.get("metadata", {})
     layer_keys = sorted([k for k in data.keys() if k.startswith("layer_")], key=lambda k: int(k.split("_")[1]))
 
@@ -706,7 +574,6 @@ def render(data: dict, title: str, annotations: dict | None = None) -> str:
     </div>
     {layer_panels}
   </main>
-  {researcher_notes_html(data, annotations)}
   <script>{JS}</script>
 </body>
 </html>"""
